@@ -30,7 +30,8 @@
     "react-router-dom": "^6.0.0",
     "strapi-plugin-multi-select": "^2.1.1",
     "styled-components": "^6.0.0",
-    "web-push": "^3.6.7"
+    "web-push": "^3.6.7",
+    "nodemailer": "^6.9.4"
   },
   "engines": {
     "node": ">=18.0.0 <=22.x.x",
