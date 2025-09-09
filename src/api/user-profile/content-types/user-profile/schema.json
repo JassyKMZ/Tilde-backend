@@ -1,0 +1,46 @@
+{
+  "kind": "collectionType",
+  "collectionName": "user_profiles",
+  "info": {
+    "name": "User Profile",
+    "singularName": "user-profile",
+    "pluralName": "user-profiles",
+    "displayName": "User Profile",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "attributes": {
+    "user": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "plugin::users-permissions.user",
+      "inversedBy": "user_profile"
+    },
+    "fullName": {
+      "type": "string"
+    },
+    "bookmarks": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "api::post.post",
+      "inversedBy": "user_profiles"
+    },
+    "kategories": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "api::category.category",
+      "inversedBy": "user_profiles"
+    },
+    "pushNotificationsEnabled": {
+      "type": "boolean"
+    },
+    "push_subscriptions": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::push-subscriptions.push-subscription",
+      "mappedBy": "user_profile"
+    }
+  }
+}

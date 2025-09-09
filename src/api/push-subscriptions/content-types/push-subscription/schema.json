@@ -1,0 +1,31 @@
+{
+  "kind": "collectionType",
+  "collectionName": "push_subscriptions",
+  "info": {
+    "displayName": "Push Subscription",
+    "singularName": "push-subscription",
+    "pluralName": "push-subscriptions",
+    "description": "Stores client push subscription objects"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "attributes": {
+    "endpoint": {
+      "type": "string",
+      "required": true
+    },
+    "keys": {
+      "type": "json",
+      "required": true
+    },
+    "user_profile": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::user-profile.user-profile",
+      "inversedBy": "push_subscriptions",
+      "nullable": true
+    },
+    "expirationTime": { "type": "datetime" }
+  }
+}

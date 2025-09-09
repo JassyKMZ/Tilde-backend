@@ -1,0 +1,45 @@
+{
+  "kind": "collectionType",
+  "collectionName": "institutions",
+  "info": {
+    "singularName": "institution",
+    "pluralName": "institutions",
+    "displayName": "Institution",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "attributes": {
+    "title": {
+      "type": "string"
+    },
+    "logo": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": [
+        "images",
+        "files",
+        "videos",
+        "audios"
+      ]
+    },
+    "email": {
+      "type": "email"
+    },
+    "adresse": {
+      "type": "text"
+    },
+    "phone": {
+      "type": "string",
+      "unique": false
+    },
+    "website": {
+      "type": "string"
+    },
+    "about": {
+      "type": "blocks"
+    }
+  }
+}
