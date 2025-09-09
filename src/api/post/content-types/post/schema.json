@@ -1,0 +1,57 @@
+{
+  "kind": "collectionType",
+  "collectionName": "posts",
+  "info": {
+    "singularName": "post",
+    "pluralName": "posts",
+    "displayName": "Post",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "attributes": {
+    "titel": {
+      "type": "string",
+      "required": true
+    },
+    "beschreibung": {
+      "type": "blocks",
+      "required": true
+    },
+    "bild": {
+      "type": "media",
+      "multiple": false,
+      "required": true,
+      "allowedTypes": [
+        "images",
+        "files"
+      ]
+    },
+    "isEvent": {
+      "type": "boolean",
+      "required": true,
+      "default": false
+    },
+    "eventDate": {
+      "type": "datetime"
+    },
+    "veranstaltungsort": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::veranstaltungsort.veranstaltungsort"
+    },
+    "user_profiles": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "api::user-profile.user-profile",
+      "mappedBy": "bookmarks"
+    },
+    "kategories": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "api::category.category",
+      "inversedBy": "posts"
+    }
+  }
+}
