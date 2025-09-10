@@ -37,19 +37,19 @@ module.exports = ({ env }) => ({
 
   email: {
     config: {
-      provider: "nodemailer",
+      provider: "@strapi/provider-email-nodemailer",
       providerOptions: {
-        host: env("SMTP_HOST", "smtp.example.com"),
-        port: env.int("SMTP_PORT", 587),
+        host: env("SMTP_HOST"),
+        port: env.int("SMTP_PORT", 465),
+        secure: true,
         auth: {
           user: env("SMTP_USERNAME"),
           pass: env("SMTP_PASSWORD"),
         },
-        secure: false,
       },
       settings: {
-        defaultFrom: env("SMTP_FROM", "no-reply@yourdomain.com"),
-        defaultReplyTo: env("SMTP_REPLY_TO", "support@yourdomain.com"),
+        defaultFrom: env("SMTP_FROM"),
+        defaultReplyTo: env("SMTP_REPLY_TO"),
       },
     },
   },
