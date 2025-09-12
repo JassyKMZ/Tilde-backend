@@ -6,7 +6,7 @@ module.exports = [
     config: {
       origin: [
         //"http://localhost:8080", // Vue dev
-        //"http://localhost:4173", // Vite dev
+        "http://localhost:4173", // Vite dev
         //"http://192.168.88.142:4173", // Vite dev on local network
         //"http://localhost:3000", // Vue preview using npx serve dist
         "https://tilde-app.de"
