@@ -1,0 +1,1 @@
+import{u as m,n as p,as as d,r as f}from"./strapi-DAjSWN8J.js";const E=(o={},r)=>{const{locale:t}=m(),s=p(t,{sensitivity:"base"}),{data:e,error:a,isError:n,isLoading:c,refetch:l}=d(o,r);return{roles:f.useMemo(()=>[...e??[]].sort((u,i)=>s.compare(u.name,i.name)),[e,s]),error:a,isError:n,isLoading:c,refetch:l}};export{E as u};

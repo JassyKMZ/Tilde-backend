@@ -1,7 +1,7 @@
 module.exports = ({ env }) => ({
   host: env("HOST", "0.0.0.0"),
   port: env.int("PORT", 1337),
-  url: env("PUBLIC_URL", "http://192.168.88.142:1337"),
+  url: env("PUBLIC_URL", "https://nice-horse-9d5c65cdc5.strapiapp.com"),
   app: {
     keys: env.array("APP_KEYS"),
   },
