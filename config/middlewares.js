@@ -5,13 +5,14 @@ module.exports = [
     name: "strapi::cors",
     config: {
       origin: [
-        "http://localhost:8080", // Vue dev
-        "http://localhost:4173", // Vite dev
-        "http://192.168.88.142:4173", // Vite dev on local network
-        "http://localhost:3000", // Vue preview using npx serve dist
+        //"http://localhost:8080", // Vue dev
+        //"http://localhost:4173", // Vite dev
+        //"http://192.168.88.142:4173", // Vite dev on local network
+        //"http://localhost:3000", // Vue preview using npx serve dist
+        "https://tilde-app.de
         // "https://localhost:4173", // Vite preview over HTTPS
       ],
-      headers: ["Content-Type", "Authorization"],
+      headers: ["Content-Type", "Authorization", "Origin", "Accept"],
       methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS", "HEAD"],
       credentials: true,
     },
