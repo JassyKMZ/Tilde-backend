@@ -9,7 +9,7 @@ module.exports = [
         //"http://localhost:4173", // Vite dev
         //"http://192.168.88.142:4173", // Vite dev on local network
         //"http://localhost:3000", // Vue preview using npx serve dist
-        "https://tilde-app.de
+        "https://tilde-app.de"
         // "https://localhost:4173", // Vite preview over HTTPS
       ],
       headers: ["Content-Type", "Authorization", "Origin", "Accept"],
