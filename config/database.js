@@ -34,6 +34,8 @@ module.exports = ({ env }) => {
    
   };
 
+  console.log("DB PASS TYPE:", typeof env("DATABASE_PASSWORD"), env("DATABASE_PASSWORD"));
+
   return {
     connection: {
       client,
