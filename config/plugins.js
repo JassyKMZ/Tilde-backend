@@ -37,9 +37,9 @@ module.exports = ({ env }) => ({
 
   email: {
     config: {
-      provider: "@strapi/provider-email-nodemailer",
+      provider: 'nodemailer',
       providerOptions: {
-        host: env("SMTP_HOST"),
+        host: env("SMTP_HOST",  'mail.agenturserver.de'),
         port: env.int("SMTP_PORT", 465),
         secure: true,
         auth: {
@@ -48,8 +48,8 @@ module.exports = ({ env }) => ({
         },
       },
       settings: {
-        defaultFrom: env("SMTP_FROM"),
-        defaultReplyTo: env("SMTP_REPLY_TO"),
+        defaultFrom: env("SMTP_FROM", 'it-service@kmz-sbk.de'),
+        defaultReplyTo: env("SMTP_REPLY_TO", 'it-service@kmz-sbk.de'),
       },
     },
   },
