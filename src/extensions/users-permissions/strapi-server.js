@@ -1,5 +1,4 @@
 "use strict";
-const { ApplicationError } = require("@strapi/utils").errors;
 
 module.exports = (plugin) => {
   // Get the User content type from the plugin.
@@ -129,21 +128,6 @@ module.exports = (plugin) => {
       }
     } catch (error) {
       strapi.log.error("Error deleting user profile:", error);
-    }
-  };
-  const originalCallback = plugin.controllers.auth.callback;
-
-  plugin.controllers.auth.callback = async (ctx) => {
-    try {
-      return await originalCallback(ctx);
-    } catch (err) {
-      // Intercept the specific "not confirmed" error
-      if (err.message === "Your account email is not confirmed") {
-        throw new ApplicationError(
-          "Bitte bestätigen Sie zuerst Ihre E-Mail-Adresse."
-        );
-      }
-      throw err;
     }
   };
 
