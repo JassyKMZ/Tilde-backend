@@ -40,8 +40,8 @@ module.exports = ({ env }) => ({
       provider: 'nodemailer',
       providerOptions: {
         host: env("SMTP_HOST",  'mail.agenturserver.de'),
-        port: env.int("SMTP_PORT", 465),
-        secure: true,
+        port: env.int("SMTP_PORT", 587),
+        secure: false,
         auth: {
           user: env("SMTP_USERNAME"),
           pass: env("SMTP_PASSWORD"),
