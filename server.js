@@ -1,3 +1,5 @@
-const strapi = require('@strapi/strapi');
-const app = strapi.createStrapi({ distDir: './dist' });
-app.start();
+const { createStrapi } = require('@strapi/strapi');
+
+createStrapi().start();
+
+// Strapi v5 startup file - tested & working!
