@@ -34,22 +34,22 @@ module.exports = ({ env }) => ({
       },
     },
   },
-// EMail Settings
+// E-Mail Settings
   email: {
     config: {
       provider: 'nodemailer',
       providerOptions: {
         host: env("SMTP_HOST",  'mail.agenturserver.de'),
-        port: env.int("SMTP_PORT", 587),
-        secure: false,
+        port: env.int("SMTP_PORT", 465),
+        // secure: false,
         auth: {
           user: env("SMTP_USERNAME"),
           pass: env("SMTP_PASSWORD"),
         },
       },
       settings: {
-        defaultFrom: env("SMTP_FROM", 'it-service@kmz-sbk.de'),
-        defaultReplyTo: env("SMTP_REPLY_TO", 'it-service@kmz-sbk.de'),
+        defaultFrom: env("SMTP_FROM", 'no-reply@tilde-app.de'),
+        defaultReplyTo: env("SMTP_REPLY_TO", 'support@tilde-app.de'),
       },
     },
   },
