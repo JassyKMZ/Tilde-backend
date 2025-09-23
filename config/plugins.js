@@ -34,7 +34,7 @@ module.exports = ({ env }) => ({
       },
     },
   },
-
+// EMail Settings
   email: {
     config: {
       provider: 'nodemailer',
