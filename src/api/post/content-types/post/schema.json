@@ -52,6 +52,18 @@
       "relation": "manyToMany",
       "target": "api::category.category",
       "inversedBy": "posts"
+    },
+    "klasses": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "api::klasse.klasse",
+      "mappedBy": "posts"
+    },
+    "altersgruppes": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "api::alter.alter",
+      "mappedBy": "posts"
     }
   }
 }

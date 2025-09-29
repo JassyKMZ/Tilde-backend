@@ -34,12 +34,12 @@ module.exports = ({ env }) => ({
       },
     },
   },
-// E-Mail Settings
+  // E-Mail Settings
   email: {
     config: {
-      provider: 'nodemailer',
+      provider: "nodemailer",
       providerOptions: {
-        host: env("SMTP_HOST",  'mail.agenturserver.de'),
+        host: env("SMTP_HOST", "mail.agenturserver.de"),
         port: env.int("SMTP_PORT", 465),
         // secure: false,
         auth: {
@@ -48,8 +48,8 @@ module.exports = ({ env }) => ({
         },
       },
       settings: {
-        defaultFrom: env("SMTP_FROM", 'no-reply@tilde-app.de'),
-        defaultReplyTo: env("SMTP_REPLY_TO", 'support@tilde-app.de'),
+        defaultFrom: env("SMTP_FROM", "no-reply@tilde-app.de"),
+        defaultReplyTo: env("SMTP_REPLY_TO", "support@tilde-app.de"),
       },
     },
   },

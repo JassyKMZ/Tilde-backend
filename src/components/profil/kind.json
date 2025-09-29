@@ -1,0 +1,22 @@
+{
+  "collectionName": "components_profil_kinds",
+  "info": {
+    "displayName": "Kind",
+    "icon": "user"
+  },
+  "options": {},
+  "attributes": {
+    "name": {
+      "type": "string",
+      "required": true
+    },
+    "favoriteCategories": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "api::category.category"
+    },
+    "alter": {
+      "type": "integer"
+    }
+  }
+}

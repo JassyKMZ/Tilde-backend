@@ -4,7 +4,6 @@ module.exports = ({ env }) => {
   const client = env("DATABASE_CLIENT", "postgres");
 
   const connections = {
-    
     postgres: {
       connection: {
         // connectionString: env("DATABASE_URL"),
@@ -31,7 +30,6 @@ module.exports = ({ env }) => {
         max: env.int("DATABASE_POOL_MAX", 10),
       },
     },
-   
   };
 
   return {

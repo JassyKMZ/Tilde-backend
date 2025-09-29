@@ -23,9 +23,10 @@
       "type": "relation",
       "relation": "manyToOne",
       "target": "api::user-profile.user-profile",
-      "inversedBy": "push_subscriptions",
-      "nullable": true
+      "inversedBy": "push_subscriptions"
     },
-    "expirationTime": { "type": "datetime" }
+    "expirationTime": {
+      "type": "datetime"
+    }
   }
 }

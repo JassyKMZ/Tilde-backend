@@ -34,6 +34,10 @@ export interface AdminApiToken extends Struct.CollectionTypeSchema {
         minLength: 1;
       }> &
       Schema.Attribute.DefaultTo<''>;
+    encryptedKey: Schema.Attribute.Text &
+      Schema.Attribute.SetMinMaxLength<{
+        minLength: 1;
+      }>;
     expiresAt: Schema.Attribute.DateTime;
     lastUsedAt: Schema.Attribute.DateTime;
     lifespan: Schema.Attribute.BigInteger;
@@ -369,6 +373,36 @@ export interface AdminUser extends Struct.CollectionTypeSchema {
   };
 }
 
+export interface ApiAlterAlter extends Struct.CollectionTypeSchema {
+  collectionName: 'alters';
+  info: {
+    displayName: 'Altersgruppe';
+    pluralName: 'alters';
+    singularName: 'alter';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<'oneToMany', 'api::alter.alter'> &
+      Schema.Attribute.Private;
+    posts: Schema.Attribute.Relation<'manyToMany', 'api::post.post'>;
+    publishedAt: Schema.Attribute.DateTime;
+    title: Schema.Attribute.String;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    user_profiles: Schema.Attribute.Relation<
+      'manyToMany',
+      'api::user-profile.user-profile'
+    >;
+  };
+}
+
 export interface ApiCategoryCategory extends Struct.CollectionTypeSchema {
   collectionName: 'categories';
   info: {
@@ -438,6 +472,40 @@ export interface ApiInstitutionInstitution extends Struct.CollectionTypeSchema {
   };
 }
 
+export interface ApiKlasseKlasse extends Struct.CollectionTypeSchema {
+  collectionName: 'klassen';
+  info: {
+    description: '';
+    displayName: 'Klasse';
+    pluralName: 'klassen';
+    singularName: 'klasse';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::klasse.klasse'
+    > &
+      Schema.Attribute.Private;
+    posts: Schema.Attribute.Relation<'manyToMany', 'api::post.post'>;
+    publishedAt: Schema.Attribute.DateTime;
+    title: Schema.Attribute.String;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    user_profiles: Schema.Attribute.Relation<
+      'manyToMany',
+      'api::user-profile.user-profile'
+    >;
+  };
+}
+
 export interface ApiPostPost extends Struct.CollectionTypeSchema {
   collectionName: 'posts';
   info: {
@@ -450,6 +518,7 @@ export interface ApiPostPost extends Struct.CollectionTypeSchema {
     draftAndPublish: true;
   };
   attributes: {
+    altersgruppes: Schema.Attribute.Relation<'manyToMany', 'api::alter.alter'>;
     beschreibung: Schema.Attribute.Blocks & Schema.Attribute.Required;
     bild: Schema.Attribute.Media<'images' | 'files'> &
       Schema.Attribute.Required;
@@ -464,6 +533,7 @@ export interface ApiPostPost extends Struct.CollectionTypeSchema {
       'manyToMany',
       'api::category.category'
     >;
+    klasses: Schema.Attribute.Relation<'manyToMany', 'api::klasse.klasse'>;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<'oneToMany', 'api::post.post'> &
       Schema.Attribute.Private;
@@ -532,6 +602,7 @@ export interface ApiUserProfileUserProfile extends Struct.CollectionTypeSchema {
     draftAndPublish: false;
   };
   attributes: {
+    altersgruppes: Schema.Attribute.Relation<'manyToMany', 'api::alter.alter'>;
     bookmarks: Schema.Attribute.Relation<'manyToMany', 'api::post.post'>;
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
@@ -541,6 +612,8 @@ export interface ApiUserProfileUserProfile extends Struct.CollectionTypeSchema {
       'manyToMany',
       'api::category.category'
     >;
+    kinder: Schema.Attribute.Component<'profil.kind', true>;
+    klasses: Schema.Attribute.Relation<'manyToMany', 'api::klasse.klasse'>;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<
       'oneToMany',
@@ -1153,8 +1226,10 @@ declare module '@strapi/strapi' {
       'admin::transfer-token': AdminTransferToken;
       'admin::transfer-token-permission': AdminTransferTokenPermission;
       'admin::user': AdminUser;
+      'api::alter.alter': ApiAlterAlter;
       'api::category.category': ApiCategoryCategory;
       'api::institution.institution': ApiInstitutionInstitution;
+      'api::klasse.klasse': ApiKlasseKlasse;
       'api::post.post': ApiPostPost;
       'api::push-subscriptions.push-subscription': ApiPushSubscriptionsPushSubscription;
       'api::user-profile.user-profile': ApiUserProfileUserProfile;

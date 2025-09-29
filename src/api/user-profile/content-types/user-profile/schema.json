@@ -11,6 +11,7 @@
   "options": {
     "draftAndPublish": false
   },
+  "pluginOptions": {},
   "attributes": {
     "user": {
       "type": "relation",
@@ -33,14 +34,31 @@
       "target": "api::category.category",
       "inversedBy": "user_profiles"
     },
-    "pushNotificationsEnabled": {
-      "type": "boolean"
+    "klasses": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "api::klasse.klasse",
+      "mappedBy": "user_profiles"
+    },
+    "altersgruppes": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "api::alter.alter",
+      "mappedBy": "user_profiles"
+    },
+    "kinder": {
+      "type": "component",
+      "component": "profil.kind",
+      "repeatable": true
     },
     "push_subscriptions": {
       "type": "relation",
       "relation": "oneToMany",
       "target": "api::push-subscriptions.push-subscription",
       "mappedBy": "user_profile"
+    },
+    "pushNotificationsEnabled": {
+      "type": "boolean"
     }
   }
 }
