@@ -526,9 +526,7 @@ export interface ApiPostPost extends Struct.CollectionTypeSchema {
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
     eventDate: Schema.Attribute.DateTime;
-    isEvent: Schema.Attribute.Boolean &
-      Schema.Attribute.Required &
-      Schema.Attribute.DefaultTo<false>;
+    isEvent: Schema.Attribute.Boolean & Schema.Attribute.Required;
     kategories: Schema.Attribute.Relation<
       'manyToMany',
       'api::category.category'
@@ -549,6 +547,9 @@ export interface ApiPostPost extends Struct.CollectionTypeSchema {
     veranstaltungsort: Schema.Attribute.Relation<
       'oneToOne',
       'api::veranstaltungsort.veranstaltungsort'
+    >;
+    veranstaltungstyp: Schema.Attribute.Enumeration<
+      ['Abrufveranstaltung', 'Workshop', 'Kurs']
     >;
   };
 }

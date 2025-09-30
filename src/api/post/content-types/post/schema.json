@@ -10,6 +10,7 @@
   "options": {
     "draftAndPublish": true
   },
+  "pluginOptions": {},
   "attributes": {
     "titel": {
       "type": "string",
@@ -30,16 +31,53 @@
     },
     "isEvent": {
       "type": "boolean",
-      "required": true,
-      "default": false
+      "required": true
     },
     "eventDate": {
-      "type": "datetime"
+      "type": "datetime",
+      "conditions": {
+        "visible": {
+          "==": [
+            {
+              "var": "isEvent"
+            },
+            true
+          ]
+        }
+      }
     },
     "veranstaltungsort": {
       "type": "relation",
       "relation": "oneToOne",
-      "target": "api::veranstaltungsort.veranstaltungsort"
+      "target": "api::veranstaltungsort.veranstaltungsort",
+      "conditions": {
+        "visible": {
+          "!=": [
+            {
+              "var": "veranstaltungstyp"
+            },
+            "Abrufveranstaltung"
+          ]
+        }
+      }
+    },
+    "veranstaltungstyp": {
+      "type": "enumeration",
+      "conditions": {
+        "visible": {
+          "==": [
+            {
+              "var": "isEvent"
+            },
+            true
+          ]
+        }
+      },
+      "enum": [
+        "Abrufveranstaltung",
+        "Workshop",
+        "Kurs"
+      ]
     },
     "user_profiles": {
       "type": "relation",
