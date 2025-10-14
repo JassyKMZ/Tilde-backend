@@ -17,20 +17,22 @@
   },
   "dependencies": {
     "@redon2inc/strapi-plugin-refresh-token": "^0.1.4",
-    "@strapi/strapi": "5.23.4",
     "@strapi/plugin-cloud": "5.23.4",
     "@strapi/plugin-users-permissions": "5.23.4",
     "@strapi/provider-email-nodemailer": "5.23.4",
+    "@strapi/strapi": "5.23.4",
+    "firebase-admin": "^13.5.0",
     "fs-extra": "^10.0.0",
+    "google-auth-library": "^10.4.0",
     "mime-types": "^2.1.27",
+    "nodemailer": "^6.9.4",
     "pg": "^8.15.6",
     "react": "^18.0.0",
     "react-dom": "^18.0.0",
     "react-router-dom": "^6.0.0",
     "strapi-plugin-multi-select": "^2.1.1",
     "styled-components": "^6.0.0",
-    "web-push": "^3.6.7",
-    "nodemailer": "^6.9.4"
+    "web-push": "^3.6.7"
   },
   "engines": {
     "node": ">=18.0.0 <=22.x.x",

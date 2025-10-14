@@ -1,0 +1,18 @@
+{
+  "kind": "collectionType",
+  "collectionName": "veranstaltungstyps",
+  "info": {
+    "singularName": "veranstaltungstyp",
+    "pluralName": "veranstaltungstyps",
+    "displayName": "veranstaltungstyp"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "title": {
+      "type": "string"
+    }
+  }
+}

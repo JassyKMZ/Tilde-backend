@@ -24,10 +24,7 @@
       "type": "media",
       "multiple": false,
       "required": true,
-      "allowedTypes": [
-        "images",
-        "files"
-      ]
+      "allowedTypes": ["images", "files"]
     },
     "isEvent": {
       "type": "boolean",
@@ -73,11 +70,7 @@
           ]
         }
       },
-      "enum": [
-        "Abrufveranstaltung",
-        "Workshop",
-        "Kurs"
-      ]
+      "enum": ["Abrufveranstaltung", "Workshop", "Kurs"]
     },
     "user_profiles": {
       "type": "relation",

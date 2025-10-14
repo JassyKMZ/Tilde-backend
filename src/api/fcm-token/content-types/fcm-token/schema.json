@@ -1,0 +1,38 @@
+{
+  "kind": "collectionType",
+  "collectionName": "fcm_tokens",
+  "info": {
+    "singularName": "fcm-token",
+    "pluralName": "fcm-tokens",
+    "displayName": "FCM Token"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "token": {
+      "type": "string",
+      "required": true,
+      "unique": true
+    },
+    "guestId": {
+      "type": "string"
+    },
+    "platform": {
+      "type": "enumeration",
+      "enum": [
+        "web",
+        "android",
+        "ios",
+        "other"
+      ]
+    },
+    "user": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::users-permissions.user",
+      "inversedBy": "fcm_tokens"
+    }
+  }
+}

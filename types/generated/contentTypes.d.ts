@@ -437,6 +437,42 @@ export interface ApiCategoryCategory extends Struct.CollectionTypeSchema {
   };
 }
 
+export interface ApiFcmTokenFcmToken extends Struct.CollectionTypeSchema {
+  collectionName: 'fcm_tokens';
+  info: {
+    displayName: 'FCM Token';
+    pluralName: 'fcm-tokens';
+    singularName: 'fcm-token';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    guestId: Schema.Attribute.String;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::fcm-token.fcm-token'
+    > &
+      Schema.Attribute.Private;
+    platform: Schema.Attribute.Enumeration<['web', 'android', 'ios', 'other']>;
+    publishedAt: Schema.Attribute.DateTime;
+    token: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.Unique;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    user: Schema.Attribute.Relation<
+      'manyToOne',
+      'plugin::users-permissions.user'
+    >;
+  };
+}
+
 export interface ApiInstitutionInstitution extends Struct.CollectionTypeSchema {
   collectionName: 'institutions';
   info: {
@@ -661,6 +697,35 @@ export interface ApiVeranstaltungsortVeranstaltungsort
       Schema.Attribute.Private;
     ort: Schema.Attribute.String;
     publishedAt: Schema.Attribute.DateTime;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
+export interface ApiVeranstaltungstypVeranstaltungstyp
+  extends Struct.CollectionTypeSchema {
+  collectionName: 'veranstaltungstyps';
+  info: {
+    displayName: 'veranstaltungstyp';
+    pluralName: 'veranstaltungstyps';
+    singularName: 'veranstaltungstyp';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::veranstaltungstyp.veranstaltungstyp'
+    > &
+      Schema.Attribute.Private;
+    publishedAt: Schema.Attribute.DateTime;
+    title: Schema.Attribute.String;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
@@ -1178,6 +1243,10 @@ export interface PluginUsersPermissionsUser
       Schema.Attribute.SetMinMaxLength<{
         minLength: 6;
       }>;
+    fcm_tokens: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::fcm-token.fcm-token'
+    >;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<
       'oneToMany',
@@ -1229,12 +1298,14 @@ declare module '@strapi/strapi' {
       'admin::user': AdminUser;
       'api::alter.alter': ApiAlterAlter;
       'api::category.category': ApiCategoryCategory;
+      'api::fcm-token.fcm-token': ApiFcmTokenFcmToken;
       'api::institution.institution': ApiInstitutionInstitution;
       'api::klasse.klasse': ApiKlasseKlasse;
       'api::post.post': ApiPostPost;
       'api::push-subscriptions.push-subscription': ApiPushSubscriptionsPushSubscription;
       'api::user-profile.user-profile': ApiUserProfileUserProfile;
       'api::veranstaltungsort.veranstaltungsort': ApiVeranstaltungsortVeranstaltungsort;
+      'api::veranstaltungstyp.veranstaltungstyp': ApiVeranstaltungstypVeranstaltungstyp;
       'plugin::content-releases.release': PluginContentReleasesRelease;
       'plugin::content-releases.release-action': PluginContentReleasesReleaseAction;
       'plugin::i18n.locale': PluginI18NLocale;
