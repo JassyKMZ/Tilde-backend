@@ -1,50 +1,31 @@
 // src/services/fcm.js
-import fetch from "node-fetch";
-import { GoogleAuth } from "google-auth-library";
+const { createRequire } = require("module");
+const requireFromCjs = createRequire(__filename);
+const { GoogleAuth } = requireFromCjs("google-auth-library");
+const fetch = requireFromCjs("node-fetch"); // if you use node-fetch; adjust if using global fetch in Node 18+
 
-const SCOPES = ["https://www.googleapis.com/auth/cloud-platform"];
+// load service account JSON path from env or use google auth via keyfile
+const FCM_PROJECT_ID = process.env.FCM_PROJECT_ID;
+const GOOGLE_APPLICATION_CREDENTIALS =
+  process.env.GOOGLE_APPLICATION_CREDENTIALS; // path to json
 
-function buildCredsFromEnv() {
-  const projectId = process.env.FIREBASE_PROJECT_ID;
-  const clientEmail = process.env.FIREBASE_CLIENT_EMAIL;
-  let privateKey = process.env.FIREBASE_PRIVATE_KEY;
-  if (!projectId || !clientEmail || !privateKey) return null;
-  if (privateKey.includes("\\n")) privateKey = privateKey.replace(/\\n/g, "\n");
-  return {
-    type: "service_account",
-    project_id: projectId,
-    client_email: clientEmail,
-    private_key: privateKey,
-  };
-}
-
-async function getAuthClient() {
-  const creds = buildCredsFromEnv();
+async function getAccessToken() {
   const auth = new GoogleAuth({
-    scopes: SCOPES,
-    credentials: creds || undefined,
+    keyFilename: GOOGLE_APPLICATION_CREDENTIALS,
+    scopes: ["https://www.googleapis.com/auth/firebase.messaging"],
   });
   const client = await auth.getClient();
-  const projectId = creds?.project_id || (await auth.getProjectId());
-  return { client, projectId };
+  const tokenResponse = await client.getAccessToken();
+  return tokenResponse.token;
 }
 
-export async function sendToToken(
-  token,
-  { notification = null, data = {} } = {}
-) {
-  if (!token) throw new Error("FCM token required");
-  const { client, projectId } = await getAuthClient();
-  const accessTokenObj = await client.getAccessToken();
-  const accessToken = accessTokenObj?.token;
-  if (!accessToken) throw new Error("Failed to obtain Google access token");
-
-  const url = `https://fcm.googleapis.com/v1/projects/${projectId}/messages:send`;
+async function sendToToken(token, message) {
+  const accessToken = await getAccessToken();
+  const url = `https://fcm.googleapis.com/v1/projects/${FCM_PROJECT_ID}/messages:send`;
   const body = {
     message: {
       token,
-      ...(notification ? { notification } : {}),
-      data: Object.keys(data || {}).length ? data : undefined,
+      ...message,
     },
   };
 
@@ -52,16 +33,19 @@ export async function sendToToken(
     method: "POST",
     headers: {
       Authorization: `Bearer ${accessToken}`,
-      "Content-Type": "application/json; UTF-8",
+      "Content-Type": "application/json",
     },
     body: JSON.stringify(body),
   });
-  const json = await res.json().catch(() => null);
+
   if (!res.ok) {
-    const err = new Error("FCM send failed");
-    err.status = res.status;
-    err.body = json;
+    const errBody = await res.text();
+    const err = new Error(`FCM send failed: ${res.status} ${res.statusText}`);
+    err.body = errBody;
     throw err;
   }
-  return json;
+
+  return res.json();
 }
+
+module.exports = { sendToToken };

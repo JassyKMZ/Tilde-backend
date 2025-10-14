@@ -1,4 +1,4 @@
-import { auth } from "google-auth-library";
+const { auth } = require("google-auth-library");
 
 export default [
   {

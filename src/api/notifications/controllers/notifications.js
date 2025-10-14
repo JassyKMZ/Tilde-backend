@@ -1,6 +1,7 @@
-import { sendToToken } from "../../../services/fcm.js";
+// src/api/notifications/controllers/notifications.js
+const { sendToToken } = require("../../../services/fcm.js");
 
-export default {
+module.exports = {
   async sendTest(ctx) {
     const { token } = ctx.request.body;
     if (!token) return ctx.badRequest("token required");
