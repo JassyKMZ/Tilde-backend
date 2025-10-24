@@ -373,36 +373,6 @@ export interface AdminUser extends Struct.CollectionTypeSchema {
   };
 }
 
-export interface ApiAlterAlter extends Struct.CollectionTypeSchema {
-  collectionName: 'alters';
-  info: {
-    displayName: 'Altersgruppe';
-    pluralName: 'alters';
-    singularName: 'alter';
-  };
-  options: {
-    draftAndPublish: false;
-  };
-  attributes: {
-    createdAt: Schema.Attribute.DateTime;
-    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
-      Schema.Attribute.Private;
-    locale: Schema.Attribute.String & Schema.Attribute.Private;
-    localizations: Schema.Attribute.Relation<'oneToMany', 'api::alter.alter'> &
-      Schema.Attribute.Private;
-    posts: Schema.Attribute.Relation<'manyToMany', 'api::post.post'>;
-    publishedAt: Schema.Attribute.DateTime;
-    title: Schema.Attribute.String;
-    updatedAt: Schema.Attribute.DateTime;
-    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
-      Schema.Attribute.Private;
-    user_profiles: Schema.Attribute.Relation<
-      'manyToMany',
-      'api::user-profile.user-profile'
-    >;
-  };
-}
-
 export interface ApiCategoryCategory extends Struct.CollectionTypeSchema {
   collectionName: 'categories';
   info: {
@@ -554,7 +524,6 @@ export interface ApiPostPost extends Struct.CollectionTypeSchema {
     draftAndPublish: true;
   };
   attributes: {
-    altersgruppes: Schema.Attribute.Relation<'manyToMany', 'api::alter.alter'>;
     beschreibung: Schema.Attribute.Blocks & Schema.Attribute.Required;
     bild: Schema.Attribute.Media<'images' | 'files'> &
       Schema.Attribute.Required;
@@ -585,7 +554,7 @@ export interface ApiPostPost extends Struct.CollectionTypeSchema {
       'api::veranstaltungsort.veranstaltungsort'
     >;
     veranstaltungstyp: Schema.Attribute.Enumeration<
-      ['Abrufveranstaltung', 'Workshop', 'Kurs']
+      ['Abrufveranstaltung', 'Kurs', 'Workshop', 'Veranstaltung']
     >;
   };
 }
@@ -626,6 +595,39 @@ export interface ApiPushSubscriptionsPushSubscription
   };
 }
 
+export interface ApiTippSectionTippSection extends Struct.CollectionTypeSchema {
+  collectionName: 'tipp_sections';
+  info: {
+    displayName: 'TippSection';
+    pluralName: 'tipp-sections';
+    singularName: 'tipp-section';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    beschreibung: Schema.Attribute.Blocks;
+    bild: Schema.Attribute.Media<
+      'images' | 'files' | 'videos' | 'audios',
+      true
+    >;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::tipp-section.tipp-section'
+    > &
+      Schema.Attribute.Private;
+    publishedAt: Schema.Attribute.DateTime;
+    titel: Schema.Attribute.String;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
 export interface ApiUserProfileUserProfile extends Struct.CollectionTypeSchema {
   collectionName: 'user_profiles';
   info: {
@@ -639,7 +641,6 @@ export interface ApiUserProfileUserProfile extends Struct.CollectionTypeSchema {
     draftAndPublish: false;
   };
   attributes: {
-    altersgruppes: Schema.Attribute.Relation<'manyToMany', 'api::alter.alter'>;
     bookmarks: Schema.Attribute.Relation<'manyToMany', 'api::post.post'>;
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
@@ -657,12 +658,29 @@ export interface ApiUserProfileUserProfile extends Struct.CollectionTypeSchema {
       'api::user-profile.user-profile'
     > &
       Schema.Attribute.Private;
+    maxAge: Schema.Attribute.Integer &
+      Schema.Attribute.SetMinMax<
+        {
+          max: 18;
+          min: 0;
+        },
+        number
+      >;
+    minAge: Schema.Attribute.Integer &
+      Schema.Attribute.SetMinMax<
+        {
+          max: 18;
+          min: 0;
+        },
+        number
+      >;
     publishedAt: Schema.Attribute.DateTime;
     push_subscriptions: Schema.Attribute.Relation<
       'oneToMany',
       'api::push-subscriptions.push-subscription'
     >;
     pushNotificationsEnabled: Schema.Attribute.Boolean;
+    roleType: Schema.Attribute.Enumeration<['fachkraft', 'elternteil']>;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
@@ -1296,13 +1314,13 @@ declare module '@strapi/strapi' {
       'admin::transfer-token': AdminTransferToken;
       'admin::transfer-token-permission': AdminTransferTokenPermission;
       'admin::user': AdminUser;
-      'api::alter.alter': ApiAlterAlter;
       'api::category.category': ApiCategoryCategory;
       'api::fcm-token.fcm-token': ApiFcmTokenFcmToken;
       'api::institution.institution': ApiInstitutionInstitution;
       'api::klasse.klasse': ApiKlasseKlasse;
       'api::post.post': ApiPostPost;
       'api::push-subscriptions.push-subscription': ApiPushSubscriptionsPushSubscription;
+      'api::tipp-section.tipp-section': ApiTippSectionTippSection;
       'api::user-profile.user-profile': ApiUserProfileUserProfile;
       'api::veranstaltungsort.veranstaltungsort': ApiVeranstaltungsortVeranstaltungsort;
       'api::veranstaltungstyp.veranstaltungstyp': ApiVeranstaltungstypVeranstaltungstyp;
