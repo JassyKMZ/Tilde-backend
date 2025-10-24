@@ -1,6 +1,5 @@
 const { auth } = require("google-auth-library");
-
-export default [
+module.exports = [
   {
     method: "POST",
     path: "/notifications/sendTest",

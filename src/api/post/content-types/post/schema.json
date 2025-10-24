@@ -24,7 +24,10 @@
       "type": "media",
       "multiple": false,
       "required": true,
-      "allowedTypes": ["images", "files"]
+      "allowedTypes": [
+        "images",
+        "files"
+      ]
     },
     "isEvent": {
       "type": "boolean",
@@ -49,11 +52,11 @@
       "target": "api::veranstaltungsort.veranstaltungsort",
       "conditions": {
         "visible": {
-          "!=": [
+          "==": [
             {
-              "var": "veranstaltungstyp"
+              "var": "isEvent"
             },
-            "Abrufveranstaltung"
+            true
           ]
         }
       }
@@ -70,7 +73,12 @@
           ]
         }
       },
-      "enum": ["Abrufveranstaltung", "Workshop", "Kurs"]
+      "enum": [
+        "Abrufveranstaltung",
+        "Kurs",
+        "Workshop",
+        "Veranstaltung"
+      ]
     },
     "user_profiles": {
       "type": "relation",
@@ -88,12 +96,6 @@
       "type": "relation",
       "relation": "manyToMany",
       "target": "api::klasse.klasse",
-      "mappedBy": "posts"
-    },
-    "altersgruppes": {
-      "type": "relation",
-      "relation": "manyToMany",
-      "target": "api::alter.alter",
       "mappedBy": "posts"
     }
   }

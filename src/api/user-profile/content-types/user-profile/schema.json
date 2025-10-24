@@ -40,12 +40,6 @@
       "target": "api::klasse.klasse",
       "mappedBy": "user_profiles"
     },
-    "altersgruppes": {
-      "type": "relation",
-      "relation": "manyToMany",
-      "target": "api::alter.alter",
-      "mappedBy": "user_profiles"
-    },
     "kinder": {
       "type": "component",
       "component": "profil.kind",
@@ -59,6 +53,23 @@
     },
     "pushNotificationsEnabled": {
       "type": "boolean"
+    },
+    "minAge": {
+      "type": "integer",
+      "min": 0,
+      "max": 18
+    },
+    "maxAge": {
+      "type": "integer",
+      "min": 0,
+      "max": 18
+    },
+    "roleType": {
+      "type": "enumeration",
+      "enum": [
+        "fachkraft",
+        "elternteil"
+      ]
     }
   }
 }
