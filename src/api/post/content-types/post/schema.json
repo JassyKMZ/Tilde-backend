@@ -97,6 +97,12 @@
       "relation": "manyToMany",
       "target": "api::klasse.klasse",
       "mappedBy": "posts"
+    },
+    "institution": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::institution.institution",
+      "inversedBy": "posts"
     }
   }
 }
