@@ -10,6 +10,7 @@
   "options": {
     "draftAndPublish": false
   },
+  "pluginOptions": {},
   "attributes": {
     "title": {
       "type": "string"
@@ -40,6 +41,12 @@
     },
     "about": {
       "type": "blocks"
+    },
+    "posts": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::post.post",
+      "mappedBy": "institution"
     }
   }
 }
