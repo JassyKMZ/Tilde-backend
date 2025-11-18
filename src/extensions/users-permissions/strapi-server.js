@@ -1,14 +1,13 @@
 // src/extensions/users-permissions/strapi-server.js
 "use strict";
 
-import customRoutesModule from "../../api/auth/routes/custom-auth.js";
-
+const customRoutesModule = require("../../api/auth/routes/custom-auth.js");
 const customRoutes =
   customRoutesModule && customRoutesModule.default
     ? customRoutesModule.default
     : customRoutesModule;
 
-export default (plugin) => {
+module.exports = (plugin) => {
   // Ensure plugin shape
   plugin.routes = plugin.routes || {};
   plugin.routes["content-api"] = plugin.routes["content-api"] || { routes: [] };
@@ -28,7 +27,13 @@ export default (plugin) => {
   }
 
   // Get the User content type from the plugin.
-  const userContentType = plugin.contentTypes.user;
+  const userContentType = plugin.contentTypes && plugin.contentTypes.user;
+  if (!userContentType) {
+    strapi.log.warn(
+      "users-permissions: user content type not found, skipping lifecycles"
+    );
+    return plugin;
+  }
 
   // Initialize lifecycles if not already defined.
   userContentType.lifecycles = userContentType.lifecycles || {};
@@ -38,7 +43,10 @@ export default (plugin) => {
    */
   userContentType.lifecycles.afterCreate = async (event) => {
     const { result } = event;
-    console.log("afterCreate hook triggered for user:", result);
+    strapi.log.info(
+      "afterCreate hook triggered for user:",
+      result && result.id
+    );
     try {
       await strapi.db.query("api::user-profile.user-profile").create({
         data: {
@@ -68,7 +76,7 @@ export default (plugin) => {
           },
         });
 
-      if (profiles.length) {
+      if (profiles && profiles.length) {
         for (const profile of profiles) {
           await strapi.entityService.delete(
             "api::user-profile.user-profile",
