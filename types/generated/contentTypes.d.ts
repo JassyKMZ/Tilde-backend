@@ -545,6 +545,22 @@ export interface ApiPostPost extends Struct.CollectionTypeSchema {
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<'oneToMany', 'api::post.post'> &
       Schema.Attribute.Private;
+    maxAge: Schema.Attribute.Integer &
+      Schema.Attribute.SetMinMax<
+        {
+          max: 18;
+          min: 0;
+        },
+        number
+      >;
+    minAge: Schema.Attribute.Integer &
+      Schema.Attribute.SetMinMax<
+        {
+          max: 18;
+          min: 0;
+        },
+        number
+      >;
     publishedAt: Schema.Attribute.DateTime;
     titel: Schema.Attribute.String & Schema.Attribute.Required;
     updatedAt: Schema.Attribute.DateTime;
@@ -1260,6 +1276,9 @@ export interface PluginUsersPermissionsUser
     > &
       Schema.Attribute.Private;
     resetPasswordToken: Schema.Attribute.String & Schema.Attribute.Private;
+    resetPasswordTokenCreatedAt: Schema.Attribute.Timestamp &
+      Schema.Attribute.Private;
+    resetPasswordTokenHash: Schema.Attribute.String & Schema.Attribute.Private;
     role: Schema.Attribute.Relation<
       'manyToOne',
       'plugin::users-permissions.role'
