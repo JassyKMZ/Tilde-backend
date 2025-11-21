@@ -49,6 +49,16 @@
       "private": true,
       "searchable": false
     },
+    "resetPasswordTokenHash": {
+      "type": "string",
+      "configurable": false,
+      "private": true
+    },
+    "resetPasswordTokenCreatedAt": {
+      "type": "timestamp",
+      "configurable": false,
+      "private": true
+    },
     "confirmed": {
       "type": "boolean",
       "default": false,
