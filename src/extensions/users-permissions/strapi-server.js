@@ -1,14 +1,13 @@
-// src/extensions/users-permissions/strapi-server.js
 "use strict";
 
-import customRoutesModule from "../../api/auth/routes/custom-auth.js";
+const customRoutesModule = require("../../api/auth/routes/custom-auth.js");
 
 const customRoutes =
   customRoutesModule && customRoutesModule.default
     ? customRoutesModule.default
     : customRoutesModule;
 
-export default (plugin) => {
+module.exports = (plugin) => {
   // Ensure plugin shape
   plugin.routes = plugin.routes || {};
   plugin.routes["content-api"] = plugin.routes["content-api"] || { routes: [] };
