@@ -33,6 +33,15 @@ const customRoutes = [
       },
     },
   },
+  // {
+  //   method: "POST",
+  //   path: "/create-for-me",
+  //   handler: "user-profile.createForMe",
+  //   config: {
+  //     auth: true,
+  //     policies: [],
+  //   },
+  // },
 ];
 
 module.exports = createCoreRouter(

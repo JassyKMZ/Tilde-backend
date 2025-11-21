@@ -87,5 +87,70 @@ module.exports = createCoreController(
 
       return ctx.send(updated);
     },
+
+    // async createForMe(ctx) {
+    //   try {
+    //     // ensure authenticated
+    //     const authUser = ctx.state.user;
+    //     if (!authUser || !authUser.id) {
+    //       return ctx.unauthorized("Not authenticated");
+    //     }
+
+    //     // incoming data under ctx.request.body.data (follow Strapi conventions)
+    //     const incoming = ctx.request.body?.data || {};
+
+    //     // whitelist and sanitize allowed fields only
+    //     const data = {
+    //       user: authUser.id,
+    //       fullName: incoming.fullName || "",
+    //       roleType: incoming.roleType || null,
+    //       workplace: incoming.workplace || null,
+    //       // onboardingCompleted:
+    //       //   incoming.onboardingCompleted === true ? true : false,
+    //     };
+
+    //     // Prevent duplicate creation: check existing profile for this user
+    //     const existing = await strapi.db
+    //       .query("api::user-profile.user-profile")
+    //       .findOne({ where: { user: authUser.id } });
+
+    //     if (existing) {
+    //       // If profile exists, optionally update missing fields instead of creating duplicate
+    //       const updateData = {};
+    //       for (const [k, v] of Object.entries(data)) {
+    //         if (k === "user") continue;
+    //         if (v != null && v !== "" && (!existing[k] || existing[k] === "")) {
+    //           updateData[k] = v;
+    //         }
+    //       }
+    //       if (Object.keys(updateData).length) {
+    //         const updated = await strapi.entityService.update(
+    //           "api::user-profile.user-profile",
+    //           existing.id,
+    //           { data: updateData }
+    //         );
+    //         return ctx.send({ ok: true, updated });
+    //       }
+    //       return ctx.send({
+    //         ok: true,
+    //         message: "Profile already exists",
+    //         profile: existing,
+    //       });
+    //     }
+
+    //     // Create profile
+    //     const created = await strapi.entityService.create(
+    //       "api::user-profile.user-profile",
+    //       {
+    //         data,
+    //       }
+    //     );
+
+    //     return ctx.created({ ok: true, profile: created });
+    //   } catch (err) {
+    //     strapi.log.error("createForMe error:", err);
+    //     return ctx.internalServerError("Could not create profile");
+    //   }
+    // },
   })
 );
