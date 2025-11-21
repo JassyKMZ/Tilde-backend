@@ -39,7 +39,7 @@ module.exports = ({ env }) => ({
     config: {
       provider: "nodemailer",
       providerOptions: {
-        host: env("SMTP_HOST", "mail.agenturserver.de"),
+        host: env("SMTP_HOST", "mailc.digitalpakt-schule.jetzt"),
         port: env.int("SMTP_PORT", 465),
         // secure: false,
         auth: {
