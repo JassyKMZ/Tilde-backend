@@ -29,7 +29,7 @@ module.exports = ({ env }) => ({
         refreshTokenExpiresIn: "30d",
         requestRefreshOnAll: false,
         refreshTokenSecret: env("REFRESH_JWT_SECRET") || "SomethingSecret",
-        cookieResponse: true,
+        cookieResponse: false,
         refreshTokenRotation: true,
       },
     },
@@ -49,7 +49,7 @@ module.exports = ({ env }) => ({
       },
       settings: {
         defaultFrom: env("SMTP_FROM", "no-reply@tilde-app.de"),
-        defaultReplyTo: env("SMTP_REPLY_TO", "support@tilde-app.de"),
+        defaultReplyTo: env("SMTP_REPLY_TO", "info@tilde-app.de"),
       },
     },
   },
