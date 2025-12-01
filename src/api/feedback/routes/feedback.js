@@ -5,7 +5,11 @@ module.exports = {
       path: "/feedbacks",
       handler: "feedback.create",
       config: {
-        middlewares: ["global::ratelimit"], // nur hier aktiv
+        policies: [
+          "api::feedback.captcha",
+          "api::feedback.honeypot",
+          "api::feedback.ratelimit",
+        ],
       },
     },
   ],
