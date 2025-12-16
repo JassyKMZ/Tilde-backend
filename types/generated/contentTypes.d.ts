@@ -543,6 +543,35 @@ export interface ApiKlasseKlasse extends Struct.CollectionTypeSchema {
   };
 }
 
+export interface ApiLandingLanding extends Struct.SingleTypeSchema {
+  collectionName: 'landings';
+  info: {
+    displayName: 'Startseite';
+    pluralName: 'landings';
+    singularName: 'landing';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    Beschreibung: Schema.Attribute.DynamicZone<['landing.starts-text']>;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::landing.landing'
+    > &
+      Schema.Attribute.Private;
+    publishedAt: Schema.Attribute.DateTime;
+    Titel: Schema.Attribute.String;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
 export interface ApiPostPost extends Struct.CollectionTypeSchema {
   collectionName: 'posts';
   info: {
@@ -572,6 +601,8 @@ export interface ApiPostPost extends Struct.CollectionTypeSchema {
       'api::category.category'
     >;
     klasses: Schema.Attribute.Relation<'manyToMany', 'api::klasse.klasse'>;
+    kostenpflichtig: Schema.Attribute.Boolean &
+      Schema.Attribute.DefaultTo<false>;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<'oneToMany', 'api::post.post'> &
       Schema.Attribute.Private;
@@ -605,7 +636,13 @@ export interface ApiPostPost extends Struct.CollectionTypeSchema {
       'api::veranstaltungsort.veranstaltungsort'
     >;
     veranstaltungstyp: Schema.Attribute.Enumeration<
-      ['Abrufveranstaltung', 'Kurs', 'Workshop', 'Veranstaltung']
+      [
+        'Abrufveranstaltung',
+        'Kurs',
+        'Workshop',
+        'Veranstaltung',
+        'Sch\u00FClerworkshop',
+      ]
     >;
   };
 }
@@ -1344,6 +1381,7 @@ declare module '@strapi/strapi' {
       'api::feedback.feedback': ApiFeedbackFeedback;
       'api::institution.institution': ApiInstitutionInstitution;
       'api::klasse.klasse': ApiKlasseKlasse;
+      'api::landing.landing': ApiLandingLanding;
       'api::post.post': ApiPostPost;
       'api::push-subscriptions.push-subscription': ApiPushSubscriptionsPushSubscription;
       'api::tipp-section.tipp-section': ApiTippSectionTippSection;

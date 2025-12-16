@@ -1,5 +1,17 @@
 import type { Schema, Struct } from '@strapi/strapi';
 
+export interface LandingStartsText extends Struct.ComponentSchema {
+  collectionName: 'components_landing_starts_texts';
+  info: {
+    displayName: 'StartText';
+    icon: 'bulletList';
+  };
+  attributes: {
+    Beschreibung: Schema.Attribute.Text;
+    Titel: Schema.Attribute.String;
+  };
+}
+
 export interface ProfilKind extends Struct.ComponentSchema {
   collectionName: 'components_profil_kinds';
   info: {
@@ -19,6 +31,7 @@ export interface ProfilKind extends Struct.ComponentSchema {
 declare module '@strapi/strapi' {
   export module Public {
     export interface ComponentSchemas {
+      'landing.starts-text': LandingStartsText;
       'profil.kind': ProfilKind;
     }
   }
