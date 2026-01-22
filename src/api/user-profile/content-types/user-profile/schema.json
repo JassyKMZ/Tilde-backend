@@ -28,6 +28,12 @@
       "target": "api::post.post",
       "inversedBy": "user_profiles"
     },
+    "reminders": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "api::post.post",
+      "inversedBy": "user_reminders"
+    },
     "kategories": {
       "type": "relation",
       "relation": "manyToMany",
@@ -66,10 +72,7 @@
     },
     "roleType": {
       "type": "enumeration",
-      "enum": [
-        "fachkraft",
-        "elternteil"
-      ]
+      "enum": ["fachkraft", "elternteil"]
     }
   }
 }

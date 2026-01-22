@@ -1,13 +1,5 @@
 "use strict";
 
-/**
- * fcm-token service
- * - upsert(token, meta)
- * - deleteByToken(token)
- * - findTokens({ filters, limit })
- * - findAll({ filters, start, limit })
- */
-
 const { createCoreService } = require("@strapi/strapi").factories;
 
 module.exports = createCoreService(
@@ -17,13 +9,12 @@ module.exports = createCoreService(
       if (!token) throw new Error("token required for upsert");
       const normalized = String(token).trim();
 
-      const found = await strapi.entityService.findMany(
-        "api::fcm-token.fcm-token",
-        {
+      const found = await strapi
+        .documents("api::fcm-token.fcm-token")
+        .findMany({
           filters: { token: normalized },
           limit: 1,
-        }
-      );
+        });
 
       if (found && found.length > 0) {
         const entry = found[0];
@@ -32,13 +23,9 @@ module.exports = createCoreService(
         if (meta.platform) data.platform = meta.platform;
         if (meta.user) data.user = meta.user;
 
-        const updated = await strapi.entityService.update(
-          "api::fcm-token.fcm-token",
-          entry.id,
-          {
-            data,
-          }
-        );
+        const updated = await strapi
+          .documents("api::fcm-token.fcm-token")
+          .update(entry.documentId, { data });
         return updated;
       }
 
@@ -49,41 +36,40 @@ module.exports = createCoreService(
         ...(meta.user ? { user: meta.user } : {}),
       };
 
-      const created = await strapi.entityService.create(
-        "api::fcm-token.fcm-token",
-        {
-          data: createData,
-        }
-      );
-
-      return created;
+      return await strapi
+        .documents("api::fcm-token.fcm-token")
+        .create({ data: createData });
     },
 
     async deleteByToken(token) {
       if (!token) return null;
       const normalized = String(token).trim();
-      const found = await strapi.entityService.findMany(
-        "api::fcm-token.fcm-token",
-        {
+
+      const found = await strapi
+        .documents("api::fcm-token.fcm-token")
+        .findMany({
           filters: { token: normalized },
           limit: 1,
-        }
-      );
+        });
+
       if (!found || found.length === 0) return null;
+
       const entry = found[0];
-      await strapi.entityService.delete("api::fcm-token.fcm-token", entry.id);
+
+      await strapi
+        .documents("api::fcm-token.fcm-token")
+        .delete(entry.documentId);
+
       return entry;
     },
 
     async findTokens({ filters = {}, limit = 1000 } = {}) {
-      const rows = await strapi.entityService.findMany(
-        "api::fcm-token.fcm-token",
-        {
-          filters,
-          limit,
-          fields: ["token"],
-        }
-      );
+      const rows = await strapi.documents("api::fcm-token.fcm-token").findMany({
+        filters,
+        limit,
+        fields: ["token"],
+      });
+
       return rows
         .map((r) => (r.token ? String(r.token).trim() : null))
         .filter(Boolean);
@@ -95,6 +81,49 @@ module.exports = createCoreService(
         start,
         limit,
       });
+    },
+
+    /* -------------------------------------------------------
+     * NEW: Find all FCM tokens for a specific user
+     * ----------------------------------------------------- */
+    async findByUser(userId) {
+      if (!userId) return [];
+
+      return await strapi.documents("api::fcm-token.fcm-token").findMany({
+        filters: { user: userId },
+        fields: ["token"],
+        limit: 200,
+      });
+    },
+
+    /* -------------------------------------------------------
+     * NEW: Send a push notification to multiple FCM tokens
+     * ----------------------------------------------------- */
+    async sendToTokens(tokens, payload) {
+      if (!tokens || tokens.length === 0) {
+        return { successCount: 0, failureCount: 0 };
+      }
+
+      const registrationTokens = tokens.map((t) => t.token).filter(Boolean);
+
+      if (registrationTokens.length === 0) {
+        return { successCount: 0, failureCount: 0 };
+      }
+
+      try {
+        const firebaseService = require("../../../services/firebase");
+        const response = await firebaseService.sendToTokens(
+          registrationTokens,
+          {
+            data: payload.data || {},
+            notification: payload.notification,
+          }
+        );
+        return response;
+      } catch (err) {
+        strapi.log.error("FCM send failed:", err);
+        return { error: err.message };
+      }
     },
   })
 );

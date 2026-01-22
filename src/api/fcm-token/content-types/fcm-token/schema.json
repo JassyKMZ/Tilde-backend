@@ -16,17 +16,9 @@
       "required": true,
       "unique": true
     },
-    "guestId": {
-      "type": "string"
-    },
     "platform": {
       "type": "enumeration",
-      "enum": [
-        "web",
-        "android",
-        "ios",
-        "other"
-      ]
+      "enum": ["web", "android", "ios", "other"]
     },
     "user": {
       "type": "relation",

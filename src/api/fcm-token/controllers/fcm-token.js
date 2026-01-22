@@ -56,6 +56,26 @@ module.exports = {
         .service("api::fcm-token.fcm-token")
         .upsert(token, { guestId, platform, user: userId });
 
+      // If user is authenticated, enable push notifications in user-profile
+      if (userId) {
+        const userProfiles = await strapi.entityService.findMany(
+          "api::user-profile.user-profile",
+          {
+            filters: { user: userId },
+            limit: 1,
+          }
+        );
+        if (userProfiles.length > 0) {
+          await strapi.entityService.update(
+            "api::user-profile.user-profile",
+            userProfiles[0].id,
+            {
+              data: { pushNotificationsEnabled: true },
+            }
+          );
+        }
+      }
+
       const safe = await safeOutput(record, "api::fcm-token.fcm-token");
 
       return ctx.created({ data: safe });
