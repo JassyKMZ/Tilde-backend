@@ -1,0 +1,14 @@
+{
+  "collectionName": "components_impressum_heading_1s",
+  "info": {
+    "displayName": "Heading 1",
+    "icon": "italic"
+  },
+  "options": {},
+  "attributes": {
+    "Titel": {
+      "type": "string"
+    }
+  },
+  "config": {}
+}

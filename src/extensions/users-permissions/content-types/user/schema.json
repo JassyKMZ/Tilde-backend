@@ -95,6 +95,12 @@
       "relation": "oneToMany",
       "target": "api::fcm-token.fcm-token",
       "mappedBy": "user"
+    },
+    "webpush_subscriptions": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::webpush-subscription.webpush-subscription",
+      "mappedBy": "user"
     }
   }
 }
