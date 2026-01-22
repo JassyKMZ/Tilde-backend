@@ -421,7 +421,6 @@ export interface ApiFcmTokenFcmToken extends Struct.CollectionTypeSchema {
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
-    guestId: Schema.Attribute.String;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<
       'oneToMany',
@@ -572,6 +571,44 @@ export interface ApiLandingLanding extends Struct.SingleTypeSchema {
   };
 }
 
+export interface ApiLegalNoticeLegalNotice extends Struct.SingleTypeSchema {
+  collectionName: 'legal_notices';
+  info: {
+    displayName: 'Impressum';
+    pluralName: 'legal-notices';
+    singularName: 'legal-notice';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    Impressum: Schema.Attribute.Component<'impressum.heading-1', true>;
+    Impressumsinhalt: Schema.Attribute.DynamicZone<
+      [
+        'impressum.textblock',
+        'impressum.link',
+        'impressum.infoblock',
+        'impressum.heading-4',
+        'impressum.heading-3',
+        'impressum.heading-2',
+      ]
+    >;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::legal-notice.legal-notice'
+    > &
+      Schema.Attribute.Private;
+    publishedAt: Schema.Attribute.DateTime;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
 export interface ApiPostPost extends Struct.CollectionTypeSchema {
   collectionName: 'posts';
   info: {
@@ -631,6 +668,10 @@ export interface ApiPostPost extends Struct.CollectionTypeSchema {
       'manyToMany',
       'api::user-profile.user-profile'
     >;
+    user_reminders: Schema.Attribute.Relation<
+      'manyToMany',
+      'api::user-profile.user-profile'
+    >;
     veranstaltungsort: Schema.Attribute.Relation<
       'oneToOne',
       'api::veranstaltungsort.veranstaltungsort'
@@ -680,6 +721,70 @@ export interface ApiPushSubscriptionsPushSubscription
       'manyToOne',
       'api::user-profile.user-profile'
     >;
+  };
+}
+
+export interface ApiRoadmapStageRoadmapStage
+  extends Struct.CollectionTypeSchema {
+  collectionName: 'roadmap_stages';
+  info: {
+    displayName: 'Roadmap Stage';
+    pluralName: 'roadmap-stages';
+    singularName: 'roadmap-stage';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    Description: Schema.Attribute.Blocks;
+    isCurrentStage: Schema.Attribute.Boolean;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::roadmap-stage.roadmap-stage'
+    > &
+      Schema.Attribute.Private;
+    milestones: Schema.Attribute.Component<'roadmap.milestone', true>;
+    Order: Schema.Attribute.Integer;
+    publishedAt: Schema.Attribute.DateTime;
+    slug: Schema.Attribute.UID<'Title'>;
+    Title: Schema.Attribute.String;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
+export interface ApiRoadmapRoadmap extends Struct.SingleTypeSchema {
+  collectionName: 'roadmaps';
+  info: {
+    displayName: 'Roadmap';
+    pluralName: 'roadmaps';
+    singularName: 'roadmap';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    Beschreibung: Schema.Attribute.Blocks;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::roadmap.roadmap'
+    > &
+      Schema.Attribute.Private;
+    publishedAt: Schema.Attribute.DateTime;
+    ScrollHintText: Schema.Attribute.String;
+    title: Schema.Attribute.String;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
   };
 }
 
@@ -768,6 +873,7 @@ export interface ApiUserProfileUserProfile extends Struct.CollectionTypeSchema {
       'api::push-subscriptions.push-subscription'
     >;
     pushNotificationsEnabled: Schema.Attribute.Boolean;
+    reminders: Schema.Attribute.Relation<'manyToMany', 'api::post.post'>;
     roleType: Schema.Attribute.Enumeration<['fachkraft', 'elternteil']>;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
@@ -806,6 +912,46 @@ export interface ApiVeranstaltungsortVeranstaltungsort
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
+  };
+}
+
+export interface ApiWebpushSubscriptionWebpushSubscription
+  extends Struct.CollectionTypeSchema {
+  collectionName: 'webpush_subscriptions';
+  info: {
+    description: 'Stores browser push subscriptions for Web Push (non-FCM browsers)';
+    displayName: 'WebPush Subscription';
+    pluralName: 'webpush-subscriptions';
+    singularName: 'webpush-subscription';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    auth: Schema.Attribute.String & Schema.Attribute.Required;
+    browser: Schema.Attribute.String;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    endpoint: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.Unique;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::webpush-subscription.webpush-subscription'
+    > &
+      Schema.Attribute.Private;
+    p256dh: Schema.Attribute.String & Schema.Attribute.Required;
+    publishedAt: Schema.Attribute.DateTime;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    user: Schema.Attribute.Relation<
+      'manyToOne',
+      'plugin::users-permissions.user'
+    >;
+    userAgent: Schema.Attribute.Text;
   };
 }
 
@@ -1363,6 +1509,10 @@ export interface PluginUsersPermissionsUser
       Schema.Attribute.SetMinMaxLength<{
         minLength: 3;
       }>;
+    webpush_subscriptions: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::webpush-subscription.webpush-subscription'
+    >;
   };
 }
 
@@ -1382,11 +1532,15 @@ declare module '@strapi/strapi' {
       'api::institution.institution': ApiInstitutionInstitution;
       'api::klasse.klasse': ApiKlasseKlasse;
       'api::landing.landing': ApiLandingLanding;
+      'api::legal-notice.legal-notice': ApiLegalNoticeLegalNotice;
       'api::post.post': ApiPostPost;
       'api::push-subscriptions.push-subscription': ApiPushSubscriptionsPushSubscription;
+      'api::roadmap-stage.roadmap-stage': ApiRoadmapStageRoadmapStage;
+      'api::roadmap.roadmap': ApiRoadmapRoadmap;
       'api::tipp-section.tipp-section': ApiTippSectionTippSection;
       'api::user-profile.user-profile': ApiUserProfileUserProfile;
       'api::veranstaltungsort.veranstaltungsort': ApiVeranstaltungsortVeranstaltungsort;
+      'api::webpush-subscription.webpush-subscription': ApiWebpushSubscriptionWebpushSubscription;
       'plugin::content-releases.release': PluginContentReleasesRelease;
       'plugin::content-releases.release-action': PluginContentReleasesReleaseAction;
       'plugin::i18n.locale': PluginI18NLocale;

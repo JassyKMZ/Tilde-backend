@@ -1,4 +1,4 @@
-module.exports = ({ env }) => ({
+module.exports = {
   "users-permissions": {
     config: {
       providers: {
@@ -11,7 +11,7 @@ module.exports = ({ env }) => ({
         isUsernameUnique: true,
       },
       jwt: {
-        expiresIn: "2h", // This value should be lower than the refreshTokenExpiresIn below.
+        expiresIn: "2h",
       },
     },
     options: {
@@ -28,28 +28,27 @@ module.exports = ({ env }) => ({
       config: {
         refreshTokenExpiresIn: "30d",
         requestRefreshOnAll: false,
-        refreshTokenSecret: env("REFRESH_JWT_SECRET") || "SomethingSecret",
+        refreshTokenSecret: process.env.REFRESH_JWT_SECRET || "SomethingSecret",
         cookieResponse: false,
         refreshTokenRotation: true,
       },
     },
   },
-  // E-Mail Settings
+
   email: {
     config: {
       provider: "nodemailer",
       providerOptions: {
-        host: env("SMTP_HOST", "mailc.digitalpakt-schule.jetzt"),
-        port: env.int("SMTP_PORT", 465),
-        // secure: false,
+        host: process.env.SMTP_HOST,
+        port: parseInt(process.env.SMTP_PORT, 10),
         auth: {
-          user: env("SMTP_USERNAME"),
-          pass: env("SMTP_PASSWORD"),
+          user: process.env.SMTP_USERNAME,
+          pass: process.env.SMTP_PASSWORD,
         },
       },
       settings: {
-        defaultFrom: env("SMTP_FROM", "no-reply@tilde-app.de"),
-        defaultReplyTo: env("SMTP_REPLY_TO", "info@tilde-app.de"),
+        defaultFrom: process.env.SMTP_FROM,
+        defaultReplyTo: process.env.SMTP_REPLY_TO,
       },
     },
   },
@@ -57,8 +56,13 @@ module.exports = ({ env }) => ({
   upload: {
     config: {
       formidable: {
-        maxFileSize: 1 * 1024 * 1024, // 1 MB
+        maxFileSize: 1 * 1024 * 1024,
       },
     },
   },
-});
+
+  "unified-notification": {
+    enabled: true,
+    resolve: "./src/plugins/unified-notification",
+  },
+};
