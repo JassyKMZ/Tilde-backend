@@ -875,6 +875,7 @@ export interface ApiUserProfileUserProfile extends Struct.CollectionTypeSchema {
     pushNotificationsEnabled: Schema.Attribute.Boolean;
     reminders: Schema.Attribute.Relation<'manyToMany', 'api::post.post'>;
     roleType: Schema.Attribute.Enumeration<['fachkraft', 'elternteil']>;
+    testUser: Schema.Attribute.Boolean;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
