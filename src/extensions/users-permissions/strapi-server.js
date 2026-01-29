@@ -19,7 +19,7 @@ module.exports = (plugin) => {
       strapi.log.info("users-permissions: custom routes added");
     } else {
       strapi.log.warn(
-        "users-permissions: no custom routes to add (customRoutes empty or not an array)"
+        "users-permissions: no custom routes to add (customRoutes empty or not an array)",
       );
     }
   } catch (err) {
@@ -71,10 +71,10 @@ module.exports = (plugin) => {
         for (const profile of profiles) {
           await strapi.entityService.delete(
             "api::user-profile.user-profile",
-            profile.id
+            profile.id,
           );
           strapi.log.info(
-            `User Profile ${profile.id} deleted for user ${result.id}`
+            `User Profile ${profile.id} deleted for user ${result.id}`,
           );
         }
       }

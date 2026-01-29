@@ -72,7 +72,13 @@
     },
     "roleType": {
       "type": "enumeration",
-      "enum": ["fachkraft", "elternteil"]
+      "enum": [
+        "fachkraft",
+        "elternteil"
+      ]
+    },
+    "testUser": {
+      "type": "boolean"
     }
   }
 }
