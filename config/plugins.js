@@ -13,8 +13,8 @@ module.exports = {
       jwt: {
         expiresIn: "2h",
       },
-      enableEMail: true,
-      sendConfirmationEmail: true,
+      enableEMail: false,
+      sendConfirmationEmail: false,
     },
     options: {
       password: {
@@ -43,7 +43,7 @@ module.exports = {
       providerOptions: {
         host: process.env.SMTP_HOST,
         port: parseInt(process.env.SMTP_PORT, 10),
-        secure: false,
+        secure: true,
         auth: {
           user: process.env.SMTP_USERNAME,
           pass: process.env.SMTP_PASSWORD,
