@@ -11,4 +11,10 @@ module.exports = [
     handler: "api::auth.custom-auth.safeResetPassword",
     config: { auth: false },
   },
+  {
+    method: "POST",
+    path: "/auth/send-confirmation-email",
+    handler: "api::auth.custom-auth.sendConfirmationEmail",
+    config: { auth: false },
+  },
 ];

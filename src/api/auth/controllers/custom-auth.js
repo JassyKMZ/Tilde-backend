@@ -22,7 +22,7 @@ module.exports = {
         {
           filters: { email: { $eq: email } },
           limit: 1,
-        }
+        },
       );
 
       const neutralResponse = {
@@ -44,7 +44,7 @@ module.exports = {
             resetPasswordTokenHash: hashed,
             resetPasswordTokenCreatedAt: now,
           },
-        }
+        },
       );
 
       const resetUrl = `${FRONTEND_URL.replace(/\/$/, "")}/reset-password?token=${rawToken}`;
@@ -87,7 +87,7 @@ module.exports = {
         {
           filters: { resetPasswordTokenHash: { $eq: incomingHash } },
           limit: 1,
-        }
+        },
       );
 
       if (!users || users.length === 0) {
@@ -109,7 +109,7 @@ module.exports = {
                 resetPasswordTokenHash: null,
                 resetPasswordTokenCreatedAt: null,
               },
-            }
+            },
           );
           return ctx.badRequest("Token abgelaufen");
         }
@@ -119,7 +119,7 @@ module.exports = {
           user.id,
           {
             data: { resetPasswordTokenHash: null },
-          }
+          },
         );
         return ctx.notFound("Token ungültig oder abgelaufen");
       }
@@ -129,7 +129,7 @@ module.exports = {
         user.id,
         {
           data: { password },
-        }
+        },
       );
 
       await strapi.entityService.update(
@@ -140,7 +140,7 @@ module.exports = {
             resetPasswordTokenHash: null,
             resetPasswordTokenCreatedAt: null,
           },
-        }
+        },
       );
 
       try {
@@ -153,7 +153,7 @@ module.exports = {
       } catch (mailErr) {
         strapi.log.error(
           "safeResetPassword: confirmation mail failed",
-          mailErr
+          mailErr,
         );
       }
 
@@ -161,6 +161,76 @@ module.exports = {
     } catch (err) {
       strapi.log.error("safeResetPassword error", err);
       return ctx.internalServerError("Internal Server Error");
+    }
+  },
+
+  async sendConfirmationEmail(ctx) {
+    try {
+      const { email } = ctx.request.body || {};
+      if (!email) return ctx.badRequest("Email is required");
+
+      const user = await strapi.entityService.findMany(
+        "plugin::users-permissions.user",
+        {
+          filters: { email: { $eq: email } },
+          limit: 1,
+        },
+      );
+
+      if (!user || user.length === 0) {
+        return ctx.send({
+          ok: true,
+          message: "If an account exists, a confirmation email will be sent.",
+        });
+      }
+
+      const userRecord = user[0];
+      if (userRecord.confirmed) {
+        return ctx.send({
+          ok: true,
+          message: "Email is already confirmed.",
+        });
+      }
+
+      // Generate confirmation token
+      const confirmationToken = crypto.randomBytes(TOKEN_BYTES).toString("hex");
+
+      await strapi.entityService.update(
+        "plugin::users-permissions.user",
+        userRecord.id,
+        {
+          data: {
+            confirmationToken: confirmationToken,
+          },
+        },
+      );
+
+      const confirmUrl = `${FRONTEND_URL.replace(/\/$/, "")}/auth/confirm-email?confirmation=${confirmationToken}`;
+
+      await strapi
+        .plugin("email")
+        .service("email")
+        .send({
+          to: userRecord.email,
+          from: process.env.SMTP_FROM || process.env.SMTP_USERNAME,
+          replyTo: process.env.SMTP_REPLY_TO,
+          subject: "Bestätigen Sie Ihre E-Mail-Adresse",
+          html: `<p>Willkommen bei Tilde!</p>
+               <p>Bitte bestätigen Sie Ihre E-Mail-Adresse:</p>
+               <p><a href="${confirmUrl}">E-Mail-Adresse bestätigen</a></p>
+               <p>Wenn Sie diese E-Mail nicht angefordert haben, ignorieren Sie diese Nachricht.</p>`,
+        });
+
+      return ctx.send({
+        ok: true,
+        message: "Confirmation email sent successfully.",
+      });
+    } catch (err) {
+      strapi.log.error("sendConfirmationEmail error", err);
+      return ctx.send({
+        ok: true,
+        message: "If an account exists, a confirmation email will be sent.",
+      });
     }
   },
 };
