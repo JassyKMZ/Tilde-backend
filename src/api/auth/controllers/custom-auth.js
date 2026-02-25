@@ -5,6 +5,7 @@ const TOKEN_BYTES = 32;
 const HASH_ALGO = "sha256";
 const TTL_MINUTES = parseInt(process.env.RESET_TOKEN_TTL_MINUTES || "60", 10);
 const FRONTEND_URL = process.env.FRONTEND_URL || "http://localhost:3000";
+const REDIRECT_URL = process.env.REDIRECT_URL || FRONTEND_URL;
 const EMAIL_FROM = process.env.EMAIL_FROM || "no-reply@example.com";
 
 function hashToken(token) {
@@ -47,7 +48,7 @@ module.exports = {
         },
       );
 
-      const resetUrl = `${FRONTEND_URL.replace(/\/$/, "")}/reset-password?token=${rawToken}`;
+      const resetUrl = `${REDIRECT_URL.replace(/\/$/, "")}/reset-password?token=${rawToken}`;
 
       await strapi
         .plugin("email")
@@ -205,7 +206,7 @@ module.exports = {
         },
       );
 
-      const confirmUrl = `${FRONTEND_URL.replace(/\/$/, "")}/auth/confirm-email?confirmation=${confirmationToken}`;
+      const confirmUrl = `${FRONTEND_URL.replace(/\/$/, "")}/verify-registration?token=${confirmationToken}`;
 
       await strapi
         .plugin("email")
@@ -231,6 +232,82 @@ module.exports = {
         ok: true,
         message: "If an account exists, a confirmation email will be sent.",
       });
+    }
+  },
+
+  async confirmRegistration(ctx) {
+    try {
+      const { token } = ctx.request.query;
+
+      if (!token) {
+        return ctx.badRequest("Bestätigungstoken erforderlich");
+      }
+
+      // Find user with this confirmation token
+      const users = await strapi.entityService.findMany(
+        "plugin::users-permissions.user",
+        {
+          filters: { confirmationToken: { $eq: token } },
+          limit: 1,
+        },
+      );
+
+      if (!users || users.length === 0) {
+        return ctx.notFound("Ungültiger oder abgelaufener Bestätigungstoken");
+      }
+
+      const user = users[0];
+
+      // Check if already confirmed
+      if (user.confirmed) {
+        return ctx.send({
+          ok: true,
+          status: "already_confirmed",
+          message: "Diese E-Mail-Adresse wurde bereits bestätigt.",
+          email: user.email,
+        });
+      }
+
+      // Mark user as confirmed and clear the token
+      await strapi.entityService.update(
+        "plugin::users-permissions.user",
+        user.id,
+        {
+          data: {
+            confirmed: true,
+            confirmationToken: null,
+          },
+        },
+      );
+
+      // Send welcome email
+      try {
+        await strapi
+          .plugin("email")
+          .service("email")
+          .send({
+            to: user.email,
+            from: process.env.SMTP_FROM || process.env.SMTP_USERNAME,
+            replyTo: process.env.SMTP_REPLY_TO,
+            subject: "Willkommen bei Tilde!",
+            html: `<p>Hallo ${user.username || user.email},</p>
+                 <p>Dein Konto wurde aktiviert. Du kannst dich jetzt anmelden!</p>
+                 <p><a href="${REDIRECT_URL}">Zur Tilde App</a></p>`,
+          });
+      } catch (mailErr) {
+        strapi.log.error("confirmRegistration: welcome mail failed", mailErr);
+        // Don't fail the whole operation if welcome email fails
+      }
+
+      return ctx.send({
+        ok: true,
+        status: "confirmed",
+        message: "E-Mail erfolgreich bestätigt! Dein Konto ist aktiviert.",
+        email: user.email,
+      });
+    } catch (err) {
+      strapi.log.error("confirmRegistration error", err);
+      return ctx.internalServerError("Ein Fehler ist aufgetreten");
     }
   },
 };

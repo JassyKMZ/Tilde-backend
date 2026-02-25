@@ -17,4 +17,10 @@ module.exports = [
     handler: "api::auth.custom-auth.sendConfirmationEmail",
     config: { auth: false },
   },
+  {
+    method: "GET",
+    path: "/auth/confirm-registration",
+    handler: "api::auth.custom-auth.confirmRegistration",
+    config: { auth: false },
+  },
 ];
