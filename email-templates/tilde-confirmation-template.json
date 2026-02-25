@@ -1,0 +1,248 @@
+{
+  "counters": {
+    "u_column": 1,
+    "u_row": 1,
+    "u_content_heading": 1,
+    "u_content_text": 3,
+    "u_content_button": 1,
+    "u_content_divider": 1
+  },
+  "body": {
+    "rows": [
+      {
+        "cells": [
+          {
+            "value": {
+              "backgroundColor": "#5ab1d1"
+            },
+            "columns": [
+              {
+                "values": {
+                  "backgroundColor": "#5ab1d1",
+                  "padding": "40px 20px",
+                  "_metadata": {
+                    "guid": "952e06e5-c8c2-4f84-9e4a-3c8a8c8a8c8a"
+                  }
+                },
+                "width": 600,
+                "contents": [
+                  {
+                    "type": "heading",
+                    "values": {
+                      "containerWidth": 560,
+                      "textAlign": "center",
+                      "headingType": "h1",
+                      "text": "Willkommen bei Tilde!",
+                      "color": "#ffffff",
+                      "fontSize": 28,
+                      "fontWeight": 600,
+                      "margin": "0px",
+                      "lineHeight": "1.4",
+                      "_metadata": {
+                        "guid": "952e06e5-c8c2-4f84-9e4a-3c8a8c8a8c8b"
+                      }
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cells": [
+          {
+            "value": {
+              "backgroundColor": "#ffffff"
+            },
+            "columns": [
+              {
+                "values": {
+                  "backgroundColor": "#ffffff",
+                  "padding": "40px 30px",
+                  "_metadata": {
+                    "guid": "952e06e5-c8c2-4f84-9e4a-3c8a8c8a8c8c"
+                  }
+                },
+                "width": 600,
+                "contents": [
+                  {
+                    "type": "text",
+                    "values": {
+                      "containerWidth": 560,
+                      "text": "Hallo,",
+                      "color": "#333333",
+                      "fontSize": 16,
+                      "textAlign": "left",
+                      "margin": "0px 0px 24px 0px",
+                      "lineHeight": "1.6",
+                      "_metadata": {
+                        "guid": "952e06e5-c8c2-4f84-9e4a-3c8a8c8a8c8d"
+                      }
+                    }
+                  },
+                  {
+                    "type": "text",
+                    "values": {
+                      "containerWidth": 560,
+                      "text": "vielen Dank für deine Registrierung bei Tilde! Um dein Konto zu aktivieren, bestätige bitte deine E-Mail-Adresse durch Klick auf den Button unten.",
+                      "color": "#333333",
+                      "fontSize": 16,
+                      "textAlign": "left",
+                      "margin": "0px 0px 32px 0px",
+                      "lineHeight": "1.6",
+                      "_metadata": {
+                        "guid": "952e06e5-c8c2-4f84-9e4a-3c8a8c8a8c8e"
+                      }
+                    }
+                  },
+                  {
+                    "type": "button",
+                    "values": {
+                      "containerWidth": 560,
+                      "text": "E-Mail-Adresse bestätigen",
+                      "textAlign": "center",
+                      "color": "#ffffff",
+                      "backgroundColor": "#5ab1d1",
+                      "href": "[CONFIRMATION_LINK]",
+                      "border-radius": "5px",
+                      "textDecoration": "none",
+                      "padding": "14px 32px",
+                      "margin": "32px 0px",
+                      "fontSize": 16,
+                      "fontWeight": 600,
+                      "_metadata": {
+                        "guid": "952e06e5-c8c2-4f84-9e4a-3c8a8c8a8c8f"
+                      }
+                    }
+                  },
+                  {
+                    "type": "divider",
+                    "values": {
+                      "containerWidth": 560,
+                      "width": "100%",
+                      "backgroundColor": "#eaeaea",
+                      "padding": "24px 0px",
+                      "margin": "24px 0px",
+                      "_metadata": {
+                        "guid": "952e06e5-c8c2-4f84-9e4a-3c8a8c8a8c90"
+                      }
+                    }
+                  },
+                  {
+                    "type": "text",
+                    "values": {
+                      "containerWidth": 560,
+                      "text": "Oder kopiere diesen Link in deinen Browser:",
+                      "color": "#666666",
+                      "fontSize": 14,
+                      "textAlign": "left",
+                      "margin": "0px 0px 12px 0px",
+                      "lineHeight": "1.6",
+                      "_metadata": {
+                        "guid": "952e06e5-c8c2-4f84-9e4a-3c8a8c8a8c91"
+                      }
+                    }
+                  },
+                  {
+                    "type": "text",
+                    "values": {
+                      "containerWidth": 560,
+                      "text": "[CONFIRMATION_LINK]",
+                      "color": "#666666",
+                      "fontSize": 12,
+                      "textAlign": "left",
+                      "margin": "0px 0px 24px 0px",
+                      "wordBreak": "break-all",
+                      "backgroundColor": "#f9f9f9",
+                      "padding": "12px",
+                      "borderRadius": "4px",
+                      "borderLeft": "3px solid #5ab1d1",
+                      "lineHeight": "1.6",
+                      "_metadata": {
+                        "guid": "952e06e5-c8c2-4f84-9e4a-3c8a8c8a8c92"
+                      }
+                    }
+                  },
+                  {
+                    "type": "text",
+                    "values": {
+                      "containerWidth": 560,
+                      "text": "Solltest du diese E-Mail nicht angefordert haben, kannst du sie einfach ignorieren.",
+                      "color": "#666666",
+                      "fontSize": 14,
+                      "textAlign": "left",
+                      "margin": "0px",
+                      "lineHeight": "1.6",
+                      "_metadata": {
+                        "guid": "952e06e5-c8c2-4f84-9e4a-3c8a8c8a8c93"
+                      }
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cells": [
+          {
+            "value": {
+              "backgroundColor": "#f9f9f9"
+            },
+            "columns": [
+              {
+                "values": {
+                  "backgroundColor": "#f9f9f9",
+                  "padding": "24px 30px",
+                  "borderTop": "1px solid #eaeaea",
+                  "textAlign": "center",
+                  "_metadata": {
+                    "guid": "952e06e5-c8c2-4f84-9e4a-3c8a8c8a8c94"
+                  }
+                },
+                "width": 600,
+                "contents": [
+                  {
+                    "type": "text",
+                    "values": {
+                      "containerWidth": 560,
+                      "text": "© 2026 Tilde. Alle Rechte vorbehalten.",
+                      "color": "#999999",
+                      "fontSize": 12,
+                      "textAlign": "center",
+                      "margin": "0px",
+                      "lineHeight": "1.6",
+                      "_metadata": {
+                        "guid": "952e06e5-c8c2-4f84-9e4a-3c8a8c8a8c95"
+                      }
+                    }
+                  },
+                  {
+                    "type": "text",
+                    "values": {
+                      "containerWidth": 560,
+                      "text": "Du erhältst diese E-Mail, weil du dich bei Tilde registriert hast.",
+                      "color": "#bbbbbb",
+                      "fontSize": 11,
+                      "textAlign": "center",
+                      "margin": "8px 0px 0px 0px",
+                      "lineHeight": "1.6",
+                      "_metadata": {
+                        "guid": "952e06e5-c8c2-4f84-9e4a-3c8a8c8a8c96"
+                      }
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "values": {
+      "backgroundColor": "#f5f5f5"
+    }
+  }
+}

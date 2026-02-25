@@ -31,6 +31,7 @@
     "react": "^18.0.0",
     "react-dom": "^18.0.0",
     "react-router-dom": "^6.0.0",
+    "strapi-plugin-email-designer-5": "^0.0.9",
     "strapi-plugin-multi-select": "^2.1.1",
     "strapi-plugin-unified-notification": "file:src/plugins/unified-notification",
     "styled-components": "^6.0.0",

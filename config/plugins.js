@@ -13,7 +13,7 @@ module.exports = {
       jwt: {
         expiresIn: "2h",
       },
-      enableEMail: false,
+      enableEMail: true,
       sendConfirmationEmail: false,
     },
     options: {
