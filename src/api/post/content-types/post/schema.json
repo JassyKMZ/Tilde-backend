@@ -63,16 +63,6 @@
     },
     "veranstaltungstyp": {
       "type": "enumeration",
-      "conditions": {
-        "visible": {
-          "==": [
-            {
-              "var": "isEvent"
-            },
-            true
-          ]
-        }
-      },
       "enum": [
         "Abrufveranstaltung",
         "Kurs",
@@ -124,6 +114,22 @@
       "relation": "manyToMany",
       "target": "api::user-profile.user-profile",
       "mappedBy": "reminders"
+    },
+    "dauer": {
+      "type": "decimal"
+    },
+    "preis": {
+      "type": "decimal",
+      "conditions": {
+        "visible": {
+          "==": [
+            {
+              "var": "kostenpflichtig"
+            },
+            true
+          ]
+        }
+      }
     }
   }
 }

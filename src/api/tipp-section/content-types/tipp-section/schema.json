@@ -26,6 +26,16 @@
         "videos",
         "audios"
       ]
+    },
+    "minAge": {
+      "type": "integer",
+      "min": 0,
+      "max": 18
+    },
+    "maxAge": {
+      "type": "integer",
+      "min": 0,
+      "max": 18
     }
   }
 }

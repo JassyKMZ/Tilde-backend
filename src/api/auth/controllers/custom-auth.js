@@ -4,6 +4,7 @@ const crypto = require("crypto");
 const TOKEN_BYTES = 32;
 const HASH_ALGO = "sha256";
 const TTL_MINUTES = parseInt(process.env.RESET_TOKEN_TTL_MINUTES || "60", 10);
+const CONFIRM_TTL_MINUTES = 24 * 60; // 24 Stunden
 const FRONTEND_URL = process.env.FRONTEND_URL || "http://localhost:3000";
 const REDIRECT_URL = process.env.REDIRECT_URL || FRONTEND_URL;
 const EMAIL_FROM = process.env.EMAIL_FROM || "no-reply@example.com";
@@ -195,6 +196,7 @@ module.exports = {
 
       // Generate confirmation token
       const confirmationToken = crypto.randomBytes(TOKEN_BYTES).toString("hex");
+      const nowIso = new Date().toISOString();
 
       await strapi.entityService.update(
         "plugin::users-permissions.user",
@@ -202,6 +204,7 @@ module.exports = {
         {
           data: {
             confirmationToken: confirmationToken,
+            confirmationTokenCreatedAt: nowIso,
           },
         },
       );
@@ -238,7 +241,6 @@ module.exports = {
   async confirmRegistration(ctx) {
     try {
       const { token } = ctx.request.query;
-
       if (!token) {
         return ctx.badRequest("Bestätigungstoken erforderlich");
       }
@@ -253,10 +255,42 @@ module.exports = {
       );
 
       if (!users || users.length === 0) {
-        return ctx.notFound("Ungültiger oder abgelaufener Bestätigungstoken");
+        return ctx.send({
+          ok: false,
+          status: "invalid",
+          message: "Ungültiger oder abgelaufener Bestätigungstoken",
+        });
       }
 
       const user = users[0];
+      const createdAtRaw = user && user.confirmationTokenCreatedAt;
+
+      // TTL prüfen
+      if (user.confirmationTokenCreatedAt) {
+        const created = new Date(user.confirmationTokenCreatedAt);
+        const now = new Date();
+        const diffMin = (now - created) / 1000 / 60;
+        if (diffMin > CONFIRM_TTL_MINUTES) {
+          // Token abgelaufen: löschen und Hinweis zurückgeben
+          await strapi.entityService.update(
+            "plugin::users-permissions.user",
+            user.id,
+            {
+              data: {
+                confirmationToken: null,
+                confirmationTokenCreatedAt: null,
+              },
+            },
+          );
+          return ctx.send({
+            ok: false,
+            status: "expired",
+            message:
+              "Der Bestätigungslink ist abgelaufen. Bitte fordere eine neue Bestätigungs‑E‑Mail an.",
+            email: user.email,
+          });
+        }
+      }
 
       // Check if already confirmed
       if (user.confirmed) {
@@ -268,7 +302,7 @@ module.exports = {
         });
       }
 
-      // Mark user as confirmed and clear the token
+      // Mark user as confirmed and clear the token fields
       await strapi.entityService.update(
         "plugin::users-permissions.user",
         user.id,
@@ -276,11 +310,12 @@ module.exports = {
           data: {
             confirmed: true,
             confirmationToken: null,
+            confirmationTokenCreatedAt: null,
           },
         },
       );
 
-      // Send welcome email
+      // optional: welcome email (wie bisher)
       try {
         await strapi
           .plugin("email")
@@ -296,7 +331,6 @@ module.exports = {
           });
       } catch (mailErr) {
         strapi.log.error("confirmRegistration: welcome mail failed", mailErr);
-        // Don't fail the whole operation if welcome email fails
       }
 
       return ctx.send({

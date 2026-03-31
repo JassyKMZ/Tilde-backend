@@ -82,7 +82,8 @@ module.exports = {
 
       await strapi.plugins["email"].services.email.send({
         to: currentUser.email,
-        from: process.env.SMTP_FROM || "noreply@tilde-app.de",
+        from: process.env.SMTP_FROM,
+        // from: process.env.SMTP_FROM || "noreply@tilde-app.de",
         subject: "Bestätige deine E-Mail-Änderung",
         html: `
           <p>Hallo,</p>
