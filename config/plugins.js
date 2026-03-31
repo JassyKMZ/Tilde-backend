@@ -11,7 +11,7 @@ module.exports = {
         isUsernameUnique: true,
       },
       jwt: {
-        expiresIn: "2h",
+        expiresIn: "2h", // 2 hours
       },
       enableEMail: true,
       sendConfirmationEmail: false,

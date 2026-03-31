@@ -627,6 +627,7 @@ export interface ApiPostPost extends Struct.CollectionTypeSchema {
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
+    dauer: Schema.Attribute.Decimal;
     eventDate: Schema.Attribute.DateTime;
     institution: Schema.Attribute.Relation<
       'manyToOne',
@@ -659,6 +660,7 @@ export interface ApiPostPost extends Struct.CollectionTypeSchema {
         },
         number
       >;
+    preis: Schema.Attribute.Decimal;
     publishedAt: Schema.Attribute.DateTime;
     titel: Schema.Attribute.String & Schema.Attribute.Required;
     updatedAt: Schema.Attribute.DateTime;
@@ -813,6 +815,22 @@ export interface ApiTippSectionTippSection extends Struct.CollectionTypeSchema {
       'api::tipp-section.tipp-section'
     > &
       Schema.Attribute.Private;
+    maxAge: Schema.Attribute.Integer &
+      Schema.Attribute.SetMinMax<
+        {
+          max: 18;
+          min: 0;
+        },
+        number
+      >;
+    minAge: Schema.Attribute.Integer &
+      Schema.Attribute.SetMinMax<
+        {
+          max: 18;
+          min: 0;
+        },
+        number
+      >;
     publishedAt: Schema.Attribute.DateTime;
     titel: Schema.Attribute.String;
     updatedAt: Schema.Attribute.DateTime;
