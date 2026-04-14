@@ -16,10 +16,6 @@
       "type": "string",
       "required": true
     },
-    "beschreibung": {
-      "type": "blocks",
-      "required": true
-    },
     "bild": {
       "type": "media",
       "multiple": false,
@@ -29,9 +25,17 @@
         "files"
       ]
     },
+    "summary": {
+      "type": "text"
+    },
+    "beschreibung": {
+      "type": "blocks",
+      "required": true
+    },
     "isEvent": {
       "type": "boolean",
-      "required": true
+      "required": true,
+      "default": false
     },
     "eventDate": {
       "type": "datetime",
@@ -63,6 +67,7 @@
     },
     "veranstaltungstyp": {
       "type": "enumeration",
+      "default": "Veranstaltung",
       "enum": [
         "Abrufveranstaltung",
         "Kurs",
@@ -130,6 +135,26 @@
           ]
         }
       }
+    },
+    "trainer": {
+      "type": "string"
+    },
+    "annotation": {
+      "type": "text"
+    },
+    "publish": {
+      "type": "boolean",
+      "default": false
+    },
+    "galerie": {
+      "type": "media",
+      "multiple": true,
+      "allowedTypes": [
+        "images",
+        "files",
+        "videos",
+        "audios"
+      ]
     }
   }
 }
