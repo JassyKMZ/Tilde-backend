@@ -1,5 +1,28 @@
 import type { Schema, Struct } from '@strapi/strapi';
 
+export interface AboutHeading extends Struct.ComponentSchema {
+  collectionName: 'components_about_headings';
+  info: {
+    displayName: 'Heading';
+    icon: 'hashtag';
+  };
+  attributes: {
+    title: Schema.Attribute.String;
+  };
+}
+
+export interface AboutTextblock extends Struct.ComponentSchema {
+  collectionName: 'components_about_textblocks';
+  info: {
+    displayName: 'Textblock';
+    icon: 'hashtag';
+  };
+  attributes: {
+    text: Schema.Attribute.Blocks;
+    title: Schema.Attribute.String;
+  };
+}
+
 export interface ImpressumHeading1 extends Struct.ComponentSchema {
   collectionName: 'components_impressum_heading_1s';
   info: {
@@ -130,6 +153,8 @@ export interface RoadmapMilestone extends Struct.ComponentSchema {
 declare module '@strapi/strapi' {
   export module Public {
     export interface ComponentSchemas {
+      'about.heading': AboutHeading;
+      'about.textblock': AboutTextblock;
       'impressum.heading-1': ImpressumHeading1;
       'impressum.heading-2': ImpressumHeading2;
       'impressum.heading-3': ImpressumHeading3;

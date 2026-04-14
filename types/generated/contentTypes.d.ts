@@ -373,6 +373,32 @@ export interface AdminUser extends Struct.CollectionTypeSchema {
   };
 }
 
+export interface ApiAboutAbout extends Struct.SingleTypeSchema {
+  collectionName: 'abouts';
+  info: {
+    displayName: 'About';
+    pluralName: 'abouts';
+    singularName: 'about';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    einleitung: Schema.Attribute.DynamicZone<['about.textblock']>;
+    heading: Schema.Attribute.Component<'about.heading', false>;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<'oneToMany', 'api::about.about'> &
+      Schema.Attribute.Private;
+    publishedAt: Schema.Attribute.DateTime;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
 export interface ApiCategoryCategory extends Struct.CollectionTypeSchema {
   collectionName: 'categories';
   info: {
@@ -621,6 +647,7 @@ export interface ApiPostPost extends Struct.CollectionTypeSchema {
     draftAndPublish: true;
   };
   attributes: {
+    annotation: Schema.Attribute.Text;
     beschreibung: Schema.Attribute.Blocks & Schema.Attribute.Required;
     bild: Schema.Attribute.Media<'images' | 'files'> &
       Schema.Attribute.Required;
@@ -629,11 +656,17 @@ export interface ApiPostPost extends Struct.CollectionTypeSchema {
       Schema.Attribute.Private;
     dauer: Schema.Attribute.Decimal;
     eventDate: Schema.Attribute.DateTime;
+    galerie: Schema.Attribute.Media<
+      'images' | 'files' | 'videos' | 'audios',
+      true
+    >;
     institution: Schema.Attribute.Relation<
       'manyToOne',
       'api::institution.institution'
     >;
-    isEvent: Schema.Attribute.Boolean & Schema.Attribute.Required;
+    isEvent: Schema.Attribute.Boolean &
+      Schema.Attribute.Required &
+      Schema.Attribute.DefaultTo<false>;
     kategories: Schema.Attribute.Relation<
       'manyToMany',
       'api::category.category'
@@ -661,8 +694,11 @@ export interface ApiPostPost extends Struct.CollectionTypeSchema {
         number
       >;
     preis: Schema.Attribute.Decimal;
+    publish: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
     publishedAt: Schema.Attribute.DateTime;
+    summary: Schema.Attribute.Text;
     titel: Schema.Attribute.String & Schema.Attribute.Required;
+    trainer: Schema.Attribute.String;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
@@ -686,7 +722,8 @@ export interface ApiPostPost extends Struct.CollectionTypeSchema {
         'Veranstaltung',
         'Sch\u00FClerworkshop',
       ]
-    >;
+    > &
+      Schema.Attribute.DefaultTo<'Veranstaltung'>;
   };
 }
 
@@ -1646,6 +1683,7 @@ declare module '@strapi/strapi' {
       'admin::transfer-token': AdminTransferToken;
       'admin::transfer-token-permission': AdminTransferTokenPermission;
       'admin::user': AdminUser;
+      'api::about.about': ApiAboutAbout;
       'api::category.category': ApiCategoryCategory;
       'api::fcm-token.fcm-token': ApiFcmTokenFcmToken;
       'api::feedback.feedback': ApiFeedbackFeedback;
