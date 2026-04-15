@@ -29,8 +29,11 @@
     "email": {
       "type": "email"
     },
-    "adresse": {
-      "type": "text"
+    "strasse": {
+      "type": "string"
+    },
+    "ort": {
+      "type": "string"
     },
     "phone": {
       "type": "string",
