@@ -97,6 +97,17 @@ export interface ImpressumLink extends Struct.ComponentSchema {
   };
 }
 
+export interface ImpressumLongText extends Struct.ComponentSchema {
+  collectionName: 'components_impressum_long_texts';
+  info: {
+    displayName: 'Long Text';
+    icon: 'hashtag';
+  };
+  attributes: {
+    Text: Schema.Attribute.Blocks;
+  };
+}
+
 export interface ImpressumTextblock extends Struct.ComponentSchema {
   collectionName: 'components_impressum_textblocks';
   info: {
@@ -105,6 +116,18 @@ export interface ImpressumTextblock extends Struct.ComponentSchema {
   };
   attributes: {
     Text: Schema.Attribute.Text;
+  };
+}
+
+export interface LandingButton extends Struct.ComponentSchema {
+  collectionName: 'components_landing_buttons';
+  info: {
+    displayName: 'Button';
+    icon: 'arrowRight';
+  };
+  attributes: {
+    content: Schema.Attribute.String;
+    linkTo: Schema.Attribute.String;
   };
 }
 
@@ -161,7 +184,9 @@ declare module '@strapi/strapi' {
       'impressum.heading-4': ImpressumHeading4;
       'impressum.infoblock': ImpressumInfoblock;
       'impressum.link': ImpressumLink;
+      'impressum.long-text': ImpressumLongText;
       'impressum.textblock': ImpressumTextblock;
+      'landing.button': LandingButton;
       'landing.starts-text': LandingStartsText;
       'profil.kind': ProfilKind;
       'roadmap.milestone': RoadmapMilestone;
