@@ -17,7 +17,8 @@
     "Beschreibung": {
       "type": "dynamiczone",
       "components": [
-        "landing.starts-text"
+        "landing.starts-text",
+        "landing.button"
       ]
     }
   }

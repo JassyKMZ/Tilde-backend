@@ -78,7 +78,7 @@ module.exports = {
 
     try {
       // Send verification email to OLD email address for security
-      const verificationLink = `${process.env.REDIRECT_URL || "http://localhost:4173"}/verify-email?token=${verificationToken}`;
+      const verificationLink = `${process.env.REDIRECT_URL || "https://tilde-app.de"}/verify-email?token=${verificationToken}`;
 
       await strapi.plugins["email"].services.email.send({
         to: currentUser.email,

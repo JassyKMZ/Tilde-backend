@@ -14,7 +14,7 @@
     "Impressum": {
       "type": "component",
       "component": "impressum.heading-1",
-      "repeatable": true
+      "repeatable": false
     },
     "Impressumsinhalt": {
       "type": "dynamiczone",
@@ -24,7 +24,8 @@
         "impressum.infoblock",
         "impressum.heading-4",
         "impressum.heading-3",
-        "impressum.heading-2"
+        "impressum.heading-2",
+        "impressum.long-text"
       ]
     }
   }

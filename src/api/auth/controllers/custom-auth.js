@@ -5,9 +5,9 @@ const TOKEN_BYTES = 32;
 const HASH_ALGO = "sha256";
 const TTL_MINUTES = parseInt(process.env.RESET_TOKEN_TTL_MINUTES || "60", 10);
 const CONFIRM_TTL_MINUTES = 24 * 60; // 24 Stunden
-const FRONTEND_URL = process.env.FRONTEND_URL || "http://localhost:3000";
+const FRONTEND_URL = process.env.FRONTEND_URL || "https://api.tilde-app.de";
 const REDIRECT_URL = process.env.REDIRECT_URL || FRONTEND_URL;
-const EMAIL_FROM = process.env.EMAIL_FROM || "no-reply@example.com";
+const EMAIL_FROM = process.env.EMAIL_FROM || "no-reply@tilde-app.de";
 
 function hashToken(token) {
   return crypto.createHash(HASH_ALGO).update(token).digest("hex");
