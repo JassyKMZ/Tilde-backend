@@ -20,10 +20,7 @@
       "type": "media",
       "multiple": false,
       "required": true,
-      "allowedTypes": [
-        "images",
-        "files"
-      ]
+      "allowedTypes": ["images", "files"]
     },
     "summary": {
       "type": "text"
@@ -88,7 +85,6 @@
       "type": "relation",
       "relation": "manyToMany",
       "target": "api::category.category",
-      "max": 3,
       "inversedBy": "posts"
     },
     "klasses": {
@@ -152,12 +148,7 @@
     "galerie": {
       "type": "media",
       "multiple": true,
-      "allowedTypes": [
-        "images",
-        "files",
-        "videos",
-        "audios"
-      ]
+      "allowedTypes": ["images", "files", "videos", "audios"]
     },
     "veranstalter": {
       "type": "relation",
@@ -180,11 +171,7 @@
           ]
         }
       },
-      "enum": [
-        "Vor Ort",
-        "Online",
-        "Hybrid"
-      ]
+      "enum": ["Vor Ort", "Online", "Hybrid"]
     }
   }
 }
