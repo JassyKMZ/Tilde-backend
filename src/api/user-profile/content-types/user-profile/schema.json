@@ -51,6 +51,26 @@
       "component": "profil.kind",
       "repeatable": true
     },
+    "klassen": {
+      "type": "component",
+      "conditions": {
+        "visible": {
+          "==": [
+            {
+              "var": "roleType"
+            },
+            "fachkraft"
+          ]
+        }
+      },
+      "component": "profil.klasse",
+      "repeatable": true
+    },
+    "gruppen": {
+      "type": "component",
+      "component": "profil.gruppe",
+      "repeatable": true
+    },
     "push_subscriptions": {
       "type": "relation",
       "relation": "oneToMany",

@@ -90,9 +90,9 @@ module.exports = {
           <p>es wurde eine Änderung deiner E-Mail-Adresse angefordert.</p>
           <p><strong>Neue E-Mail-Adresse:</strong> ${newEmail}</p>
           <p>Bitte klicke auf den folgenden Link, um die Änderung zu bestätigen:</p>
-          <p><a href="${verificationLink}" style="background-color: #5ab1d1; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; display: inline-block;">E-Mail-Änderung bestätigen</a></p>
-          <p style="margin-top: 20px; color: #666;">Oder kopiere diesen Link in deinen Browser:</p>
-          <p style="word-break: break-all; color: #666; font-size: 12px;"><code>${verificationLink}</code></p>
+          <p><a href="${verificationLink}" style="background-color: #6750f2; color: white; padding: 10px 20px; text-decoration: none; border-radius: 20px; display: inline-block;">E-Mail-Änderung bestätigen</a></p>
+          <p style="margin-top: 20px; color: #6750f2;">Oder kopiere diesen Link in deinen Browser:</p>
+          <p style="word-break: break-all; color: #6750f2; font-size: 12px;"><code>${verificationLink}</code></p>
           <p>Dieser Link ist 24 Stunden lang gültig.</p>
           <p>Falls du diese Änderung nicht angefordert hast, kannst du diese E-Mail einfach ignorieren. Deine aktuelle E-Mail-Adresse bleibt unverändert.</p>
           <p>Beste Grüße,<br>das Tilde-Team</p>
