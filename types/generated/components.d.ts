@@ -143,6 +143,38 @@ export interface LandingStartsText extends Struct.ComponentSchema {
   };
 }
 
+export interface ProfilGruppe extends Struct.ComponentSchema {
+  collectionName: 'components_profil_gruppes';
+  info: {
+    displayName: 'Gruppe';
+    icon: 'puzzle';
+  };
+  attributes: {
+    kategories: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::category.category'
+    >;
+    kinder: Schema.Attribute.Component<'profil.kind', true>;
+    maxAge: Schema.Attribute.Integer &
+      Schema.Attribute.SetMinMax<
+        {
+          max: 18;
+          min: 0;
+        },
+        number
+      >;
+    minAge: Schema.Attribute.Integer &
+      Schema.Attribute.SetMinMax<
+        {
+          max: 18;
+          min: 0;
+        },
+        number
+      >;
+    name: Schema.Attribute.String;
+  };
+}
+
 export interface ProfilKind extends Struct.ComponentSchema {
   collectionName: 'components_profil_kinds';
   info: {
@@ -156,6 +188,41 @@ export interface ProfilKind extends Struct.ComponentSchema {
       'api::category.category'
     >;
     name: Schema.Attribute.String & Schema.Attribute.Required;
+  };
+}
+
+export interface ProfilKindGruppe extends Struct.ComponentSchema {
+  collectionName: 'components_profil_kind_gruppes';
+  info: {
+    displayName: 'kindGruppe';
+  };
+  attributes: {
+    Alter: Schema.Attribute.Integer &
+      Schema.Attribute.SetMinMax<
+        {
+          max: 18;
+          min: 0;
+        },
+        number
+      >;
+    name: Schema.Attribute.String;
+  };
+}
+
+export interface ProfilKlasse extends Struct.ComponentSchema {
+  collectionName: 'components_profil_klasses';
+  info: {
+    displayName: 'Klasse';
+    icon: 'book';
+  };
+  attributes: {
+    fach: Schema.Attribute.String;
+    kategories: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::category.category'
+    >;
+    klasse: Schema.Attribute.Relation<'oneToOne', 'api::klasse.klasse'>;
+    name: Schema.Attribute.String;
   };
 }
 
@@ -188,7 +255,10 @@ declare module '@strapi/strapi' {
       'impressum.textblock': ImpressumTextblock;
       'landing.button': LandingButton;
       'landing.starts-text': LandingStartsText;
+      'profil.gruppe': ProfilGruppe;
       'profil.kind': ProfilKind;
+      'profil.kind-gruppe': ProfilKindGruppe;
+      'profil.klasse': ProfilKlasse;
       'roadmap.milestone': RoadmapMilestone;
     }
   }

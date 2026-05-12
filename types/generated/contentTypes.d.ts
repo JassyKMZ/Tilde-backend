@@ -709,6 +709,7 @@ export interface ApiPostPost extends Struct.CollectionTypeSchema {
   };
   attributes: {
     annotation: Schema.Attribute.Text;
+    availability: Schema.Attribute.Enumeration<['Vor Ort', 'Online', 'Hybrid']>;
     beschreibung: Schema.Attribute.Blocks & Schema.Attribute.Required;
     bild: Schema.Attribute.Media<'images' | 'files'> &
       Schema.Attribute.Required;
@@ -731,7 +732,13 @@ export interface ApiPostPost extends Struct.CollectionTypeSchema {
     kategories: Schema.Attribute.Relation<
       'manyToMany',
       'api::category.category'
-    >;
+    > &
+      Schema.Attribute.SetMinMax<
+        {
+          max: 3;
+        },
+        number
+      >;
     klasses: Schema.Attribute.Relation<'manyToMany', 'api::klasse.klasse'>;
     kostenpflichtig: Schema.Attribute.Boolean &
       Schema.Attribute.DefaultTo<false>;
@@ -758,6 +765,7 @@ export interface ApiPostPost extends Struct.CollectionTypeSchema {
     publish: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
     publishedAt: Schema.Attribute.DateTime;
     summary: Schema.Attribute.Text;
+    teilnehmer: Schema.Attribute.Integer;
     titel: Schema.Attribute.String & Schema.Attribute.Required;
     trainer: Schema.Attribute.String;
     updatedAt: Schema.Attribute.DateTime;
@@ -770,6 +778,10 @@ export interface ApiPostPost extends Struct.CollectionTypeSchema {
     user_reminders: Schema.Attribute.Relation<
       'manyToMany',
       'api::user-profile.user-profile'
+    >;
+    veranstalter: Schema.Attribute.Relation<
+      'manyToOne',
+      'api::veranstalter.veranstalter'
     >;
     veranstaltungsort: Schema.Attribute.Relation<
       'oneToOne',
@@ -955,11 +967,13 @@ export interface ApiUserProfileUserProfile extends Struct.CollectionTypeSchema {
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
     fullName: Schema.Attribute.String;
+    gruppen: Schema.Attribute.Component<'profil.gruppe', true>;
     kategories: Schema.Attribute.Relation<
       'manyToMany',
       'api::category.category'
     >;
     kinder: Schema.Attribute.Component<'profil.kind', true>;
+    klassen: Schema.Attribute.Component<'profil.klasse', true>;
     klasses: Schema.Attribute.Relation<'manyToMany', 'api::klasse.klasse'>;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<
@@ -999,6 +1013,41 @@ export interface ApiUserProfileUserProfile extends Struct.CollectionTypeSchema {
       'oneToOne',
       'plugin::users-permissions.user'
     >;
+  };
+}
+
+export interface ApiVeranstalterVeranstalter
+  extends Struct.CollectionTypeSchema {
+  collectionName: 'veranstalters';
+  info: {
+    displayName: 'Veranstalter';
+    pluralName: 'veranstalters';
+    singularName: 'veranstalter';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::veranstalter.veranstalter'
+    > &
+      Schema.Attribute.Private;
+    logo: Schema.Attribute.Media<'images' | 'files' | 'videos' | 'audios'>;
+    mail: Schema.Attribute.Email;
+    name: Schema.Attribute.String;
+    ort: Schema.Attribute.String;
+    posts: Schema.Attribute.Relation<'oneToMany', 'api::post.post'>;
+    publishedAt: Schema.Attribute.DateTime;
+    strasse: Schema.Attribute.String;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    website: Schema.Attribute.String;
   };
 }
 
@@ -1760,6 +1809,7 @@ declare module '@strapi/strapi' {
       'api::roadmap.roadmap': ApiRoadmapRoadmap;
       'api::tipp-section.tipp-section': ApiTippSectionTippSection;
       'api::user-profile.user-profile': ApiUserProfileUserProfile;
+      'api::veranstalter.veranstalter': ApiVeranstalterVeranstalter;
       'api::veranstaltungsort.veranstaltungsort': ApiVeranstaltungsortVeranstaltungsort;
       'api::webpush-subscription.webpush-subscription': ApiWebpushSubscriptionWebpushSubscription;
       'plugin::content-releases.release': PluginContentReleasesRelease;

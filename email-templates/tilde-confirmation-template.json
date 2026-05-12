@@ -105,7 +105,7 @@
                       "color": "#ffffff",
                       "backgroundColor": "#5ab1d1",
                       "href": "[CONFIRMATION_LINK]",
-                      "border-radius": "5px",
+                      "border-radius": "20px",
                       "textDecoration": "none",
                       "padding": "14px 32px",
                       "margin": "32px 0px",
