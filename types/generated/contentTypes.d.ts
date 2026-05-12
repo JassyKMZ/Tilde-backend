@@ -732,13 +732,7 @@ export interface ApiPostPost extends Struct.CollectionTypeSchema {
     kategories: Schema.Attribute.Relation<
       'manyToMany',
       'api::category.category'
-    > &
-      Schema.Attribute.SetMinMax<
-        {
-          max: 3;
-        },
-        number
-      >;
+    >;
     klasses: Schema.Attribute.Relation<'manyToMany', 'api::klasse.klasse'>;
     kostenpflichtig: Schema.Attribute.Boolean &
       Schema.Attribute.DefaultTo<false>;
@@ -792,6 +786,8 @@ export interface ApiPostPost extends Struct.CollectionTypeSchema {
         'Abrufveranstaltung',
         'Kurs',
         'Workshop',
+        'Seminar',
+        'Fortbildung',
         'Veranstaltung',
         'Sch\u00FClerworkshop',
       ]
