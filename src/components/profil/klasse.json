@@ -1,0 +1,27 @@
+{
+  "collectionName": "components_profil_klasses",
+  "info": {
+    "displayName": "Klasse",
+    "icon": "book"
+  },
+  "options": {},
+  "attributes": {
+    "name": {
+      "type": "string"
+    },
+    "klasse": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::klasse.klasse"
+    },
+    "kategories": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::category.category"
+    },
+    "fach": {
+      "type": "string"
+    }
+  },
+  "config": {}
+}
