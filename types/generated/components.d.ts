@@ -183,6 +183,14 @@ export interface ProfilKind extends Struct.ComponentSchema {
   };
   attributes: {
     alter: Schema.Attribute.Integer;
+    avatarIndex: Schema.Attribute.Integer &
+      Schema.Attribute.SetMinMax<
+        {
+          max: 3;
+          min: 0;
+        },
+        number
+      >;
     favoriteCategories: Schema.Attribute.Relation<
       'manyToMany',
       'api::category.category'

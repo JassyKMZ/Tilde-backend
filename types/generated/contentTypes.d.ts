@@ -713,6 +713,7 @@ export interface ApiPostPost extends Struct.CollectionTypeSchema {
     beschreibung: Schema.Attribute.Blocks & Schema.Attribute.Required;
     bild: Schema.Attribute.Media<'images' | 'files'> &
       Schema.Attribute.Required;
+    buchung: Schema.Attribute.String;
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
@@ -726,9 +727,7 @@ export interface ApiPostPost extends Struct.CollectionTypeSchema {
       'manyToOne',
       'api::institution.institution'
     >;
-    isEvent: Schema.Attribute.Boolean &
-      Schema.Attribute.Required &
-      Schema.Attribute.DefaultTo<false>;
+    isEvent: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
     kategories: Schema.Attribute.Relation<
       'manyToMany',
       'api::category.category'
@@ -755,7 +754,7 @@ export interface ApiPostPost extends Struct.CollectionTypeSchema {
         },
         number
       >;
-    preis: Schema.Attribute.Decimal;
+    preis: Schema.Attribute.String;
     publish: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
     publishedAt: Schema.Attribute.DateTime;
     summary: Schema.Attribute.Text;
