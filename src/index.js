@@ -1,5 +1,7 @@
 "use strict";
 
+const cron = require("node-cron");
+
 module.exports = {
   register({ strapi }) {},
   async bootstrap({ strapi }) {
@@ -62,5 +64,73 @@ module.exports = {
         }
       },
     });
+
+    // Schedule daily job to unpublish events older than 14 days
+    // Runs every day at 2:00 AM (02:00 UTC)
+    cron.schedule("0 2 * * *", async () => {
+      try {
+        strapi.log.info(
+          "[Cron] Starting daily job to archive events older than 14 days",
+        );
+
+        const now = new Date();
+        const twoWeeksMs = 14 * 24 * 60 * 60 * 1000;
+        const cutoffDate = new Date(now.getTime() - twoWeeksMs);
+
+        // Find all published events where eventDate is older than 14 days
+        const expiredPosts = await strapi.db.query("api::post.post").findMany({
+          where: {
+            isEvent: true,
+            eventDate: {
+              $lt: cutoffDate, // eventDate is before cutoff
+            },
+            publishedAt: {
+              $notNull: true, // only published posts
+            },
+          },
+          select: ["id", "documentId", "titel", "eventDate"],
+        });
+
+        if (expiredPosts.length === 0) {
+          strapi.log.info("[Cron] No expired events found to archive");
+          return;
+        }
+
+        strapi.log.info(
+          `[Cron] Found ${expiredPosts.length} expired events to unpublish`,
+        );
+
+        // Unpublish each expired event
+        for (const post of expiredPosts) {
+          try {
+            await strapi.db.query("api::post.post").update({
+              where: { id: post.id },
+              data: {
+                publishedAt: null, // Unpublish
+              },
+            });
+
+            strapi.log.debug(
+              `[Cron] Unpublished expired event: ${post.titel} (ID: ${post.documentId})`,
+            );
+          } catch (error) {
+            strapi.log.error(
+              `[Cron] Failed to unpublish event ${post.documentId}:`,
+              error,
+            );
+          }
+        }
+
+        strapi.log.info(
+          `[Cron] Daily archive job completed: ${expiredPosts.length} events unpublished`,
+        );
+      } catch (error) {
+        strapi.log.error("[Cron] Error in daily archive job:", error);
+      }
+    });
+
+    strapi.log.info(
+      "[Bootstrap] Daily event archival cron job scheduled (runs daily at 2:00 AM UTC)",
+    );
   },
 };
