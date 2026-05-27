@@ -20,7 +20,10 @@
       "type": "media",
       "multiple": false,
       "required": true,
-      "allowedTypes": ["images", "files"]
+      "allowedTypes": [
+        "images",
+        "files"
+      ]
     },
     "summary": {
       "type": "text"
@@ -31,7 +34,7 @@
     },
     "isEvent": {
       "type": "boolean",
-      "required": true,
+      "required": false,
       "default": false
     },
     "eventDate": {
@@ -64,6 +67,16 @@
     },
     "veranstaltungstyp": {
       "type": "enumeration",
+      "conditions": {
+        "visible": {
+          "==": [
+            {
+              "var": "isEvent"
+            },
+            true
+          ]
+        }
+      },
       "default": "Veranstaltung",
       "enum": [
         "Abrufveranstaltung",
@@ -122,19 +135,6 @@
     "dauer": {
       "type": "decimal"
     },
-    "preis": {
-      "type": "decimal",
-      "conditions": {
-        "visible": {
-          "==": [
-            {
-              "var": "kostenpflichtig"
-            },
-            true
-          ]
-        }
-      }
-    },
     "trainer": {
       "type": "string"
     },
@@ -148,7 +148,12 @@
     "galerie": {
       "type": "media",
       "multiple": true,
-      "allowedTypes": ["images", "files", "videos", "audios"]
+      "allowedTypes": [
+        "images",
+        "files",
+        "videos",
+        "audios"
+      ]
     },
     "veranstalter": {
       "type": "relation",
@@ -171,7 +176,27 @@
           ]
         }
       },
-      "enum": ["Vor Ort", "Online", "Hybrid"]
+      "enum": [
+        "Vor Ort",
+        "Online",
+        "Hybrid"
+      ]
+    },
+    "preis": {
+      "type": "string",
+      "conditions": {
+        "visible": {
+          "==": [
+            {
+              "var": "kostenpflichtig"
+            },
+            true
+          ]
+        }
+      }
+    },
+    "buchung": {
+      "type": "string"
     }
   }
 }
