@@ -479,6 +479,10 @@ export interface ApiCategoryCategory extends Struct.CollectionTypeSchema {
       Schema.Attribute.Private;
     posts: Schema.Attribute.Relation<'manyToMany', 'api::post.post'>;
     publishedAt: Schema.Attribute.DateTime;
+    tipps: Schema.Attribute.Relation<
+      'manyToMany',
+      'api::tipp-section.tipp-section'
+    >;
     title: Schema.Attribute.String;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
@@ -772,6 +776,10 @@ export interface ApiPostPost extends Struct.CollectionTypeSchema {
       'manyToMany',
       'api::user-profile.user-profile'
     >;
+    user_role: Schema.Attribute.Relation<
+      'manyToOne',
+      'api::user-role.user-role'
+    >;
     veranstalter: Schema.Attribute.Relation<
       'manyToOne',
       'api::veranstalter.veranstalter'
@@ -914,6 +922,10 @@ export interface ApiTippSectionTippSection extends Struct.CollectionTypeSchema {
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
+    kategories: Schema.Attribute.Relation<
+      'manyToMany',
+      'api::category.category'
+    >;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<
       'oneToMany',
@@ -941,6 +953,10 @@ export interface ApiTippSectionTippSection extends Struct.CollectionTypeSchema {
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
+    user_profiles: Schema.Attribute.Relation<
+      'manyToMany',
+      'api::user-profile.user-profile'
+    >;
   };
 }
 
@@ -999,7 +1015,10 @@ export interface ApiUserProfileUserProfile extends Struct.CollectionTypeSchema {
     >;
     pushNotificationsEnabled: Schema.Attribute.Boolean;
     reminders: Schema.Attribute.Relation<'manyToMany', 'api::post.post'>;
-    roleType: Schema.Attribute.Enumeration<['fachkraft', 'elternteil']>;
+    saved_tipps: Schema.Attribute.Relation<
+      'manyToMany',
+      'api::tipp-section.tipp-section'
+    >;
     testUser: Schema.Attribute.Boolean;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
@@ -1007,6 +1026,43 @@ export interface ApiUserProfileUserProfile extends Struct.CollectionTypeSchema {
     user: Schema.Attribute.Relation<
       'oneToOne',
       'plugin::users-permissions.user'
+    >;
+    user_role: Schema.Attribute.Relation<
+      'manyToOne',
+      'api::user-role.user-role'
+    >;
+  };
+}
+
+export interface ApiUserRoleUserRole extends Struct.CollectionTypeSchema {
+  collectionName: 'user_roles';
+  info: {
+    displayName: 'userRole';
+    pluralName: 'user-roles';
+    singularName: 'user-role';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::user-role.user-role'
+    > &
+      Schema.Attribute.Private;
+    posts: Schema.Attribute.Relation<'oneToMany', 'api::post.post'>;
+    publishedAt: Schema.Attribute.DateTime;
+    roleType: Schema.Attribute.String;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    user_profiles: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::user-profile.user-profile'
     >;
   };
 }
@@ -1804,6 +1860,7 @@ declare module '@strapi/strapi' {
       'api::roadmap.roadmap': ApiRoadmapRoadmap;
       'api::tipp-section.tipp-section': ApiTippSectionTippSection;
       'api::user-profile.user-profile': ApiUserProfileUserProfile;
+      'api::user-role.user-role': ApiUserRoleUserRole;
       'api::veranstalter.veranstalter': ApiVeranstalterVeranstalter;
       'api::veranstaltungsort.veranstaltungsort': ApiVeranstaltungsortVeranstaltungsort;
       'api::webpush-subscription.webpush-subscription': ApiWebpushSubscriptionWebpushSubscription;
