@@ -197,6 +197,12 @@
     },
     "buchung": {
       "type": "string"
+    },
+    "user_role": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::user-role.user-role",
+      "inversedBy": "posts"
     }
   }
 }

@@ -90,15 +90,20 @@
       "min": 0,
       "max": 18
     },
-    "roleType": {
-      "type": "enumeration",
-      "enum": [
-        "fachkraft",
-        "elternteil"
-      ]
-    },
     "testUser": {
       "type": "boolean"
+    },
+    "saved_tipps": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "api::tipp-section.tipp-section",
+      "mappedBy": "user_profiles"
+    },
+    "user_role": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::user-role.user-role",
+      "inversedBy": "user_profiles"
     }
   }
 }
