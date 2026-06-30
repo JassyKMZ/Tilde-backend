@@ -14,7 +14,7 @@ module.exports = {
         expiresIn: "2h", // 2 hours
       },
       enableEMail: true,
-      sendConfirmationEmail: false,
+      // sendConfirmationEmail: false,
     },
     options: {
       password: {

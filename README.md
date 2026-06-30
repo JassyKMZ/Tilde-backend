@@ -36,15 +36,6 @@ yarn build
 
 Strapi gives you many possible deployment options for your project including [Strapi Cloud](https://cloud.strapi.io). Browse the [deployment section of the documentation](https://docs.strapi.io/dev-docs/deployment) to find the best solution for your use case.
 
-### Deploy via Plesk:
-- pull repository
-- head to terminal and enter these:
-rm -rf node_modules .cache build
-npm i
-npm run build
-NODE_ENV=production npm run start (if this runs without showing errors, you'Re good to go)
-
-
 ```
 yarn strapi deploy
 ```

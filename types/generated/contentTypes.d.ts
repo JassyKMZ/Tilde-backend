@@ -508,12 +508,15 @@ export interface ApiFcmTokenFcmToken extends Struct.CollectionTypeSchema {
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
+    deviceId: Schema.Attribute.String;
+    lastSeen: Schema.Attribute.Timestamp;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<
       'oneToMany',
       'api::fcm-token.fcm-token'
     > &
       Schema.Attribute.Private;
+    meta: Schema.Attribute.JSON;
     platform: Schema.Attribute.Enumeration<['web', 'android', 'ios', 'other']>;
     publishedAt: Schema.Attribute.DateTime;
     token: Schema.Attribute.String &
@@ -593,40 +596,6 @@ export interface ApiInstitutionInstitution extends Struct.CollectionTypeSchema {
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
     website: Schema.Attribute.String;
-  };
-}
-
-export interface ApiKlasseKlasse extends Struct.CollectionTypeSchema {
-  collectionName: 'klassen';
-  info: {
-    description: '';
-    displayName: 'Klasse';
-    pluralName: 'klassen';
-    singularName: 'klasse';
-  };
-  options: {
-    draftAndPublish: false;
-  };
-  attributes: {
-    createdAt: Schema.Attribute.DateTime;
-    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
-      Schema.Attribute.Private;
-    locale: Schema.Attribute.String & Schema.Attribute.Private;
-    localizations: Schema.Attribute.Relation<
-      'oneToMany',
-      'api::klasse.klasse'
-    > &
-      Schema.Attribute.Private;
-    posts: Schema.Attribute.Relation<'manyToMany', 'api::post.post'>;
-    publishedAt: Schema.Attribute.DateTime;
-    title: Schema.Attribute.String;
-    updatedAt: Schema.Attribute.DateTime;
-    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
-      Schema.Attribute.Private;
-    user_profiles: Schema.Attribute.Relation<
-      'manyToMany',
-      'api::user-profile.user-profile'
-    >;
   };
 }
 
@@ -736,7 +705,6 @@ export interface ApiPostPost extends Struct.CollectionTypeSchema {
       'manyToMany',
       'api::category.category'
     >;
-    klasses: Schema.Attribute.Relation<'manyToMany', 'api::klasse.klasse'>;
     kostenpflichtig: Schema.Attribute.Boolean &
       Schema.Attribute.DefaultTo<false>;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
@@ -745,7 +713,7 @@ export interface ApiPostPost extends Struct.CollectionTypeSchema {
     maxAge: Schema.Attribute.Integer &
       Schema.Attribute.SetMinMax<
         {
-          max: 18;
+          max: 99;
           min: 0;
         },
         number
@@ -753,12 +721,16 @@ export interface ApiPostPost extends Struct.CollectionTypeSchema {
     minAge: Schema.Attribute.Integer &
       Schema.Attribute.SetMinMax<
         {
-          max: 18;
+          max: 99;
           min: 0;
         },
         number
       >;
     preis: Schema.Attribute.String;
+    profile_role: Schema.Attribute.Relation<
+      'manyToOne',
+      'api::profile-role.profile-role'
+    >;
     publish: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
     publishedAt: Schema.Attribute.DateTime;
     summary: Schema.Attribute.Text;
@@ -775,10 +747,6 @@ export interface ApiPostPost extends Struct.CollectionTypeSchema {
     user_reminders: Schema.Attribute.Relation<
       'manyToMany',
       'api::user-profile.user-profile'
-    >;
-    user_role: Schema.Attribute.Relation<
-      'manyToOne',
-      'api::user-role.user-role'
     >;
     veranstalter: Schema.Attribute.Relation<
       'manyToOne',
@@ -800,6 +768,39 @@ export interface ApiPostPost extends Struct.CollectionTypeSchema {
       ]
     > &
       Schema.Attribute.DefaultTo<'Veranstaltung'>;
+  };
+}
+
+export interface ApiProfileRoleProfileRole extends Struct.CollectionTypeSchema {
+  collectionName: 'profile_roles';
+  info: {
+    displayName: 'profileRole';
+    pluralName: 'profile-roles';
+    singularName: 'profile-role';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::profile-role.profile-role'
+    > &
+      Schema.Attribute.Private;
+    posts: Schema.Attribute.Relation<'oneToMany', 'api::post.post'>;
+    publishedAt: Schema.Attribute.DateTime;
+    roleType: Schema.Attribute.String;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    user_profiles: Schema.Attribute.Relation<
+      'manyToMany',
+      'api::user-profile.user-profile'
+    >;
   };
 }
 
@@ -935,7 +936,7 @@ export interface ApiTippSectionTippSection extends Struct.CollectionTypeSchema {
     maxAge: Schema.Attribute.Integer &
       Schema.Attribute.SetMinMax<
         {
-          max: 18;
+          max: 99;
           min: 0;
         },
         number
@@ -943,7 +944,7 @@ export interface ApiTippSectionTippSection extends Struct.CollectionTypeSchema {
     minAge: Schema.Attribute.Integer &
       Schema.Attribute.SetMinMax<
         {
-          max: 18;
+          max: 99;
           min: 0;
         },
         number
@@ -984,8 +985,6 @@ export interface ApiUserProfileUserProfile extends Struct.CollectionTypeSchema {
       'api::category.category'
     >;
     kinder: Schema.Attribute.Component<'profil.kind', true>;
-    klassen: Schema.Attribute.Component<'profil.klasse', true>;
-    klasses: Schema.Attribute.Relation<'manyToMany', 'api::klasse.klasse'>;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<
       'oneToMany',
@@ -995,7 +994,7 @@ export interface ApiUserProfileUserProfile extends Struct.CollectionTypeSchema {
     maxAge: Schema.Attribute.Integer &
       Schema.Attribute.SetMinMax<
         {
-          max: 18;
+          max: 99;
           min: 0;
         },
         number
@@ -1003,11 +1002,17 @@ export interface ApiUserProfileUserProfile extends Struct.CollectionTypeSchema {
     minAge: Schema.Attribute.Integer &
       Schema.Attribute.SetMinMax<
         {
-          max: 18;
+          max: 99;
           min: 0;
         },
         number
       >;
+    onboardingComplete: Schema.Attribute.Boolean &
+      Schema.Attribute.DefaultTo<false>;
+    profile_roles: Schema.Attribute.Relation<
+      'manyToMany',
+      'api::profile-role.profile-role'
+    >;
     publishedAt: Schema.Attribute.DateTime;
     push_subscriptions: Schema.Attribute.Relation<
       'oneToMany',
@@ -1026,43 +1031,6 @@ export interface ApiUserProfileUserProfile extends Struct.CollectionTypeSchema {
     user: Schema.Attribute.Relation<
       'oneToOne',
       'plugin::users-permissions.user'
-    >;
-    user_role: Schema.Attribute.Relation<
-      'manyToOne',
-      'api::user-role.user-role'
-    >;
-  };
-}
-
-export interface ApiUserRoleUserRole extends Struct.CollectionTypeSchema {
-  collectionName: 'user_roles';
-  info: {
-    displayName: 'userRole';
-    pluralName: 'user-roles';
-    singularName: 'user-role';
-  };
-  options: {
-    draftAndPublish: false;
-  };
-  attributes: {
-    createdAt: Schema.Attribute.DateTime;
-    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
-      Schema.Attribute.Private;
-    locale: Schema.Attribute.String & Schema.Attribute.Private;
-    localizations: Schema.Attribute.Relation<
-      'oneToMany',
-      'api::user-role.user-role'
-    > &
-      Schema.Attribute.Private;
-    posts: Schema.Attribute.Relation<'oneToMany', 'api::post.post'>;
-    publishedAt: Schema.Attribute.DateTime;
-    roleType: Schema.Attribute.String;
-    updatedAt: Schema.Attribute.DateTime;
-    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
-      Schema.Attribute.Private;
-    user_profiles: Schema.Attribute.Relation<
-      'oneToMany',
-      'api::user-profile.user-profile'
     >;
   };
 }
@@ -1851,16 +1819,15 @@ declare module '@strapi/strapi' {
       'api::fcm-token.fcm-token': ApiFcmTokenFcmToken;
       'api::feedback.feedback': ApiFeedbackFeedback;
       'api::institution.institution': ApiInstitutionInstitution;
-      'api::klasse.klasse': ApiKlasseKlasse;
       'api::landing.landing': ApiLandingLanding;
       'api::legal-notice.legal-notice': ApiLegalNoticeLegalNotice;
       'api::post.post': ApiPostPost;
+      'api::profile-role.profile-role': ApiProfileRoleProfileRole;
       'api::push-subscriptions.push-subscription': ApiPushSubscriptionsPushSubscription;
       'api::roadmap-stage.roadmap-stage': ApiRoadmapStageRoadmapStage;
       'api::roadmap.roadmap': ApiRoadmapRoadmap;
       'api::tipp-section.tipp-section': ApiTippSectionTippSection;
       'api::user-profile.user-profile': ApiUserProfileUserProfile;
-      'api::user-role.user-role': ApiUserRoleUserRole;
       'api::veranstalter.veranstalter': ApiVeranstalterVeranstalter;
       'api::veranstaltungsort.veranstaltungsort': ApiVeranstaltungsortVeranstaltungsort;
       'api::webpush-subscription.webpush-subscription': ApiWebpushSubscriptionWebpushSubscription;

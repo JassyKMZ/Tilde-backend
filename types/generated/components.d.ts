@@ -158,7 +158,7 @@ export interface ProfilGruppe extends Struct.ComponentSchema {
     maxAge: Schema.Attribute.Integer &
       Schema.Attribute.SetMinMax<
         {
-          max: 18;
+          max: 99;
           min: 0;
         },
         number
@@ -166,7 +166,7 @@ export interface ProfilGruppe extends Struct.ComponentSchema {
     minAge: Schema.Attribute.Integer &
       Schema.Attribute.SetMinMax<
         {
-          max: 18;
+          max: 99;
           min: 0;
         },
         number
@@ -217,23 +217,6 @@ export interface ProfilKindGruppe extends Struct.ComponentSchema {
   };
 }
 
-export interface ProfilKlasse extends Struct.ComponentSchema {
-  collectionName: 'components_profil_klasses';
-  info: {
-    displayName: 'Klasse';
-    icon: 'book';
-  };
-  attributes: {
-    fach: Schema.Attribute.String;
-    kategories: Schema.Attribute.Relation<
-      'oneToMany',
-      'api::category.category'
-    >;
-    klasse: Schema.Attribute.Relation<'oneToOne', 'api::klasse.klasse'>;
-    name: Schema.Attribute.String;
-  };
-}
-
 export interface RoadmapMilestone extends Struct.ComponentSchema {
   collectionName: 'components_roadmap_milestones';
   info: {
@@ -266,7 +249,6 @@ declare module '@strapi/strapi' {
       'profil.gruppe': ProfilGruppe;
       'profil.kind': ProfilKind;
       'profil.kind-gruppe': ProfilKindGruppe;
-      'profil.klasse': ProfilKlasse;
       'roadmap.milestone': RoadmapMilestone;
     }
   }
