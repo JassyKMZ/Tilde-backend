@@ -1,7 +1,7 @@
 "use strict";
 
 const MIN_ALLOWED = 0;
-const MAX_ALLOWED = 18;
+const MAX_ALLOWED = 99;
 
 function toIntOrNull(v) {
   if (v === null || v === undefined) return null;
@@ -42,6 +42,41 @@ function validateRange(data) {
   if (maxAge !== null) data.maxAge = maxAge;
 }
 
+function extractRelationIds(value) {
+  const ids = [];
+
+  const pushValue = (item) => {
+    if (item === null || item === undefined) return;
+    if (typeof item === "number" || typeof item === "string") {
+      const parsed = Number(item);
+      if (Number.isFinite(parsed)) ids.push(parsed);
+      return;
+    }
+
+    if (typeof item !== "object") return;
+
+    const directId = item.id ?? item.documentId ?? item.value;
+    if (directId !== undefined && directId !== null && directId !== "") {
+      const parsed = Number(directId);
+      if (Number.isFinite(parsed)) ids.push(parsed);
+    }
+
+    if (Array.isArray(item.connect)) item.connect.forEach(pushValue);
+    if (Array.isArray(item.set)) item.set.forEach(pushValue);
+    if (Array.isArray(item.data)) item.data.forEach(pushValue);
+  };
+
+  if (Array.isArray(value)) {
+    value.forEach(pushValue);
+  } else if (value && typeof value === "object") {
+    if (Array.isArray(value.connect)) value.connect.forEach(pushValue);
+    if (Array.isArray(value.set)) value.set.forEach(pushValue);
+    if (Array.isArray(value.data)) value.data.forEach(pushValue);
+  }
+
+  return [...new Set(ids)];
+}
+
 module.exports = {
   async beforeCreate(event) {
     const { data } = event.params;
@@ -53,6 +88,13 @@ module.exports = {
     const { data } = event.params;
     if (!data) return;
     validateRange(data);
+
+    if (data.profile_roles !== undefined) {
+      const roleIds = extractRelationIds(data.profile_roles);
+      if (!roleIds.length) {
+        throw new Error("Bitte mindestens eine Rolle auswählen");
+      }
+    }
   },
   async afterCreate(event) {
     const { result } = event;
@@ -66,7 +108,7 @@ module.exports = {
           data: {
             user_profile: result.id, // Link the newly created profile to the user
           },
-        }
+        },
       );
     }
   },

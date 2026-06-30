@@ -100,12 +100,6 @@
       "target": "api::category.category",
       "inversedBy": "posts"
     },
-    "klasses": {
-      "type": "relation",
-      "relation": "manyToMany",
-      "target": "api::klasse.klasse",
-      "mappedBy": "posts"
-    },
     "institution": {
       "type": "relation",
       "relation": "manyToOne",
@@ -115,12 +109,12 @@
     "minAge": {
       "type": "integer",
       "min": 0,
-      "max": 18
+      "max": 99
     },
     "maxAge": {
       "type": "integer",
       "min": 0,
-      "max": 18
+      "max": 99
     },
     "kostenpflichtig": {
       "type": "boolean",
@@ -198,10 +192,10 @@
     "buchung": {
       "type": "string"
     },
-    "user_role": {
+    "profile_role": {
       "type": "relation",
       "relation": "manyToOne",
-      "target": "api::user-role.user-role",
+      "target": "api::profile-role.profile-role",
       "inversedBy": "posts"
     }
   }

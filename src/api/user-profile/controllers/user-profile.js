@@ -24,7 +24,7 @@ module.exports = createCoreController(
           profileId,
           {
             populate: { bookmarks: true },
-          }
+          },
         );
 
         if (!profile) return ctx.notFound("Profile not found");
@@ -51,7 +51,7 @@ module.exports = createCoreController(
           profileId,
           {
             data: { bookmarks: updatedBookmarks },
-          }
+          },
         );
 
         return ctx.send(updatedProfile);
@@ -66,91 +66,84 @@ module.exports = createCoreController(
       const user = ctx.state.user;
       if (!user) return ctx.unauthorized();
 
+      // Verify the profile belongs to the authenticated user
       const profile = await strapi.db
         .query("api::user-profile.user-profile")
         .findOne({ where: { documentId, user: user.id } });
       if (!profile) return ctx.notFound();
 
-      const updated = await strapi.entityService.update(
-        "api::user-profile.user-profile",
-        profile.id,
-        {
-          data: ctx.request.body.data,
+      const { profile_roles: roleIds, ...otherData } =
+        ctx.request.body?.data || {};
+
+      // Update non-role fields via Document Service
+      if (Object.keys(otherData).length > 0) {
+        await strapi.documents("api::user-profile.user-profile").update({
+          documentId,
+          data: otherData,
+        });
+      }
+
+      // profile_roles: Document Service rejects this field (collectionName collision).
+      // Use entityService instead — same proven path as updateBookmarks.
+      if (roleIds !== undefined) {
+        const ids = Array.isArray(roleIds)
+          ? roleIds.filter(Number.isFinite)
+          : [];
+        if (!ids.length)
+          return ctx.badRequest("Bitte mindestens eine Rolle auswählen");
+        await strapi.entityService.update(
+          "api::user-profile.user-profile",
+          profile.id,
+          { data: { profile_roles: ids } },
+        );
+      }
+
+      const updated = await strapi
+        .documents("api::user-profile.user-profile")
+        .findOne({
+          documentId,
           populate: {
             user: { fields: ["email", "fullName"] },
             kategories: true,
             bookmarks: { populate: "bild" },
-            notificationPreferences: true,
+            profile_roles: true,
           },
-        }
-      );
+        });
 
       return ctx.send(updated);
     },
 
-    // async createForMe(ctx) {
-    //   try {
-    //     // ensure authenticated
-    //     const authUser = ctx.state.user;
-    //     if (!authUser || !authUser.id) {
-    //       return ctx.unauthorized("Not authenticated");
-    //     }
+    async completeOnboarding(ctx) {
+      try {
+        const authUser = ctx.state.user;
+        if (!authUser || !authUser.id)
+          return ctx.unauthorized("Not authenticated");
 
-    //     // incoming data under ctx.request.body.data (follow Strapi conventions)
-    //     const incoming = ctx.request.body?.data || {};
+        const profileId = authUser.profileId;
+        if (!profileId) return ctx.notFound("User profile not found");
 
-    //     // whitelist and sanitize allowed fields only
-    //     const data = {
-    //       user: authUser.id,
-    //       fullName: incoming.fullName || "",
-    //       roleType: incoming.roleType || null,
-    //       workplace: incoming.workplace || null,
-    //       // onboardingCompleted:
-    //       //   incoming.onboardingCompleted === true ? true : false,
-    //     };
+        const incoming = ctx.request.body?.data || {};
+        // whitelist fields
+        const allowed = {};
+        if (typeof incoming.fullName === "string")
+          allowed.fullName = incoming.fullName;
+        if (incoming.roleType) allowed.roleType = incoming.roleType;
+        allowed.onboardingComplete = true;
 
-    //     // Prevent duplicate creation: check existing profile for this user
-    //     const existing = await strapi.db
-    //       .query("api::user-profile.user-profile")
-    //       .findOne({ where: { user: authUser.id } });
+        const updated = await strapi.entityService.update(
+          "api::user-profile.user-profile",
+          profileId,
+          {
+            data: allowed,
+            populate: { user: { fields: ["email"] } },
+          },
+        );
 
-    //     if (existing) {
-    //       // If profile exists, optionally update missing fields instead of creating duplicate
-    //       const updateData = {};
-    //       for (const [k, v] of Object.entries(data)) {
-    //         if (k === "user") continue;
-    //         if (v != null && v !== "" && (!existing[k] || existing[k] === "")) {
-    //           updateData[k] = v;
-    //         }
-    //       }
-    //       if (Object.keys(updateData).length) {
-    //         const updated = await strapi.entityService.update(
-    //           "api::user-profile.user-profile",
-    //           existing.id,
-    //           { data: updateData }
-    //         );
-    //         return ctx.send({ ok: true, updated });
-    //       }
-    //       return ctx.send({
-    //         ok: true,
-    //         message: "Profile already exists",
-    //         profile: existing,
-    //       });
-    //     }
-
-    //     // Create profile
-    //     const created = await strapi.entityService.create(
-    //       "api::user-profile.user-profile",
-    //       {
-    //         data,
-    //       }
-    //     );
-
-    //     return ctx.created({ ok: true, profile: created });
-    //   } catch (err) {
-    //     strapi.log.error("createForMe error:", err);
-    //     return ctx.internalServerError("Could not create profile");
-    //   }
-    // },
-  })
+        return ctx.send({ ok: true, profile: updated });
+      } catch (err) {
+        strapi.log.error("completeOnboarding error:", err);
+        return ctx.internalServerError("Could not complete onboarding");
+      }
+    },
+  }),
 );

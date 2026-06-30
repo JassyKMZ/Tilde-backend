@@ -40,30 +40,9 @@
       "target": "api::category.category",
       "inversedBy": "user_profiles"
     },
-    "klasses": {
-      "type": "relation",
-      "relation": "manyToMany",
-      "target": "api::klasse.klasse",
-      "mappedBy": "user_profiles"
-    },
     "kinder": {
       "type": "component",
       "component": "profil.kind",
-      "repeatable": true
-    },
-    "klassen": {
-      "type": "component",
-      "conditions": {
-        "visible": {
-          "==": [
-            {
-              "var": "roleType"
-            },
-            "fachkraft"
-          ]
-        }
-      },
-      "component": "profil.klasse",
       "repeatable": true
     },
     "gruppen": {
@@ -83,12 +62,12 @@
     "minAge": {
       "type": "integer",
       "min": 0,
-      "max": 18
+      "max": 99
     },
     "maxAge": {
       "type": "integer",
       "min": 0,
-      "max": 18
+      "max": 99
     },
     "testUser": {
       "type": "boolean"
@@ -99,10 +78,14 @@
       "target": "api::tipp-section.tipp-section",
       "mappedBy": "user_profiles"
     },
-    "user_role": {
+    "onboardingComplete": {
+      "type": "boolean",
+      "default": false
+    },
+    "profile_roles": {
       "type": "relation",
-      "relation": "manyToOne",
-      "target": "api::user-role.user-role",
+      "relation": "manyToMany",
+      "target": "api::profile-role.profile-role",
       "inversedBy": "user_profiles"
     }
   }

@@ -33,6 +33,15 @@ const customRoutes = [
       },
     },
   },
+  {
+    method: "POST",
+    path: "/complete-onboarding",
+    handler: "user-profile.completeOnboarding",
+    config: {
+      auth: { strategies: ["jwt"] },
+    },
+  },
+
   // {
   //   method: "POST",
   //   path: "/create-for-me",
@@ -48,5 +57,5 @@ module.exports = createCoreRouter(
   "api::user-profile.user-profile",
   ({ router }) => ({
     routes: [...customRoutes, ...router.routes],
-  })
+  }),
 );

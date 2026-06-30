@@ -7,39 +7,30 @@ async function sendNewPostNotifications(post) {
     .documents("api::user-profile.user-profile")
     .findMany({
       filters: { pushNotificationsEnabled: true },
-      populate: [
-        "user",
-        "kategories",
-        "klasses",
-        "kinder",
-        "kinder.favoriteCategories",
-      ],
+      populate: ["user", "kategories", "kinder", "kinder.favoriteCategories"],
     });
 
   console.log("Found user profiles with push enabled:", userProfiles.length);
 
   const postCategories = post.kategories?.map((c) => c.id) || [];
-  const postKlasses = post.klasses?.map((k) => k.id) || [];
   const postMinAge = post.minAge || 0;
-  const postMaxAge = post.maxAge || 18;
+  const postMaxAge = post.maxAge || 99;
 
   for (const profile of userProfiles) {
     const userCategories = profile.kategories?.map((c) => c.id) || [];
-    const userKlasses = profile.klasses?.map((k) => k.id) || [];
     const userMinAge = profile.minAge || 0;
-    const userMaxAge = profile.maxAge || 18;
+    const userMaxAge = profile.maxAge || 99;
 
     let userMatches = false;
     let kidMatches = [];
 
     // Check user preferences
     const categoryMatch = postCategories.some((id) =>
-      userCategories.includes(id)
+      userCategories.includes(id),
     );
-    const klasseMatch = postKlasses.some((id) => userKlasses.includes(id));
     const ageMatch = postMinAge <= userMaxAge && postMaxAge >= userMinAge;
 
-    if (categoryMatch || klasseMatch || ageMatch) {
+    if (categoryMatch || ageMatch) {
       userMatches = true;
     }
 
@@ -79,7 +70,7 @@ async function sendNewPostNotifications(post) {
         "Sending kid match notification to user:",
         profile.user.id,
         "for kid:",
-        kidName
+        kidName,
       );
       await strapi
         .plugin("unified-notification")
