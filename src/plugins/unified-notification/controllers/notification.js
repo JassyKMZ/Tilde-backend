@@ -117,17 +117,15 @@ module.exports = ({ strapi }) => ({
     try {
       // Robust post loading
       const post =
-        (await strapi
-          .documents("api::post.post")
-          .findOne(postId, {
-            populate: ["kategories", "klasses"],
-            status: "published",
-            locale: "all",
-          })) ||
+        (await strapi.documents("api::post.post").findOne(postId, {
+          populate: ["kategories"],
+          status: "published",
+          locale: "all",
+        })) ||
         (await (isNaN(Number(postId))
           ? Promise.resolve(null)
           : strapi.entityService.findOne("api::post.post", Number(postId), {
-              populate: ["kategories", "klasses"],
+              populate: ["kategories"],
             })));
 
       if (!post) return ctx.notFound("Post not found");
@@ -182,7 +180,7 @@ module.exports = ({ strapi }) => ({
       // 1) Try documents().findOne(documentId)
       try {
         post = await strapi.documents("api::post.post").findOne(postId, {
-          populate: ["kategories", "klasses"],
+          populate: ["kategories"],
           status: "published",
           locale: "all",
         });
@@ -196,7 +194,7 @@ module.exports = ({ strapi }) => ({
         try {
           const docs = await strapi.documents("api::post.post").findMany({
             filters: { documentId: postId },
-            populate: ["kategories", "klasses"],
+            populate: ["kategories"],
             status: "published",
             locale: "all",
           });
@@ -217,7 +215,7 @@ module.exports = ({ strapi }) => ({
             "api::post.post",
             Number(postId),
             {
-              populate: ["kategories", "klasses"],
+              populate: ["kategories"],
             },
           );
           if (post)
@@ -232,7 +230,7 @@ module.exports = ({ strapi }) => ({
         try {
           const docs = await strapi.documents("api::post.post").findMany({
             filters: { id: Number(postId) },
-            populate: ["kategories", "klasses"],
+            populate: ["kategories"],
             status: "published",
             locale: "all",
           });
@@ -277,14 +275,14 @@ module.exports = ({ strapi }) => ({
       // Robust post loading like preview
       const post =
         (await strapi.documents("api::post.post").findOne(postId, {
-          populate: ["kategories", "klasses"],
+          populate: ["kategories"],
           status: "published",
           locale: "all",
         })) ||
         (await (isNaN(Number(postId))
           ? Promise.resolve(null)
           : strapi.entityService.findOne("api::post.post", Number(postId), {
-              populate: ["kategories", "klasses"],
+              populate: ["kategories"],
             })));
 
       if (!post) {

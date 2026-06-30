@@ -132,5 +132,57 @@ module.exports = {
     strapi.log.info(
       "[Bootstrap] Daily event archival cron job scheduled (runs daily at 2:00 AM UTC)",
     );
+
+    // Prune stale FCM tokens daily at 03:30 UTC
+    cron.schedule("30 3 * * *", async () => {
+      try {
+        const PRUNE_DAYS = Number(process.env.FCM_PRUNE_DAYS || 180);
+        const cutoff = new Date(
+          Date.now() - PRUNE_DAYS * 24 * 60 * 60 * 1000,
+        ).toISOString();
+
+        strapi.log.info(
+          `[Cron] Pruning FCM tokens not seen since ${cutoff} (threshold ${PRUNE_DAYS} days)`,
+        );
+
+        // Prefer lastSeen field if you added it; otherwise use updatedAt
+        const staleTokens = await strapi.entityService.findMany(
+          "api::fcm-token.fcm-token",
+          {
+            filters: {
+              $or: [
+                { lastSeen: { $lt: cutoff } },
+                { lastSeen: null, updatedAt: { $lt: cutoff } },
+              ],
+            },
+            limit: 1000,
+            select: ["id", "token", "lastSeen", "updatedAt"],
+          },
+        );
+
+        if (!staleTokens || staleTokens.length === 0) {
+          strapi.log.info("[Cron] No stale FCM tokens found to prune");
+          return;
+        }
+
+        strapi.log.info(
+          `[Cron] Found ${staleTokens.length} stale FCM tokens to prune`,
+        );
+
+        // Delete in small batches to avoid DB pressure
+        for (const t of staleTokens) {
+          try {
+            await strapi.entityService.delete("api::fcm-token.fcm-token", t.id);
+            strapi.log.info(`[Cron] Pruned FCM token id=${t.id}`);
+          } catch (err) {
+            strapi.log.warn("[Cron] Failed to delete FCM token", t.id, err);
+          }
+        }
+
+        strapi.log.info("[Cron] FCM token prune job completed");
+      } catch (err) {
+        strapi.log.error("[Cron] Error in FCM token prune job:", err);
+      }
+    });
   },
 };

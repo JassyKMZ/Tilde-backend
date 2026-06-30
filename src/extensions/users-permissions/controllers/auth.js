@@ -163,4 +163,33 @@ module.exports = {
 
     ctx.created(newUser);
   },
+
+  async emailConfirmation(ctx) {
+    const { confirmation } = ctx.query;
+
+    if (!confirmation) {
+      return ctx.badRequest("Missing confirmation token");
+    }
+
+    try {
+      // Use the users-permissions plugin service to confirm the email
+      const user = await strapi
+        .plugin("users-permissions")
+        .service("user")
+        .confirmEmail(confirmation);
+
+      if (!user) {
+        return ctx.notFound("Invalid or expired confirmation token");
+      }
+
+      // Return JSON for SPA clients (no redirect)
+      return ctx.send({
+        status: user.confirmed ? "confirmed" : "pending",
+        email: user.email,
+      });
+    } catch (err) {
+      strapi.log.error("Email confirmation error", err);
+      return ctx.internalServerError(err.message || "Confirmation failed");
+    }
+  },
 };

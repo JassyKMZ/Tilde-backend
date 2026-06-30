@@ -1,12 +1,12 @@
 "use strict";
 
 const crypto = require("crypto");
-const customRoutesModule = require("../../api/auth/routes/custom-auth.js");
+// const customRoutesModule = require("../../api/auth/routes/custom-auth.js");
 
-const customRoutes =
-  customRoutesModule && customRoutesModule.default
-    ? customRoutesModule.default
-    : customRoutesModule;
+// const customRoutes =
+//   customRoutesModule && customRoutesModule.default
+//     ? customRoutesModule.default
+//     : customRoutesModule;
 
 const REDIRECT_URL = (
   process.env.REDIRECT_URL ||
@@ -46,20 +46,6 @@ module.exports = (plugin) => {
   // Ensure plugin shape
   plugin.routes = plugin.routes || {};
   plugin.routes["content-api"] = plugin.routes["content-api"] || { routes: [] };
-
-  // Append custom routes into users-permissions content-api routes
-  try {
-    if (Array.isArray(customRoutes) && customRoutes.length) {
-      plugin.routes["content-api"].routes.push(...customRoutes);
-      strapi.log.info("users-permissions: custom routes added");
-    } else {
-      strapi.log.warn(
-        "users-permissions: no custom routes to add (customRoutes empty or not an array)",
-      );
-    }
-  } catch (err) {
-    strapi.log.error("users-permissions: failed to add custom routes", err);
-  }
 
   // Get the User content type from the plugin.
   const userContentType = plugin.contentTypes.user;

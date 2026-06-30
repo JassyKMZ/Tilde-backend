@@ -253,33 +253,30 @@ module.exports = ({ strapi }) => {
           populate: [
             "user",
             "kategories",
-            "klasses",
+
             "kinder",
             "kinder.favoriteCategories",
           ],
         });
 
       const postCategories = post.kategories?.map((c) => c.id) || [];
-      const postKlasses = post.klasses?.map((k) => k.id) || [];
       const postMinAge = post.minAge || 0;
-      const postMaxAge = post.maxAge || 18;
+      const postMaxAge = post.maxAge || 99;
 
       const matches = [];
 
       for (const profile of userProfiles) {
         const userCategories = profile.kategories?.map((c) => c.id) || [];
-        const userKlasses = profile.klasses?.map((k) => k.id) || [];
         const userMinAge = profile.minAge || 0;
-        const userMaxAge = profile.maxAge || 18;
+        const userMaxAge = profile.maxAge || 99;
 
         // --- MATCHING LOGIC ---
         const categoryMatch = userCategories.some((id) =>
           postCategories.includes(id),
         );
-        const klasseMatch = userKlasses.some((id) => postKlasses.includes(id));
         const ageMatch = userMinAge <= postMaxAge && userMaxAge >= postMinAge;
 
-        const userMatches = categoryMatch || klasseMatch || ageMatch;
+        const userMatches = categoryMatch || ageMatch;
 
         if (userMatches) {
           matches.push({

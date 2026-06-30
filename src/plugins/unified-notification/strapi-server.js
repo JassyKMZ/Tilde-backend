@@ -93,7 +93,7 @@ module.exports = {
           filters: {
             publishedAt: { $gte: windowStart.toISOString() },
           },
-          populate: ["kategories", "klasses"],
+          populate: ["kategories"],
           status: "published",
         });
 
