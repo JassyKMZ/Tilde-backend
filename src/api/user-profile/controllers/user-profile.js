@@ -7,6 +7,41 @@ module.exports = createCoreController(
   ({ strapi, super: core }) => ({
     ...core,
 
+    async me(ctx) {
+      const authUser = ctx.state.user;
+      if (!authUser) return ctx.unauthorized("You must be logged in");
+
+      const profileId = authUser.profileId;
+      if (!profileId) return ctx.notFound("User profile not found");
+
+      const profile = await strapi.entityService.findOne(
+        "api::user-profile.user-profile",
+        profileId,
+        {
+          populate: {
+            user: { fields: ["email", "fullName"] },
+            bookmarks: { populate: { bild: true } },
+            kategories: true,
+            kinder: { populate: { favoriteCategories: true } },
+            reminders: true,
+            gruppen: {
+              populate: {
+                kinder: true,
+                kategories: true,
+              },
+            },
+            profile_roles: true,
+          },
+        },
+      );
+
+      if (!profile) return ctx.notFound("User profile not found");
+
+      return ctx.send({
+        data: { user_profile: profile, email: authUser.email },
+      });
+    },
+
     async updateBookmarks(ctx) {
       const { bookmarks: docId } = ctx.request.body.data || {}; // Expect a single docId
       if (!docId) return ctx.badRequest("bookmark must be a valid documentId");

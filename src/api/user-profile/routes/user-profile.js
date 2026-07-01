@@ -6,6 +6,14 @@ const { createCoreRouter } = require("@strapi/strapi").factories;
 const customRoutes = [
   {
     method: "GET",
+    path: "/me",
+    handler: "user-profile.me",
+    config: {
+      auth: { strategies: ["jwt"] },
+    },
+  },
+  {
+    method: "GET",
     path: "/me-bookmarks",
     handler: "user-profile.bookmarks",
     config: {
