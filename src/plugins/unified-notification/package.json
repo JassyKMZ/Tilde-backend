@@ -1,8 +1,0 @@
-{
-  "name": "unified-notification",
-  "version": "1.0.0",
-  "strapi": {
-    "name": "unified-notification",
-    "type": "plugin"
-  }
-}
