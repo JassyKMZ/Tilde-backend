@@ -1,0 +1,17 @@
+{
+  "collectionName": "components_impressum_links",
+  "info": {
+    "displayName": "Link",
+    "icon": "attachment"
+  },
+  "options": {},
+  "attributes": {
+    "LinkName": {
+      "type": "string"
+    },
+    "LinkAdresse": {
+      "type": "string"
+    }
+  },
+  "config": {}
+}

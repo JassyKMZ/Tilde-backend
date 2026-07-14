@@ -1,0 +1,202 @@
+{
+  "kind": "collectionType",
+  "collectionName": "posts",
+  "info": {
+    "singularName": "post",
+    "pluralName": "posts",
+    "displayName": "Post",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "titel": {
+      "type": "string",
+      "required": true
+    },
+    "bild": {
+      "type": "media",
+      "multiple": false,
+      "required": true,
+      "allowedTypes": [
+        "images",
+        "files"
+      ]
+    },
+    "summary": {
+      "type": "text"
+    },
+    "beschreibung": {
+      "type": "blocks",
+      "required": true
+    },
+    "isEvent": {
+      "type": "boolean",
+      "required": false,
+      "default": false
+    },
+    "eventDate": {
+      "type": "datetime",
+      "conditions": {
+        "visible": {
+          "==": [
+            {
+              "var": "isEvent"
+            },
+            true
+          ]
+        }
+      }
+    },
+    "veranstaltungsort": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::veranstaltungsort.veranstaltungsort",
+      "conditions": {
+        "visible": {
+          "==": [
+            {
+              "var": "isEvent"
+            },
+            true
+          ]
+        }
+      }
+    },
+    "veranstaltungstyp": {
+      "type": "enumeration",
+      "conditions": {
+        "visible": {
+          "==": [
+            {
+              "var": "isEvent"
+            },
+            true
+          ]
+        }
+      },
+      "default": "Veranstaltung",
+      "enum": [
+        "Abrufveranstaltung",
+        "Kurs",
+        "Workshop",
+        "Seminar",
+        "Fortbildung",
+        "Veranstaltung",
+        "Schülerworkshop"
+      ]
+    },
+    "user_profiles": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "api::user-profile.user-profile",
+      "mappedBy": "bookmarks"
+    },
+    "kategories": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "api::category.category",
+      "inversedBy": "posts"
+    },
+    "institution": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::institution.institution",
+      "inversedBy": "posts"
+    },
+    "minAge": {
+      "type": "integer",
+      "min": 0,
+      "max": 99
+    },
+    "maxAge": {
+      "type": "integer",
+      "min": 0,
+      "max": 99
+    },
+    "kostenpflichtig": {
+      "type": "boolean",
+      "default": false
+    },
+    "user_reminders": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "api::user-profile.user-profile",
+      "mappedBy": "reminders"
+    },
+    "dauer": {
+      "type": "decimal"
+    },
+    "trainer": {
+      "type": "string"
+    },
+    "annotation": {
+      "type": "text"
+    },
+    "publish": {
+      "type": "boolean",
+      "default": false
+    },
+    "galerie": {
+      "type": "media",
+      "multiple": true,
+      "allowedTypes": [
+        "images",
+        "files",
+        "videos",
+        "audios"
+      ]
+    },
+    "veranstalter": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::veranstalter.veranstalter",
+      "inversedBy": "posts"
+    },
+    "teilnehmer": {
+      "type": "integer"
+    },
+    "availability": {
+      "type": "enumeration",
+      "conditions": {
+        "visible": {
+          "==": [
+            {
+              "var": "isEvent"
+            },
+            true
+          ]
+        }
+      },
+      "enum": [
+        "Vor Ort",
+        "Online",
+        "Hybrid"
+      ]
+    },
+    "preis": {
+      "type": "string",
+      "conditions": {
+        "visible": {
+          "==": [
+            {
+              "var": "kostenpflichtig"
+            },
+            true
+          ]
+        }
+      }
+    },
+    "buchung": {
+      "type": "string"
+    },
+    "profile_role": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::profile-role.profile-role",
+      "inversedBy": "posts"
+    }
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "collectionName": "components_profil_kind_gruppes",
+  "info": {
+    "displayName": "kindGruppe"
+  },
+  "options": {},
+  "attributes": {
+    "name": {
+      "type": "string"
+    },
+    "Alter": {
+      "type": "integer",
+      "min": 0,
+      "max": 18
+    }
+  },
+  "config": {}
+}

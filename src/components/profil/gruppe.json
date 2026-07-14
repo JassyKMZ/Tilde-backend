@@ -1,0 +1,34 @@
+{
+  "collectionName": "components_profil_gruppes",
+  "info": {
+    "displayName": "Gruppe",
+    "icon": "puzzle"
+  },
+  "options": {},
+  "attributes": {
+    "name": {
+      "type": "string"
+    },
+    "minAge": {
+      "type": "integer",
+      "min": 0,
+      "max": 99
+    },
+    "maxAge": {
+      "type": "integer",
+      "min": 0,
+      "max": 99
+    },
+    "kategories": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::category.category"
+    },
+    "kinder": {
+      "type": "component",
+      "component": "profil.kind",
+      "repeatable": true
+    }
+  },
+  "config": {}
+}

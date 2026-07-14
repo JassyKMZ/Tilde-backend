@@ -1,0 +1,24 @@
+{
+  "kind": "collectionType",
+  "collectionName": "profile_roles",
+  "info": {
+    "singularName": "profile-role",
+    "pluralName": "profile-roles",
+    "displayName": "profileRole"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "roleType": {
+      "type": "string"
+    },
+    "posts": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::post.post",
+      "mappedBy": "profile_role"
+    }
+  }
+}

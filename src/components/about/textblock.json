@@ -1,0 +1,17 @@
+{
+  "collectionName": "components_about_textblocks",
+  "info": {
+    "displayName": "Textblock",
+    "icon": "hashtag"
+  },
+  "options": {},
+  "attributes": {
+    "title": {
+      "type": "string"
+    },
+    "text": {
+      "type": "blocks"
+    }
+  },
+  "config": {}
+}
