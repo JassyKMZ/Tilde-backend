@@ -797,10 +797,6 @@ export interface ApiProfileRoleProfileRole extends Struct.CollectionTypeSchema {
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
-    user_profiles: Schema.Attribute.Relation<
-      'manyToMany',
-      'api::user-profile.user-profile'
-    >;
   };
 }
 
@@ -980,11 +976,18 @@ export interface ApiUserProfileUserProfile extends Struct.CollectionTypeSchema {
       Schema.Attribute.Private;
     fullName: Schema.Attribute.String;
     gruppen: Schema.Attribute.Component<'profil.gruppe', true>;
+    identity: Schema.Attribute.JSON;
     kategories: Schema.Attribute.Relation<
       'manyToMany',
       'api::category.category'
     >;
-    kinder: Schema.Attribute.Component<'profil.kind', true>;
+    kinder: Schema.Attribute.Component<'profil.kind', true> &
+      Schema.Attribute.SetMinMax<
+        {
+          max: 14;
+        },
+        number
+      >;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<
       'oneToMany',
@@ -1009,10 +1012,6 @@ export interface ApiUserProfileUserProfile extends Struct.CollectionTypeSchema {
       >;
     onboardingComplete: Schema.Attribute.Boolean &
       Schema.Attribute.DefaultTo<false>;
-    profile_roles: Schema.Attribute.Relation<
-      'manyToMany',
-      'api::profile-role.profile-role'
-    >;
     publishedAt: Schema.Attribute.DateTime;
     push_subscriptions: Schema.Attribute.Relation<
       'oneToMany',
