@@ -20,10 +20,7 @@
       "type": "media",
       "multiple": false,
       "required": true,
-      "allowedTypes": [
-        "images",
-        "files"
-      ]
+      "allowedTypes": ["images", "files"]
     },
     "summary": {
       "type": "text"
@@ -142,12 +139,7 @@
     "galerie": {
       "type": "media",
       "multiple": true,
-      "allowedTypes": [
-        "images",
-        "files",
-        "videos",
-        "audios"
-      ]
+      "allowedTypes": ["images", "files", "videos", "audios"]
     },
     "veranstalter": {
       "type": "relation",
@@ -170,11 +162,7 @@
           ]
         }
       },
-      "enum": [
-        "Vor Ort",
-        "Online",
-        "Hybrid"
-      ]
+      "enum": ["Vor Ort", "Online", "Hybrid"]
     },
     "preis": {
       "type": "string",
@@ -196,7 +184,32 @@
       "type": "relation",
       "relation": "manyToOne",
       "target": "api::profile-role.profile-role",
-      "inversedBy": "posts"
+      "inversedBy": "posts",
+      "pluginOptions": {
+        "content-manager": {
+          "visible": false
+        },
+        "content-type-builder": {
+          "visible": false
+        }
+      }
+    },
+    "target_roles": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "api::profile-role.profile-role",
+      "inversedBy": "targeted_posts"
+    },
+    "identity": {
+      "type": "json",
+      "pluginOptions": {
+        "content-manager": {
+          "visible": false
+        },
+        "content-type-builder": {
+          "visible": false
+        }
+      }
     }
   }
 }

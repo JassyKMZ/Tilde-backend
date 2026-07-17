@@ -201,7 +201,7 @@ module.exports = createCoreController(
 
         if (!fullNameCandidate) {
           return ctx.badRequest(
-            "Onboarding kann nur abgeschlossen werden, wenn fullName gesetzt ist",
+            "Onboarding kann nur abgeschlossen werden, wenn Name gesetzt ist",
           );
         }
 

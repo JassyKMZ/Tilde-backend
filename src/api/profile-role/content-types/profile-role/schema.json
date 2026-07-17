@@ -19,6 +19,12 @@
       "relation": "oneToMany",
       "target": "api::post.post",
       "mappedBy": "profile_role"
+    },
+    "targeted_posts": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "api::post.post",
+      "mappedBy": "target_roles"
     }
   }
 }

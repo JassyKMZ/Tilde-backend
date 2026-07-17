@@ -1,89 +1,74 @@
 "use strict";
 
-async function sendNewPostNotifications(post) {
-  console.log("Sending new post notifications for post:", post.titel);
-  // Get all user profiles with push enabled
-  const userProfiles = await strapi
-    .documents("api::user-profile.user-profile")
-    .findMany({
-      filters: { pushNotificationsEnabled: true },
-      populate: ["user", "kategories", "kinder", "kinder.favoriteCategories"],
-    });
+function normalizeIds(values = []) {
+  return [
+    ...new Set(
+      (Array.isArray(values) ? values : [])
+        .map((id) => Number(id))
+        .filter((id) => Number.isFinite(id) && id > 0),
+    ),
+  ];
+}
 
-  console.log("Found user profiles with push enabled:", userProfiles.length);
+function extractRelationIds(value) {
+  const ids = [];
+  const pushValue = (item) => {
+    if (item === null || item === undefined) return;
 
-  const postCategories = post.kategories?.map((c) => c.id) || [];
-  const postMinAge = post.minAge || 0;
-  const postMaxAge = post.maxAge || 99;
-
-  for (const profile of userProfiles) {
-    const userCategories = profile.kategories?.map((c) => c.id) || [];
-    const userMinAge = profile.minAge || 0;
-    const userMaxAge = profile.maxAge || 99;
-
-    let userMatches = false;
-    let kidMatches = [];
-
-    // Check user preferences
-    const categoryMatch = postCategories.some((id) =>
-      userCategories.includes(id),
-    );
-    const ageMatch = postMinAge <= userMaxAge && postMaxAge >= userMinAge;
-
-    if (categoryMatch || ageMatch) {
-      userMatches = true;
+    if (typeof item === "number" || typeof item === "string") {
+      const parsed = Number(item);
+      if (Number.isFinite(parsed) && parsed > 0) ids.push(parsed);
+      return;
     }
 
-    // TEMP: For testing, always match user
-    userMatches = true;
+    if (typeof item !== "object") return;
 
-    // Check kids
-    // if (profile.kinder) {
-    //   for (const kid of profile.kinder) {
-    //     const kidAge = kid.alter;
-    //     if (kidAge >= postMinAge && kidAge <= postMaxAge) {
-    //       const kidCategories = kid.favoriteCategories?.map((c) => c.id) || [];
-    //       if (postCategories.some(id => kidCategories.includes(id))) {
-    //         kidMatches.push(kid.name);
-    //       }
-    //     }
-    //   }
-    // }
-
-    // Send notifications
-    const url = `/post/${post.documentId}`; // Frontend route
-
-    if (userMatches) {
-      console.log("Sending user match notification to user:", profile.user.id);
-      await strapi
-        .plugin("unified-notification")
-        .service("notification")
-        .sendToUser(profile.user.id, {
-          title: "New Post Published",
-          body: "A new post that you might like was published",
-          data: { url },
-        });
+    const direct = item.id ?? item.documentId ?? item.value;
+    if (direct !== undefined && direct !== null && direct !== "") {
+      const parsed = Number(direct);
+      if (Number.isFinite(parsed) && parsed > 0) ids.push(parsed);
     }
 
-    for (const kidName of kidMatches) {
-      console.log(
-        "Sending kid match notification to user:",
-        profile.user.id,
-        "for kid:",
-        kidName,
-      );
-      await strapi
-        .plugin("unified-notification")
-        .service("notification")
-        .sendToUser(profile.user.id, {
-          title: "New Post Published",
-          body: `A post that ${kidName} might like, was published`,
-          data: { url },
-        });
-    }
+    if (Array.isArray(item.connect)) item.connect.forEach(pushValue);
+    if (Array.isArray(item.set)) item.set.forEach(pushValue);
+    if (Array.isArray(item.data)) item.data.forEach(pushValue);
+  };
+
+  if (Array.isArray(value)) value.forEach(pushValue);
+  else if (value && typeof value === "object") pushValue(value);
+
+  return [...new Set(ids)];
+}
+
+function syncTargetRolesAndIdentity(data) {
+  if (!data || typeof data !== "object") return;
+
+  const hasTargetRoles = Object.prototype.hasOwnProperty.call(
+    data,
+    "target_roles",
+  );
+  const hasIdentity = Object.prototype.hasOwnProperty.call(data, "identity");
+
+  if (!hasTargetRoles && !hasIdentity) return;
+
+  if (hasTargetRoles) {
+    const relationIds = extractRelationIds(data.target_roles);
+    data.identity = relationIds;
+    return;
+  }
+
+  if (hasIdentity) {
+    const identityIds = normalizeIds(data.identity);
+    data.identity = identityIds;
+    data.target_roles = { set: identityIds.map((id) => ({ id })) };
   }
 }
 
-// Disabled: Transaction conflicts with database queries
-// Use cron job instead to send notifications for recently published posts
-module.exports = {};
+module.exports = {
+  async beforeCreate(event) {
+    syncTargetRolesAndIdentity(event?.params?.data);
+  },
+  async beforeUpdate(event) {
+    syncTargetRolesAndIdentity(event?.params?.data);
+  },
+};
