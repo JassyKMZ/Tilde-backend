@@ -696,6 +696,15 @@ export interface ApiPostPost extends Struct.CollectionTypeSchema {
       'images' | 'files' | 'videos' | 'audios',
       true
     >;
+    identity: Schema.Attribute.JSON &
+      Schema.Attribute.SetPluginOptions<{
+        'content-manager': {
+          visible: false;
+        };
+        'content-type-builder': {
+          visible: false;
+        };
+      }>;
     institution: Schema.Attribute.Relation<
       'manyToOne',
       'api::institution.institution'
@@ -730,10 +739,22 @@ export interface ApiPostPost extends Struct.CollectionTypeSchema {
     profile_role: Schema.Attribute.Relation<
       'manyToOne',
       'api::profile-role.profile-role'
-    >;
+    > &
+      Schema.Attribute.SetPluginOptions<{
+        'content-manager': {
+          visible: false;
+        };
+        'content-type-builder': {
+          visible: false;
+        };
+      }>;
     publish: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
     publishedAt: Schema.Attribute.DateTime;
     summary: Schema.Attribute.Text;
+    target_roles: Schema.Attribute.Relation<
+      'manyToMany',
+      'api::profile-role.profile-role'
+    >;
     teilnehmer: Schema.Attribute.Integer;
     titel: Schema.Attribute.String & Schema.Attribute.Required;
     trainer: Schema.Attribute.String;
@@ -794,6 +815,7 @@ export interface ApiProfileRoleProfileRole extends Struct.CollectionTypeSchema {
     posts: Schema.Attribute.Relation<'oneToMany', 'api::post.post'>;
     publishedAt: Schema.Attribute.DateTime;
     roleType: Schema.Attribute.String;
+    targeted_posts: Schema.Attribute.Relation<'manyToMany', 'api::post.post'>;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
