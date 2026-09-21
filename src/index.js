@@ -80,7 +80,7 @@ module.exports = {
         // Find all published events where eventDate is older than 14 days
         const expiredPosts = await strapi.db.query("api::post.post").findMany({
           where: {
-            isEvent: true,
+            postType: "event",
             eventDate: {
               $lt: cutoffDate, // eventDate is before cutoff
             },
