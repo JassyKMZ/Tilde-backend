@@ -36,7 +36,7 @@ module.exports = {
 
         // Fetch all published events once
         const events = await strapi.documents("api::post.post").findMany({
-          filters: { isEvent: true },
+          filters: { postType: "event" },
           populate: ["user_reminders", "user_reminders.user"],
           status: "published",
         });

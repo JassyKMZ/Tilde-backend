@@ -78,7 +78,7 @@ module.exports = ({ strapi }) => ({
         );
       }
 
-      if (!post || !post.isEvent || !post.eventDate) {
+      if (!post || post.postType !== "event" || !post.eventDate) {
         return ctx.badRequest("Invalid post or not an event");
       }
 
