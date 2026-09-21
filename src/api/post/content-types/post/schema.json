@@ -29,20 +29,15 @@
       "type": "blocks",
       "required": true
     },
-    "isEvent": {
-      "type": "boolean",
-      "required": false,
-      "default": false
-    },
     "eventDate": {
       "type": "datetime",
       "conditions": {
         "visible": {
           "==": [
             {
-              "var": "isEvent"
+              "var": "postType"
             },
-            true
+            "event"
           ]
         }
       }
@@ -55,9 +50,9 @@
         "visible": {
           "==": [
             {
-              "var": "isEvent"
+              "var": "postType"
             },
-            true
+            "event"
           ]
         }
       }
@@ -68,9 +63,9 @@
         "visible": {
           "==": [
             {
-              "var": "isEvent"
+              "var": "postType"
             },
-            true
+            "event"
           ]
         }
       },
@@ -90,6 +85,12 @@
       "relation": "manyToMany",
       "target": "api::user-profile.user-profile",
       "mappedBy": "bookmarks"
+    },
+    "saved_tipp_profiles": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "api::user-profile.user-profile",
+      "mappedBy": "saved_tipps"
     },
     "kategories": {
       "type": "relation",
@@ -115,6 +116,16 @@
     },
     "kostenpflichtig": {
       "type": "boolean",
+      "conditions": {
+        "visible": {
+          "==": [
+            {
+              "var": "postType"
+            },
+            "event"
+          ]
+        }
+      },
       "default": false
     },
     "user_reminders": {
@@ -124,10 +135,30 @@
       "mappedBy": "reminders"
     },
     "dauer": {
-      "type": "decimal"
+      "type": "decimal",
+      "conditions": {
+        "visible": {
+          "==": [
+            {
+              "var": "postType"
+            },
+            "event"
+          ]
+        }
+      }
     },
     "trainer": {
-      "type": "string"
+      "type": "string",
+      "conditions": {
+        "visible": {
+          "==": [
+            {
+              "var": "postType"
+            },
+            "event"
+          ]
+        }
+      }
     },
     "annotation": {
       "type": "text"
@@ -148,7 +179,17 @@
       "inversedBy": "posts"
     },
     "teilnehmer": {
-      "type": "integer"
+      "type": "integer",
+      "conditions": {
+        "visible": {
+          "==": [
+            {
+              "var": "postType"
+            },
+            "event"
+          ]
+        }
+      }
     },
     "availability": {
       "type": "enumeration",
@@ -156,9 +197,9 @@
         "visible": {
           "==": [
             {
-              "var": "isEvent"
+              "var": "postType"
             },
-            true
+            "event"
           ]
         }
       },
@@ -177,22 +218,8 @@
         }
       }
     },
-    "buchung": {
+    "linkTo": {
       "type": "string"
-    },
-    "profile_role": {
-      "type": "relation",
-      "relation": "manyToOne",
-      "target": "api::profile-role.profile-role",
-      "inversedBy": "posts",
-      "pluginOptions": {
-        "content-manager": {
-          "visible": false
-        },
-        "content-type-builder": {
-          "visible": false
-        }
-      }
     },
     "target_roles": {
       "type": "relation",
@@ -210,6 +237,10 @@
           "visible": false
         }
       }
+    },
+    "postType": {
+      "type": "enumeration",
+      "enum": ["event", "tipp", "beitrag"]
     }
   }
 }

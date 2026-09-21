@@ -30,7 +30,7 @@ module.exports = createCoreController("api::post.post", {
       const existingFilters = ctx.query.filters || {};
 
       // Build auto-expiry filter:
-      // Show (isEvent = false) OR (isEvent = true AND (eventDate >= cutoff OR eventDate is null))
+      // Show non-events OR events with a recent date or no date.
       // This includes:
       // - All non-events, regardless of date
       // - Recent events (with dates >= cutoff)
@@ -38,11 +38,11 @@ module.exports = createCoreController("api::post.post", {
       const autoExpiryFilter = {
         ...existingFilters,
         $or: [
-          { isEvent: { $eq: false } }, // All non-events, regardless of date
+          { postType: { $ne: "event" } }, // All non-events, regardless of date
           {
             // Events: both recent events and on-demand events without dates
             $and: [
-              { isEvent: { $eq: true } },
+              { postType: { $eq: "event" } },
               {
                 // Recent events OR events without dates (on-demand/flexible)
                 $or: [
