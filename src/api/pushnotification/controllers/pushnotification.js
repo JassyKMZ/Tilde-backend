@@ -37,7 +37,7 @@ module.exports = {
       // Get the user profile
       const userProfile = await strapi.entityService.findOne(
         "api::user-profile.user-profile",
-        userProfileId
+        userProfileId,
       );
       if (!userProfile) {
         return ctx.badRequest("Invalid user profile");
@@ -47,7 +47,7 @@ module.exports = {
 
       // Get the post
       const post = await strapi.entityService.findOne("api::post.post", postId);
-      if (!post || !post.isEvent || !post.eventDate) {
+      if (!post || post.postType !== "event" || !post.eventDate) {
         return ctx.badRequest("Invalid post or not an event");
       }
 
