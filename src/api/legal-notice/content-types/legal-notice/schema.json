@@ -1,0 +1,32 @@
+{
+  "kind": "singleType",
+  "collectionName": "legal_notices",
+  "info": {
+    "singularName": "legal-notice",
+    "pluralName": "legal-notices",
+    "displayName": "Impressum"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "Impressum": {
+      "type": "component",
+      "component": "impressum.heading-1",
+      "repeatable": false
+    },
+    "Impressumsinhalt": {
+      "type": "dynamiczone",
+      "components": [
+        "impressum.textblock",
+        "impressum.link",
+        "impressum.infoblock",
+        "impressum.heading-4",
+        "impressum.heading-3",
+        "impressum.heading-2",
+        "impressum.long-text"
+      ]
+    }
+  }
+}

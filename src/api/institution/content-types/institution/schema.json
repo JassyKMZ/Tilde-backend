@@ -1,0 +1,55 @@
+{
+  "kind": "collectionType",
+  "collectionName": "institutions",
+  "info": {
+    "singularName": "institution",
+    "pluralName": "institutions",
+    "displayName": "Institution",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "title": {
+      "type": "string"
+    },
+    "logo": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": [
+        "images",
+        "files",
+        "videos",
+        "audios"
+      ]
+    },
+    "email": {
+      "type": "email"
+    },
+    "strasse": {
+      "type": "string"
+    },
+    "ort": {
+      "type": "string"
+    },
+    "phone": {
+      "type": "string",
+      "unique": false
+    },
+    "website": {
+      "type": "string"
+    },
+    "about": {
+      "type": "blocks"
+    },
+    "posts": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::post.post",
+      "mappedBy": "institution"
+    }
+  }
+}
