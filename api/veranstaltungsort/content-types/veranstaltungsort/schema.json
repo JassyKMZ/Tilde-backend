@@ -1,0 +1,20 @@
+{
+  "kind": "collectionType",
+  "collectionName": "veranstaltungsorte",
+  "info": {
+    "singularName": "veranstaltungsort",
+    "pluralName": "veranstaltungsorte",
+    "displayName": "Veranstaltungsort"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "attributes": {
+    "ort": {
+      "type": "string"
+    },
+    "adresse": {
+      "type": "text"
+    }
+  }
+}
