@@ -76,8 +76,8 @@
     "saved_tipps": {
       "type": "relation",
       "relation": "manyToMany",
-      "target": "api::post.post",
-      "inversedBy": "saved_tipp_profiles"
+      "target": "api::tipp-section.tipp-section",
+      "mappedBy": "user_profiles"
     },
     "onboardingComplete": {
       "type": "boolean",

@@ -20,7 +20,10 @@
       "type": "media",
       "multiple": false,
       "required": true,
-      "allowedTypes": ["images", "files"]
+      "allowedTypes": [
+        "images",
+        "files"
+      ]
     },
     "summary": {
       "type": "text"
@@ -170,7 +173,12 @@
     "galerie": {
       "type": "media",
       "multiple": true,
-      "allowedTypes": ["images", "files", "videos", "audios"]
+      "allowedTypes": [
+        "images",
+        "files",
+        "videos",
+        "audios"
+      ]
     },
     "veranstalter": {
       "type": "relation",
@@ -203,7 +211,11 @@
           ]
         }
       },
-      "enum": ["Vor Ort", "Online", "Hybrid"]
+      "enum": [
+        "Vor Ort",
+        "Online",
+        "Hybrid"
+      ]
     },
     "preis": {
       "type": "string",
@@ -240,7 +252,11 @@
     },
     "postType": {
       "type": "enumeration",
-      "enum": ["event", "tipp", "beitrag"]
+      "enum": [
+        "event",
+        "tipp",
+        "beitrag"
+      ]
     }
   }
 }

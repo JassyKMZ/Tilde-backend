@@ -26,6 +26,12 @@
     },
     "title": {
       "type": "string"
+    },
+    "tipps": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "api::tipp-section.tipp-section",
+      "inversedBy": "kategories"
     }
   }
 }
