@@ -20,10 +20,7 @@
       "type": "media",
       "multiple": false,
       "required": true,
-      "allowedTypes": [
-        "images",
-        "files"
-      ]
+      "allowedTypes": ["images", "files"]
     },
     "summary": {
       "type": "text"
@@ -32,15 +29,20 @@
       "type": "blocks",
       "required": true
     },
+    "isEvent": {
+      "type": "boolean",
+      "required": false,
+      "default": false
+    },
     "eventDate": {
       "type": "datetime",
       "conditions": {
         "visible": {
           "==": [
             {
-              "var": "postType"
+              "var": "isEvent"
             },
-            "event"
+            true
           ]
         }
       }
@@ -53,9 +55,9 @@
         "visible": {
           "==": [
             {
-              "var": "postType"
+              "var": "isEvent"
             },
-            "event"
+            true
           ]
         }
       }
@@ -66,9 +68,9 @@
         "visible": {
           "==": [
             {
-              "var": "postType"
+              "var": "isEvent"
             },
-            "event"
+            true
           ]
         }
       },
@@ -88,12 +90,6 @@
       "relation": "manyToMany",
       "target": "api::user-profile.user-profile",
       "mappedBy": "bookmarks"
-    },
-    "saved_tipp_profiles": {
-      "type": "relation",
-      "relation": "manyToMany",
-      "target": "api::user-profile.user-profile",
-      "mappedBy": "saved_tipps"
     },
     "kategories": {
       "type": "relation",
@@ -119,16 +115,6 @@
     },
     "kostenpflichtig": {
       "type": "boolean",
-      "conditions": {
-        "visible": {
-          "==": [
-            {
-              "var": "postType"
-            },
-            "event"
-          ]
-        }
-      },
       "default": false
     },
     "user_reminders": {
@@ -138,30 +124,10 @@
       "mappedBy": "reminders"
     },
     "dauer": {
-      "type": "decimal",
-      "conditions": {
-        "visible": {
-          "==": [
-            {
-              "var": "postType"
-            },
-            "event"
-          ]
-        }
-      }
+      "type": "decimal"
     },
     "trainer": {
-      "type": "string",
-      "conditions": {
-        "visible": {
-          "==": [
-            {
-              "var": "postType"
-            },
-            "event"
-          ]
-        }
-      }
+      "type": "string"
     },
     "annotation": {
       "type": "text"
@@ -173,12 +139,7 @@
     "galerie": {
       "type": "media",
       "multiple": true,
-      "allowedTypes": [
-        "images",
-        "files",
-        "videos",
-        "audios"
-      ]
+      "allowedTypes": ["images", "files", "videos", "audios"]
     },
     "veranstalter": {
       "type": "relation",
@@ -187,17 +148,7 @@
       "inversedBy": "posts"
     },
     "teilnehmer": {
-      "type": "integer",
-      "conditions": {
-        "visible": {
-          "==": [
-            {
-              "var": "postType"
-            },
-            "event"
-          ]
-        }
-      }
+      "type": "integer"
     },
     "availability": {
       "type": "enumeration",
@@ -205,17 +156,13 @@
         "visible": {
           "==": [
             {
-              "var": "postType"
+              "var": "isEvent"
             },
-            "event"
+            true
           ]
         }
       },
-      "enum": [
-        "Vor Ort",
-        "Online",
-        "Hybrid"
-      ]
+      "enum": ["Vor Ort", "Online", "Hybrid"]
     },
     "preis": {
       "type": "string",
@@ -232,6 +179,20 @@
     },
     "linkTo": {
       "type": "string"
+    },
+    "profile_role": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::profile-role.profile-role",
+      "inversedBy": "posts",
+      "pluginOptions": {
+        "content-manager": {
+          "visible": false
+        },
+        "content-type-builder": {
+          "visible": false
+        }
+      }
     },
     "target_roles": {
       "type": "relation",
@@ -252,11 +213,7 @@
     },
     "postType": {
       "type": "enumeration",
-      "enum": [
-        "event",
-        "tipp",
-        "beitrag"
-      ]
+      "enum": ["event", "tipp", "beitrag"]
     }
   }
 }
