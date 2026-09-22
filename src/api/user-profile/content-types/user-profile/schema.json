@@ -73,12 +73,6 @@
     "testUser": {
       "type": "boolean"
     },
-    "saved_tipps": {
-      "type": "relation",
-      "relation": "manyToMany",
-      "target": "api::tipp-section.tipp-section",
-      "mappedBy": "user_profiles"
-    },
     "onboardingComplete": {
       "type": "boolean",
       "default": false
