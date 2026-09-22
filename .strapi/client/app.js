@@ -5,6 +5,7 @@
 import refreshToken from "@redon2inc/strapi-plugin-refresh-token/strapi-admin";
 import strapiCloud from "@strapi/plugin-cloud/strapi-admin";
 import usersPermissions from "@strapi/plugin-users-permissions/strapi-admin";
+import emailDesigner5 from "strapi-plugin-email-designer-5/strapi-admin";
 import multiSelect from "strapi-plugin-multi-select/strapi-admin";
 import { renderAdmin } from "@strapi/strapi/admin";
 
@@ -13,6 +14,7 @@ renderAdmin(document.getElementById("strapi"), {
     "refresh-token": refreshToken,
     "strapi-cloud": strapiCloud,
     "users-permissions": usersPermissions,
+    "email-designer-5": emailDesigner5,
     "multi-select": multiSelect,
   },
 });
