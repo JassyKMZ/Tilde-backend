@@ -1,10 +1,10 @@
-import type { Schema, Struct } from '@strapi/strapi';
+import type { Schema, Struct } from "@strapi/strapi";
 
 export interface AboutHeading extends Struct.ComponentSchema {
-  collectionName: 'components_about_headings';
+  collectionName: "components_about_headings";
   info: {
-    displayName: 'Heading';
-    icon: 'hashtag';
+    displayName: "Heading";
+    icon: "hashtag";
   };
   attributes: {
     title: Schema.Attribute.String;
@@ -12,10 +12,10 @@ export interface AboutHeading extends Struct.ComponentSchema {
 }
 
 export interface AboutTextblock extends Struct.ComponentSchema {
-  collectionName: 'components_about_textblocks';
+  collectionName: "components_about_textblocks";
   info: {
-    displayName: 'Textblock';
-    icon: 'hashtag';
+    displayName: "Textblock";
+    icon: "hashtag";
   };
   attributes: {
     text: Schema.Attribute.Blocks;
@@ -24,10 +24,10 @@ export interface AboutTextblock extends Struct.ComponentSchema {
 }
 
 export interface ImpressumHeading1 extends Struct.ComponentSchema {
-  collectionName: 'components_impressum_heading_1s';
+  collectionName: "components_impressum_heading_1s";
   info: {
-    displayName: 'Heading 1';
-    icon: 'italic';
+    displayName: "Heading 1";
+    icon: "italic";
   };
   attributes: {
     Titel: Schema.Attribute.String;
@@ -35,10 +35,10 @@ export interface ImpressumHeading1 extends Struct.ComponentSchema {
 }
 
 export interface ImpressumHeading2 extends Struct.ComponentSchema {
-  collectionName: 'components_impressum_heading_2s';
+  collectionName: "components_impressum_heading_2s";
   info: {
-    displayName: 'Heading 2';
-    icon: 'italic';
+    displayName: "Heading 2";
+    icon: "italic";
   };
   attributes: {
     Titel: Schema.Attribute.String;
@@ -46,10 +46,10 @@ export interface ImpressumHeading2 extends Struct.ComponentSchema {
 }
 
 export interface ImpressumHeading3 extends Struct.ComponentSchema {
-  collectionName: 'components_impressum_heading_3s';
+  collectionName: "components_impressum_heading_3s";
   info: {
-    displayName: 'Heading 3';
-    icon: 'italic';
+    displayName: "Heading 3";
+    icon: "italic";
   };
   attributes: {
     Titel: Schema.Attribute.String;
@@ -57,10 +57,10 @@ export interface ImpressumHeading3 extends Struct.ComponentSchema {
 }
 
 export interface ImpressumHeading4 extends Struct.ComponentSchema {
-  collectionName: 'components_impressum_heading_4s';
+  collectionName: "components_impressum_heading_4s";
   info: {
-    displayName: 'Heading 4';
-    icon: 'italic';
+    displayName: "Heading 4";
+    icon: "italic";
   };
   attributes: {
     Titel: Schema.Attribute.String;
@@ -68,10 +68,10 @@ export interface ImpressumHeading4 extends Struct.ComponentSchema {
 }
 
 export interface ImpressumInfoblock extends Struct.ComponentSchema {
-  collectionName: 'components_impressum_infoblocks';
+  collectionName: "components_impressum_infoblocks";
   info: {
-    displayName: 'Infoblock';
-    icon: 'bulletList';
+    displayName: "Infoblock";
+    icon: "bulletList";
   };
   attributes: {
     EMail: Schema.Attribute.String;
@@ -86,10 +86,10 @@ export interface ImpressumInfoblock extends Struct.ComponentSchema {
 }
 
 export interface ImpressumLink extends Struct.ComponentSchema {
-  collectionName: 'components_impressum_links';
+  collectionName: "components_impressum_links";
   info: {
-    displayName: 'Link';
-    icon: 'attachment';
+    displayName: "Link";
+    icon: "attachment";
   };
   attributes: {
     LinkAdresse: Schema.Attribute.String;
@@ -98,10 +98,10 @@ export interface ImpressumLink extends Struct.ComponentSchema {
 }
 
 export interface ImpressumLongText extends Struct.ComponentSchema {
-  collectionName: 'components_impressum_long_texts';
+  collectionName: "components_impressum_long_texts";
   info: {
-    displayName: 'Long Text';
-    icon: 'hashtag';
+    displayName: "Long Text";
+    icon: "hashtag";
   };
   attributes: {
     Text: Schema.Attribute.Blocks;
@@ -109,10 +109,10 @@ export interface ImpressumLongText extends Struct.ComponentSchema {
 }
 
 export interface ImpressumTextblock extends Struct.ComponentSchema {
-  collectionName: 'components_impressum_textblocks';
+  collectionName: "components_impressum_textblocks";
   info: {
-    displayName: 'Textblock';
-    icon: 'layer';
+    displayName: "Textblock";
+    icon: "layer";
   };
   attributes: {
     Text: Schema.Attribute.Text;
@@ -120,10 +120,10 @@ export interface ImpressumTextblock extends Struct.ComponentSchema {
 }
 
 export interface LandingButton extends Struct.ComponentSchema {
-  collectionName: 'components_landing_buttons';
+  collectionName: "components_landing_buttons";
   info: {
-    displayName: 'Button';
-    icon: 'arrowRight';
+    displayName: "Button";
+    icon: "arrowRight";
   };
   attributes: {
     content: Schema.Attribute.String;
@@ -132,10 +132,10 @@ export interface LandingButton extends Struct.ComponentSchema {
 }
 
 export interface LandingStartsText extends Struct.ComponentSchema {
-  collectionName: 'components_landing_starts_texts';
+  collectionName: "components_landing_starts_texts";
   info: {
-    displayName: 'StartText';
-    icon: 'bulletList';
+    displayName: "StartText";
+    icon: "bulletList";
   };
   attributes: {
     Beschreibung: Schema.Attribute.Text;
@@ -144,17 +144,17 @@ export interface LandingStartsText extends Struct.ComponentSchema {
 }
 
 export interface ProfilGruppe extends Struct.ComponentSchema {
-  collectionName: 'components_profil_gruppes';
+  collectionName: "components_profil_gruppes";
   info: {
-    displayName: 'Gruppe';
-    icon: 'puzzle';
+    displayName: "Gruppe";
+    icon: "puzzle";
   };
   attributes: {
     kategories: Schema.Attribute.Relation<
-      'oneToMany',
-      'api::category.category'
+      "oneToMany",
+      "api::category.category"
     >;
-    kinder: Schema.Attribute.Component<'profil.kind', true>;
+    kinder: Schema.Attribute.Component<"profil.kind", true>;
     maxAge: Schema.Attribute.Integer &
       Schema.Attribute.SetMinMax<
         {
@@ -176,10 +176,10 @@ export interface ProfilGruppe extends Struct.ComponentSchema {
 }
 
 export interface ProfilKind extends Struct.ComponentSchema {
-  collectionName: 'components_profil_kinds';
+  collectionName: "components_profil_kinds";
   info: {
-    displayName: 'Kind';
-    icon: 'user';
+    displayName: "Kind";
+    icon: "user";
   };
   attributes: {
     alter: Schema.Attribute.Integer;
@@ -192,17 +192,17 @@ export interface ProfilKind extends Struct.ComponentSchema {
         number
       >;
     favoriteCategories: Schema.Attribute.Relation<
-      'manyToMany',
-      'api::category.category'
+      "manyToMany",
+      "api::category.category"
     >;
     name: Schema.Attribute.String & Schema.Attribute.Required;
   };
 }
 
 export interface ProfilKindGruppe extends Struct.ComponentSchema {
-  collectionName: 'components_profil_kind_gruppes';
+  collectionName: "components_profil_kind_gruppes";
   info: {
-    displayName: 'kindGruppe';
+    displayName: "kindGruppe";
   };
   attributes: {
     Alter: Schema.Attribute.Integer &
@@ -218,38 +218,38 @@ export interface ProfilKindGruppe extends Struct.ComponentSchema {
 }
 
 export interface RoadmapMilestone extends Struct.ComponentSchema {
-  collectionName: 'components_roadmap_milestones';
+  collectionName: "components_roadmap_milestones";
   info: {
-    displayName: 'milestone';
-    icon: 'check';
+    displayName: "milestone";
+    icon: "check";
   };
   attributes: {
     description: Schema.Attribute.Blocks;
     isDone: Schema.Attribute.Boolean;
-    progress: Schema.Attribute.Enumeration<['Geplant', 'In Arbeit', 'Testen']>;
+    progress: Schema.Attribute.Enumeration<["Geplant", "In Arbeit", "Testen"]>;
     title: Schema.Attribute.String;
   };
 }
 
-declare module '@strapi/strapi' {
+declare module "@strapi/strapi" {
   export module Public {
     export interface ComponentSchemas {
-      'about.heading': AboutHeading;
-      'about.textblock': AboutTextblock;
-      'impressum.heading-1': ImpressumHeading1;
-      'impressum.heading-2': ImpressumHeading2;
-      'impressum.heading-3': ImpressumHeading3;
-      'impressum.heading-4': ImpressumHeading4;
-      'impressum.infoblock': ImpressumInfoblock;
-      'impressum.link': ImpressumLink;
-      'impressum.long-text': ImpressumLongText;
-      'impressum.textblock': ImpressumTextblock;
-      'landing.button': LandingButton;
-      'landing.starts-text': LandingStartsText;
-      'profil.gruppe': ProfilGruppe;
-      'profil.kind': ProfilKind;
-      'profil.kind-gruppe': ProfilKindGruppe;
-      'roadmap.milestone': RoadmapMilestone;
+      "about.heading": AboutHeading;
+      "about.textblock": AboutTextblock;
+      "impressum.heading-1": ImpressumHeading1;
+      "impressum.heading-2": ImpressumHeading2;
+      "impressum.heading-3": ImpressumHeading3;
+      "impressum.heading-4": ImpressumHeading4;
+      "impressum.infoblock": ImpressumInfoblock;
+      "impressum.link": ImpressumLink;
+      "impressum.long-text": ImpressumLongText;
+      "impressum.textblock": ImpressumTextblock;
+      "landing.button": LandingButton;
+      "landing.starts-text": LandingStartsText;
+      "profil.gruppe": ProfilGruppe;
+      "profil.kind": ProfilKind;
+      "profil.kind-gruppe": ProfilKindGruppe;
+      "roadmap.milestone": RoadmapMilestone;
     }
   }
 }
