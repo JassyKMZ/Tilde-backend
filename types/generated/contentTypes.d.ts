@@ -686,7 +686,6 @@ export interface ApiPostPost extends Struct.CollectionTypeSchema {
     beschreibung: Schema.Attribute.Blocks & Schema.Attribute.Required;
     bild: Schema.Attribute.Media<'images' | 'files'> &
       Schema.Attribute.Required;
-    buchung: Schema.Attribute.String;
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
@@ -709,13 +708,13 @@ export interface ApiPostPost extends Struct.CollectionTypeSchema {
       'manyToOne',
       'api::institution.institution'
     >;
-    isEvent: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
     kategories: Schema.Attribute.Relation<
       'manyToMany',
       'api::category.category'
     >;
     kostenpflichtig: Schema.Attribute.Boolean &
       Schema.Attribute.DefaultTo<false>;
+    linkTo: Schema.Attribute.String;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<'oneToMany', 'api::post.post'> &
       Schema.Attribute.Private;
@@ -735,21 +734,14 @@ export interface ApiPostPost extends Struct.CollectionTypeSchema {
         },
         number
       >;
+    postType: Schema.Attribute.Enumeration<['event', 'tipp', 'beitrag']>;
     preis: Schema.Attribute.String;
-    profile_role: Schema.Attribute.Relation<
-      'manyToOne',
-      'api::profile-role.profile-role'
-    > &
-      Schema.Attribute.SetPluginOptions<{
-        'content-manager': {
-          visible: false;
-        };
-        'content-type-builder': {
-          visible: false;
-        };
-      }>;
     publish: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
     publishedAt: Schema.Attribute.DateTime;
+    saved_tipp_profiles: Schema.Attribute.Relation<
+      'manyToMany',
+      'api::user-profile.user-profile'
+    >;
     summary: Schema.Attribute.Text;
     target_roles: Schema.Attribute.Relation<
       'manyToMany',
@@ -812,7 +804,6 @@ export interface ApiProfileRoleProfileRole extends Struct.CollectionTypeSchema {
       'api::profile-role.profile-role'
     > &
       Schema.Attribute.Private;
-    posts: Schema.Attribute.Relation<'oneToMany', 'api::post.post'>;
     publishedAt: Schema.Attribute.DateTime;
     roleType: Schema.Attribute.String;
     targeted_posts: Schema.Attribute.Relation<'manyToMany', 'api::post.post'>;
