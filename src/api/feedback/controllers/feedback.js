@@ -4,18 +4,7 @@ module.exports = createCoreController(
   "api::feedback.feedback",
   ({ strapi }) => ({
     async create(ctx) {
-      const { name, nachricht, kategorie, captcha, website } =
-        ctx.request.body.data;
-
-      // 🕵️ Honeypot
-      if (website && website.trim() !== "") {
-        return ctx.badRequest("Bot detected (honeypot field filled).");
-      }
-
-      // 🔢 Captcha
-      if (!captcha || captcha.trim() !== "7") {
-        return ctx.badRequest("Bitte das Captcha korrekt ausfüllen.");
-      }
+      const { name, nachricht, kategorie } = ctx.request.body.data || {};
 
       // Nur erlaubte Felder weitergeben
       ctx.request.body.data = { name, nachricht, kategorie };
@@ -24,10 +13,10 @@ module.exports = createCoreController(
       const response = await super.create(ctx);
 
       strapi.log.info(
-        `Feedback gespeichert: Kategorie=${kategorie}, Name=${name || "-"}, Nachricht=${nachricht}`
+        `Feedback gespeichert: Kategorie=${kategorie}, Name=${name || "-"}, Nachricht=${nachricht}`,
       );
 
       return response;
     },
-  })
+  }),
 );
