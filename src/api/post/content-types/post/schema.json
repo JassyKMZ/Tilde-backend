@@ -20,7 +20,10 @@
       "type": "media",
       "multiple": false,
       "required": true,
-      "allowedTypes": ["images", "files"]
+      "allowedTypes": [
+        "images",
+        "files"
+      ]
     },
     "summary": {
       "type": "text"
@@ -40,9 +43,9 @@
         "visible": {
           "==": [
             {
-              "var": "isEvent"
+              "var": "postType"
             },
-            true
+            "event"
           ]
         }
       }
@@ -55,9 +58,9 @@
         "visible": {
           "==": [
             {
-              "var": "isEvent"
+              "var": "postType"
             },
-            true
+            "event"
           ]
         }
       }
@@ -68,9 +71,9 @@
         "visible": {
           "==": [
             {
-              "var": "isEvent"
+              "var": "postType"
             },
-            true
+            "event"
           ]
         }
       },
@@ -139,7 +142,12 @@
     "galerie": {
       "type": "media",
       "multiple": true,
-      "allowedTypes": ["images", "files", "videos", "audios"]
+      "allowedTypes": [
+        "images",
+        "files",
+        "videos",
+        "audios"
+      ]
     },
     "veranstalter": {
       "type": "relation",
@@ -148,7 +156,17 @@
       "inversedBy": "posts"
     },
     "teilnehmer": {
-      "type": "integer"
+      "type": "integer",
+      "conditions": {
+        "visible": {
+          "==": [
+            {
+              "var": "postType"
+            },
+            "event"
+          ]
+        }
+      }
     },
     "availability": {
       "type": "enumeration",
@@ -156,13 +174,17 @@
         "visible": {
           "==": [
             {
-              "var": "isEvent"
+              "var": "postType"
             },
-            true
+            "event"
           ]
         }
       },
-      "enum": ["Vor Ort", "Online", "Hybrid"]
+      "enum": [
+        "Vor Ort",
+        "Online",
+        "Hybrid"
+      ]
     },
     "preis": {
       "type": "string",
@@ -184,7 +206,6 @@
       "type": "relation",
       "relation": "manyToOne",
       "target": "api::profile-role.profile-role",
-      "inversedBy": "posts",
       "pluginOptions": {
         "content-manager": {
           "visible": false
@@ -192,7 +213,8 @@
         "content-type-builder": {
           "visible": false
         }
-      }
+      },
+      "inversedBy": "posts"
     },
     "target_roles": {
       "type": "relation",
@@ -213,7 +235,11 @@
     },
     "postType": {
       "type": "enumeration",
-      "enum": ["event", "tipp", "beitrag"]
+      "enum": [
+        "event",
+        "tipp",
+        "beitrag"
+      ]
     }
   }
 }
