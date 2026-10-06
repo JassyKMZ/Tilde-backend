@@ -28,6 +28,12 @@
       "target": "api::post.post",
       "inversedBy": "user_profiles"
     },
+    "savedTipps": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "api::post.post",
+      "inversedBy": "savedTipps"
+    },
     "reminders": {
       "type": "relation",
       "relation": "manyToMany",
