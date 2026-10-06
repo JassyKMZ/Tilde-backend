@@ -20,10 +20,7 @@
       "type": "media",
       "multiple": false,
       "required": true,
-      "allowedTypes": [
-        "images",
-        "files"
-      ]
+      "allowedTypes": ["images", "files"]
     },
     "summary": {
       "type": "text"
@@ -94,6 +91,12 @@
       "target": "api::user-profile.user-profile",
       "mappedBy": "bookmarks"
     },
+    "savedTipps": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "api::user-profile.user-profile",
+      "mappedBy": "savedTipps"
+    },
     "kategories": {
       "type": "relation",
       "relation": "manyToMany",
@@ -142,12 +145,7 @@
     "galerie": {
       "type": "media",
       "multiple": true,
-      "allowedTypes": [
-        "images",
-        "files",
-        "videos",
-        "audios"
-      ]
+      "allowedTypes": ["images", "files", "videos", "audios"]
     },
     "veranstalter": {
       "type": "relation",
@@ -180,11 +178,7 @@
           ]
         }
       },
-      "enum": [
-        "Vor Ort",
-        "Online",
-        "Hybrid"
-      ]
+      "enum": ["Vor Ort", "Online", "Hybrid"]
     },
     "preis": {
       "type": "string",
@@ -235,11 +229,7 @@
     },
     "postType": {
       "type": "enumeration",
-      "enum": [
-        "event",
-        "tipp",
-        "beitrag"
-      ]
+      "enum": ["event", "tipp", "beitrag"]
     }
   }
 }
