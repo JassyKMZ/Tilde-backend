@@ -64,6 +64,7 @@ function syncTargetRolesAndIdentity(data) {
   }
 }
 
+// Send E-Mail to roles Super Admin and Supervisor when a post is ready for review (inside post: publish is set to true)
 function isReviewRole(role) {
   const code = String(role?.code || "").toLowerCase();
   const name = String(role?.name || "").toLowerCase();
@@ -112,8 +113,9 @@ async function notifyReviewers(post) {
           .send({
             to: recipient,
             subject: `Post zur Prüfung bereit: ${title}`,
-            text: `Der Post "${title}" wurde zur Veröffentlichung eingereicht. Bitte prüfe ihn im Strapi-Adminbereich.`,
-            html: `<p>Der Post <strong>${escapedTitle}</strong> wurde zur Veröffentlichung eingereicht.</p><p>Bitte prüfe ihn im Strapi-Adminbereich.</p>`,
+            text: `Der Post "${title}" wurde zur Veröffentlichung eingereicht. Bitte prüfe ihn im Strapi-Adminbereich. Bitte antworten Sie nicht auf diese E-Mail, da sie automatisch generiert wurde. Mit freundlichen Grüßen, Ihr Tilde-Team`,
+            html: `<p>Der Post <strong>${escapedTitle}</strong> wurde zur Veröffentlichung eingereicht.</p><p>Bitte prüfe ihn im Strapi-Adminbereich.</p><p>Bitte antworten Sie nicht auf diese E-Mail, da sie automatisch generiert wurde.</p><br/><p>Mit freundlichen Grüßen,<br/>Ihr Tilde-Team</p>
+            `,
           });
       } catch (error) {
         strapi.log.error(`Failed to email post reviewer ${recipient}:`, error);
