@@ -40,6 +40,47 @@ module.exports = ({ strapi }) => {
     }
   }
 
+  function categoryValues(categories = []) {
+    const values = new Set();
+    for (const category of Array.isArray(categories) ? categories : []) {
+      if (category && typeof category === "object") {
+        if (category.id != null) values.add(String(category.id));
+        if (category.documentId) values.add(String(category.documentId));
+        const title = category.title || category.name;
+        if (title) values.add(String(title).trim().toLowerCase());
+      } else if (category != null) {
+        const value = String(category).trim();
+        if (value) values.add(value.toLowerCase());
+      }
+    }
+    return values;
+  }
+
+  function categoriesOverlap(first, second) {
+    const firstValues = categoryValues(first);
+    return [...categoryValues(second)].some((value) => firstValues.has(value));
+  }
+
+  function ageRangeOverlaps(firstMin, firstMax, secondMin, secondMax) {
+    const minA =
+      firstMin != null && Number.isFinite(Number(firstMin))
+        ? Number(firstMin)
+        : 0;
+    const maxA =
+      firstMax != null && Number.isFinite(Number(firstMax))
+        ? Number(firstMax)
+        : 99;
+    const minB =
+      secondMin != null && Number.isFinite(Number(secondMin))
+        ? Number(secondMin)
+        : 0;
+    const maxB =
+      secondMax != null && Number.isFinite(Number(secondMax))
+        ? Number(secondMax)
+        : 99;
+    return minA <= maxB && maxA >= minB;
+  }
+
   return {
     /**
      * Send a prepared payload to a single user.
@@ -217,7 +258,7 @@ module.exports = ({ strapi }) => {
 
     /**
      * (Optional) Send reminder notifications for an event post.
-     * You can call this from your cronjob when a post is 2 days away.
+     * Send a reminder for an event starting approximately 24 hours from now.
      */
     async sendReminderNotification(post, userId) {
       const eventDate = post.eventDate ? new Date(post.eventDate) : null;
@@ -228,9 +269,7 @@ module.exports = ({ strapi }) => {
 
       const payload = {
         title: `Erinnerung - ${post.titel}`,
-        body: eventDate
-          ? `${dateText} — in 2 Tagen`
-          : `Erinnerung: ${post.titel}`,
+        body: eventDate ? `${dateText} — morgen` : `Erinnerung: ${post.titel}`,
         icon: `${FRONTEND_URL}/icons/icon-192.png`,
         badge: `${FRONTEND_URL}/icons/badge.png`,
         data: { url: absolutePostUrl },
@@ -259,26 +298,47 @@ module.exports = ({ strapi }) => {
           ],
         });
 
-      const postCategories = post.kategories?.map((c) => c.id) || [];
-      const postMinAge = post.minAge || 0;
-      const postMaxAge = post.maxAge || 99;
+      const postCategories = post.kategories || [];
+      const postMinAge = post.minAge;
+      const postMaxAge = post.maxAge;
 
       const matches = [];
 
       for (const profile of userProfiles) {
-        const userCategories = profile.kategories?.map((c) => c.id) || [];
-        const userMinAge = profile.minAge || 0;
-        const userMaxAge = profile.maxAge || 99;
+        const userCategories = profile.kategories || [];
+        const hasUserCategories = userCategories.length > 0;
+        const hasUserAge = profile.minAge != null && profile.maxAge != null;
+        const hasUserPreferences = hasUserCategories || hasUserAge;
+        const categoryMatch =
+          hasUserCategories &&
+          categoriesOverlap(userCategories, postCategories);
+        const ageMatch =
+          hasUserAge &&
+          ageRangeOverlaps(
+            profile.minAge,
+            profile.maxAge,
+            postMinAge,
+            postMaxAge,
+          );
 
-        // --- MATCHING LOGIC ---
-        const categoryMatch = userCategories.some((id) =>
-          postCategories.includes(id),
-        );
-        const ageMatch = userMinAge <= postMaxAge && userMaxAge >= postMinAge;
+        const userMatches = !hasUserPreferences || categoryMatch || ageMatch;
+        const kidMatches = (profile.kinder || []).some((kid) => {
+          const kidCategories = kid.favoriteCategories || [];
+          const hasKidCategories = kidCategories.length > 0;
+          const hasKidAge =
+            kid.alter != null && Number.isFinite(Number(kid.alter));
+          if (!hasKidCategories && !hasKidAge) return true;
 
-        const userMatches = categoryMatch || ageMatch;
+          const kidAgeMatch =
+            !hasKidAge ||
+            ageRangeOverlaps(kid.alter, kid.alter, postMinAge, postMaxAge);
+          const kidCategoryMatch =
+            !hasKidCategories ||
+            categoriesOverlap(kidCategories, postCategories);
+          return kidAgeMatch && kidCategoryMatch;
+        });
 
-        if (userMatches) {
+        if ((userMatches || kidMatches) && profile.user?.id) {
           matches.push({
             userId: profile.user.id,
             userName: profile.user.username,

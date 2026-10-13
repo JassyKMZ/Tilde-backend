@@ -18,70 +18,68 @@ module.exports = {
       strapi.plugins["unified-notification"].controllers,
     );
 
-    // Make strapi available globally for cron callbacks
-    global.strapi = strapi;
-
-    // Schedule reminder notifications
-    cron.schedule("0 9 * * *", async () => {
-      const strapi = global.strapi;
-      console.log("Running reminder notification job");
-
+    // Run every five minutes; the event window is the 5 minutes before T-24h.
+    cron.schedule("*/5 * * * *", async () => {
       try {
-        const now = new Date();
-        const targetDate = new Date(now);
-        targetDate.setDate(now.getDate() + 2);
-
-        // Compare only YYYY-MM-DD to avoid timezone issues
-        const targetDateStr = targetDate.toISOString().slice(0, 10);
-
-        // Fetch all published events once
-        const events = await strapi.documents("api::post.post").findMany({
-          filters: { postType: "event" },
-          populate: ["user_reminders", "user_reminders.user"],
+        const now = Date.now();
+        const reminderDueBefore = new Date(now + 24 * 60 * 60 * 1000);
+        const reminderDueAfter = new Date(
+          reminderDueBefore.getTime() - 5 * 60 * 1000,
+        );
+        const posts = await strapi.documents("api::post.post").findMany({
+          filters: {
+            postType: "event",
+            eventDate: {
+              $gte: reminderDueAfter.toISOString(),
+              $lte: reminderDueBefore.toISOString(),
+            },
+            eventReminderNotificationSent: false,
+          },
           status: "published",
         });
 
-        // Filter events happening exactly 2 days from now
-        const posts = events.filter((post) => {
-          if (!post.eventDate) return false;
-          const eventDateStr = new Date(post.eventDate)
-            .toISOString()
-            .slice(0, 10);
-          return eventDateStr === targetDateStr;
-        });
+        if (!posts.length) return;
 
-        console.log(`Found ${posts.length} events happening in 2 days`);
+        const profiles = await strapi
+          .documents("api::user-profile.user-profile")
+          .findMany({
+            filters: { pushNotificationsEnabled: true },
+            populate: ["user", "bookmarks"],
+          });
+        const notificationService = strapi
+          .plugin("unified-notification")
+          .service("notification");
 
         for (const post of posts) {
-          // Correct user filtering
-          const users = post.user_reminders
-            .map((rem) => rem.user)
-            .filter((user) => user?.pushNotificationsEnabled);
-
-          console.log(
-            `Post "${post.titel}" → ${users.length} users with push enabled`,
+          const bookmarkedProfiles = profiles.filter((profile) =>
+            (profile.bookmarks || []).some(
+              (bookmark) =>
+                bookmark.documentId === post.documentId ||
+                bookmark.id === post.id,
+            ),
           );
 
-          for (const user of users) {
-            await strapi
-              .plugin("unified-notification")
-              .service("notification")
-              .sendToUser(user.id, {
-                title: `Reminder: ${post.titel}`,
-                body: `Don't forget the event on ${new Date(
-                  post.eventDate,
-                ).toDateString()}`,
-              });
+          for (const profile of bookmarkedProfiles) {
+            if (!profile.user?.id) continue;
+            await notificationService.sendReminderNotification(
+              post,
+              profile.user.id,
+            );
+          }
+
+          if (bookmarkedProfiles.length) {
+            await strapi.documents("api::post.post").update(post.documentId, {
+              data: { eventReminderNotificationSent: true },
+            });
           }
         }
       } catch (error) {
-        console.error("Error in reminder job:", error);
+        strapi.log.error("Error in 24-hour event reminder job:", error);
       }
     });
 
     // Schedule notifications for recently published posts (every 5 minutes)
     cron.schedule("*/5 * * * *", async () => {
-      const strapi = global.strapi;
       console.log("Running new post notification check");
 
       try {
