@@ -479,10 +479,6 @@ export interface ApiCategoryCategory extends Struct.CollectionTypeSchema {
       Schema.Attribute.Private;
     posts: Schema.Attribute.Relation<'manyToMany', 'api::post.post'>;
     publishedAt: Schema.Attribute.DateTime;
-    tipps: Schema.Attribute.Relation<
-      'manyToMany',
-      'api::tipp-section.tipp-section'
-    >;
     title: Schema.Attribute.String;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
@@ -599,6 +595,61 @@ export interface ApiInstitutionInstitution extends Struct.CollectionTypeSchema {
   };
 }
 
+export interface ApiKurztippKurztipp extends Struct.CollectionTypeSchema {
+  collectionName: 'kurztipps';
+  info: {
+    displayName: 'Kurztipps';
+    pluralName: 'kurztipps';
+    singularName: 'kurztipp';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  pluginOptions: {
+    i18n: {
+      localized: true;
+    };
+  };
+  attributes: {
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    description: Schema.Attribute.Text &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    linkTo: Schema.Attribute.Text &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: false;
+        };
+      }>;
+    locale: Schema.Attribute.String;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::kurztipp.kurztipp'
+    >;
+    logo: Schema.Attribute.Media<'images' | 'files' | 'videos' | 'audios'> &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    publishedAt: Schema.Attribute.DateTime;
+    title: Schema.Attribute.String &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
 export interface ApiLandingLanding extends Struct.SingleTypeSchema {
   collectionName: 'landings';
   info: {
@@ -691,6 +742,8 @@ export interface ApiPostPost extends Struct.CollectionTypeSchema {
       Schema.Attribute.Private;
     dauer: Schema.Attribute.Decimal;
     eventDate: Schema.Attribute.DateTime;
+    eventReminderNotificationSent: Schema.Attribute.Boolean &
+      Schema.Attribute.DefaultTo<false>;
     galerie: Schema.Attribute.Media<
       'images' | 'files' | 'videos' | 'audios',
       true
@@ -708,6 +761,7 @@ export interface ApiPostPost extends Struct.CollectionTypeSchema {
       'manyToOne',
       'api::institution.institution'
     >;
+    isEvent: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
     kategories: Schema.Attribute.Relation<
       'manyToMany',
       'api::category.category'
@@ -734,11 +788,25 @@ export interface ApiPostPost extends Struct.CollectionTypeSchema {
         },
         number
       >;
+    notificationSent: Schema.Attribute.Boolean &
+      Schema.Attribute.DefaultTo<false>;
     postType: Schema.Attribute.Enumeration<['event', 'tipp', 'beitrag']>;
     preis: Schema.Attribute.String;
+    profile_role: Schema.Attribute.Relation<
+      'manyToOne',
+      'api::profile-role.profile-role'
+    > &
+      Schema.Attribute.SetPluginOptions<{
+        'content-manager': {
+          visible: false;
+        };
+        'content-type-builder': {
+          visible: false;
+        };
+      }>;
     publish: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
     publishedAt: Schema.Attribute.DateTime;
-    saved_tipp_profiles: Schema.Attribute.Relation<
+    savedTipps: Schema.Attribute.Relation<
       'manyToMany',
       'api::user-profile.user-profile'
     >;
@@ -804,6 +872,7 @@ export interface ApiProfileRoleProfileRole extends Struct.CollectionTypeSchema {
       'api::profile-role.profile-role'
     > &
       Schema.Attribute.Private;
+    posts: Schema.Attribute.Relation<'oneToMany', 'api::post.post'>;
     publishedAt: Schema.Attribute.DateTime;
     roleType: Schema.Attribute.String;
     targeted_posts: Schema.Attribute.Relation<'manyToMany', 'api::post.post'>;
@@ -913,63 +982,6 @@ export interface ApiRoadmapRoadmap extends Struct.SingleTypeSchema {
   };
 }
 
-export interface ApiTippSectionTippSection extends Struct.CollectionTypeSchema {
-  collectionName: 'tipp_sections';
-  info: {
-    displayName: 'TippSection';
-    pluralName: 'tipp-sections';
-    singularName: 'tipp-section';
-  };
-  options: {
-    draftAndPublish: true;
-  };
-  attributes: {
-    beschreibung: Schema.Attribute.Blocks;
-    bild: Schema.Attribute.Media<
-      'images' | 'files' | 'videos' | 'audios',
-      true
-    >;
-    createdAt: Schema.Attribute.DateTime;
-    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
-      Schema.Attribute.Private;
-    kategories: Schema.Attribute.Relation<
-      'manyToMany',
-      'api::category.category'
-    >;
-    locale: Schema.Attribute.String & Schema.Attribute.Private;
-    localizations: Schema.Attribute.Relation<
-      'oneToMany',
-      'api::tipp-section.tipp-section'
-    > &
-      Schema.Attribute.Private;
-    maxAge: Schema.Attribute.Integer &
-      Schema.Attribute.SetMinMax<
-        {
-          max: 99;
-          min: 0;
-        },
-        number
-      >;
-    minAge: Schema.Attribute.Integer &
-      Schema.Attribute.SetMinMax<
-        {
-          max: 99;
-          min: 0;
-        },
-        number
-      >;
-    publishedAt: Schema.Attribute.DateTime;
-    titel: Schema.Attribute.String;
-    updatedAt: Schema.Attribute.DateTime;
-    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
-      Schema.Attribute.Private;
-    user_profiles: Schema.Attribute.Relation<
-      'manyToMany',
-      'api::user-profile.user-profile'
-    >;
-  };
-}
-
 export interface ApiUserProfileUserProfile extends Struct.CollectionTypeSchema {
   collectionName: 'user_profiles';
   info: {
@@ -1032,10 +1044,7 @@ export interface ApiUserProfileUserProfile extends Struct.CollectionTypeSchema {
     >;
     pushNotificationsEnabled: Schema.Attribute.Boolean;
     reminders: Schema.Attribute.Relation<'manyToMany', 'api::post.post'>;
-    saved_tipps: Schema.Attribute.Relation<
-      'manyToMany',
-      'api::tipp-section.tipp-section'
-    >;
+    savedTipps: Schema.Attribute.Relation<'manyToMany', 'api::post.post'>;
     testUser: Schema.Attribute.Boolean;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
@@ -1831,6 +1840,7 @@ declare module '@strapi/strapi' {
       'api::fcm-token.fcm-token': ApiFcmTokenFcmToken;
       'api::feedback.feedback': ApiFeedbackFeedback;
       'api::institution.institution': ApiInstitutionInstitution;
+      'api::kurztipp.kurztipp': ApiKurztippKurztipp;
       'api::landing.landing': ApiLandingLanding;
       'api::legal-notice.legal-notice': ApiLegalNoticeLegalNotice;
       'api::post.post': ApiPostPost;
@@ -1838,7 +1848,6 @@ declare module '@strapi/strapi' {
       'api::push-subscriptions.push-subscription': ApiPushSubscriptionsPushSubscription;
       'api::roadmap-stage.roadmap-stage': ApiRoadmapStageRoadmapStage;
       'api::roadmap.roadmap': ApiRoadmapRoadmap;
-      'api::tipp-section.tipp-section': ApiTippSectionTippSection;
       'api::user-profile.user-profile': ApiUserProfileUserProfile;
       'api::veranstalter.veranstalter': ApiVeranstalterVeranstalter;
       'api::veranstaltungsort.veranstaltungsort': ApiVeranstaltungsortVeranstaltungsort;
