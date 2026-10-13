@@ -64,11 +64,93 @@ function syncTargetRolesAndIdentity(data) {
   }
 }
 
+function isReviewRole(role) {
+  const code = String(role?.code || "").toLowerCase();
+  const name = String(role?.name || "").toLowerCase();
+  return (
+    code === "strapi-super-admin" ||
+    code.includes("supervisor") ||
+    name.includes("supervisor")
+  );
+}
+
+function escapeHtml(value) {
+  return String(value).replace(/[&<>"']/g, (character) => {
+    const entities = {
+      "&": "&amp;",
+      "<": "&lt;",
+      ">": "&gt;",
+      '"': "&quot;",
+      "'": "&#39;",
+    };
+    return entities[character];
+  });
+}
+
+async function notifyReviewers(post) {
+  if (!post?.publish) return;
+
+  try {
+    const admins = await strapi.db.query("admin::user").findMany({
+      populate: { roles: true },
+    });
+    const recipients = [
+      ...new Set(
+        admins
+          .filter((admin) => admin.email && admin.roles?.some(isReviewRole))
+          .map((admin) => admin.email),
+      ),
+    ];
+    const title = post.titel || "Ohne Titel";
+    const escapedTitle = escapeHtml(title);
+
+    for (const recipient of recipients) {
+      try {
+        await strapi
+          .plugin("email")
+          .service("email")
+          .send({
+            to: recipient,
+            subject: `Post zur Prüfung bereit: ${title}`,
+            text: `Der Post "${title}" wurde zur Veröffentlichung eingereicht. Bitte prüfe ihn im Strapi-Adminbereich.`,
+            html: `<p>Der Post <strong>${escapedTitle}</strong> wurde zur Veröffentlichung eingereicht.</p><p>Bitte prüfe ihn im Strapi-Adminbereich.</p>`,
+          });
+      } catch (error) {
+        strapi.log.error(`Failed to email post reviewer ${recipient}:`, error);
+      }
+    }
+  } catch (error) {
+    strapi.log.error("Failed to find post reviewers:", error);
+  }
+}
+
 module.exports = {
   async beforeCreate(event) {
     syncTargetRolesAndIdentity(event?.params?.data);
   },
+  async afterCreate(event) {
+    await notifyReviewers(event?.result);
+  },
   async beforeUpdate(event) {
     syncTargetRolesAndIdentity(event?.params?.data);
+
+    if (event?.params?.where) {
+      const existing = await strapi.db.query("api::post.post").findOne({
+        where: event.params.where,
+        select: ["publish"],
+      });
+      event.state = {
+        ...event.state,
+        wasPublishRequested: existing?.publish === true,
+      };
+    }
+  },
+  async afterUpdate(event) {
+    if (
+      event?.result?.publish === true &&
+      event.state?.wasPublishRequested !== true
+    ) {
+      await notifyReviewers(event.result);
+    }
   },
 };
