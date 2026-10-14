@@ -86,13 +86,12 @@ module.exports = {
       }
     });
 
-    // Schedule notifications for recently published posts (every 5 minutes)
+    // Retry pending notifications every five minutes for up to 24 hours.
     cron.schedule("*/5 * * * *", async () => {
       console.log("Running new post notification check");
 
       try {
-        // Add a buffer to avoid missing posts due to timestamp rounding
-        const windowStart = new Date(Date.now() - 6 * 60 * 1000);
+        const windowStart = new Date(Date.now() - 24 * 60 * 60 * 1000);
 
         // Fetch recently published posts
         const recentPosts = await strapi.documents("api::post.post").findMany({
@@ -115,20 +114,43 @@ module.exports = {
 
           console.log(`Sending notifications for post: ${post.titel}`);
 
-          // Send notifications to matching users
-          await strapi
+          // Keep failed sends pending so the next cron run can retry them.
+          const delivery = await strapi
             .plugin("unified-notification")
             .service("notification")
-            .sendNewPostNotifications(post);
+            .sendNewPostNotifications(post, {
+              deliveredUserIds: post.notificationDeliveredUserIds || [],
+            });
 
-          // Mark post as notified (if field exists)
+          console.log(
+            `Post notification result for ${post.documentId}:`,
+            delivery,
+          );
+
+          const complete =
+            delivery &&
+            (delivery.matchedUsers === 0 || delivery.failedUsers === 0);
+          const notificationDeliveredUserIds = [
+            ...new Set(
+              [
+                ...(post.notificationDeliveredUserIds || []),
+                ...(delivery?.deliveredUserIds || []),
+              ].map(String),
+            ),
+          ];
+
           try {
-            // @ts-ignore
             await strapi.documents("api::post.post").update(post.documentId, {
-              data: { notificationSent: true },
+              data: {
+                notificationDeliveredUserIds,
+                ...(complete ? { notificationSent: true } : {}),
+              },
             });
           } catch (err) {
-            console.log("Could not mark post as notified:", err.message);
+            console.log(
+              "Could not update post notification state:",
+              err.message,
+            );
           }
         }
       } catch (error) {

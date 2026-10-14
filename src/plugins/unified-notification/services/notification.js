@@ -227,11 +227,22 @@ module.exports = ({ strapi }) => {
 
       // Get matching users
       const matches = await this.getMatchingUsersForPost(post);
+      const previouslyDelivered = new Set(
+        (options.deliveredUserIds || []).map(String),
+      );
+      const pendingMatches = matches.filter(
+        (match) => !previouslyDelivered.has(String(match.userId)),
+      );
 
-      console.log(`Matched ${matches.length} users for post ${post.titel}`);
+      console.log(
+        `Matched ${pendingMatches.length} pending users for post ${post.titel}`,
+      );
 
       // Send notifications to each matched user
-      for (const match of matches) {
+      let deliveredUsers = 0;
+      let failedUsers = 0;
+      const deliveredUserIds = [];
+      for (const match of pendingMatches) {
         const matchedTypes = Array.isArray(match.matchTypes)
           ? match.matchTypes
           : [];
@@ -268,14 +279,31 @@ module.exports = ({ strapi }) => {
         };
 
         try {
-          await this.sendToUser(match.userId, payload);
+          const result = await this.sendToUser(match.userId, payload);
+          const delivered =
+            Number(result?.fcm?.successCount || 0) > 0 ||
+            Number(result?.webpush?.successCount || 0) > 0;
+          if (delivered) {
+            deliveredUsers += 1;
+            deliveredUserIds.push(match.userId);
+          } else {
+            failedUsers += 1;
+          }
         } catch (err) {
+          failedUsers += 1;
           strapi.log.error(
             `Failed to send new-post notification to user ${match.userId}:`,
             err,
           );
         }
       }
+
+      return {
+        matchedUsers: pendingMatches.length,
+        deliveredUsers,
+        failedUsers,
+        deliveredUserIds,
+      };
     },
 
     /**
