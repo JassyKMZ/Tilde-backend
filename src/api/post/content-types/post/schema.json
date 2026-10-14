@@ -146,6 +146,9 @@
       "type": "boolean",
       "default": false
     },
+    "notificationDeliveredUserIds": {
+      "type": "json"
+    },
     "eventReminderNotificationSent": {
       "type": "boolean",
       "default": false
