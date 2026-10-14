@@ -232,15 +232,37 @@ module.exports = ({ strapi }) => {
 
       // Send notifications to each matched user
       for (const match of matches) {
+        const matchedTypes = Array.isArray(match.matchTypes)
+          ? match.matchTypes
+          : [];
+        const hasUserMatch = matchedTypes.includes("user");
+        const hasKidMatch = matchedTypes.includes("kid");
+        const matchType =
+          hasUserMatch && hasKidMatch ? "both" : hasKidMatch ? "kid" : "user";
+
         const payload = {
-          title: "Neuer Beitrag der dir gefallen könnte",
-          body: post.titel,
+          title:
+            matchType === "both"
+              ? "Neuer Beitrag für dich und deine Kinder"
+              : matchType === "kid"
+                ? "Neuer Beitrag für deine Kinder"
+                : "Neuer Beitrag für dich",
+          body:
+            matchType === "both"
+              ? `${post.titel} passt zu dir und deinen Kindern.`
+              : matchType === "kid"
+                ? `${post.titel} passt zu deinen Kinderprofilen.`
+                : post.titel,
           icon: `${FRONTEND_URL}/icons/icon-192.png`,
           badge: `${FRONTEND_URL}/icons/badge.png`,
           image: post.heroImageUrl
             ? `${FRONTEND_URL}${post.heroImageUrl}`
             : undefined,
-          data: { url: absolutePostUrl },
+          data: {
+            url: absolutePostUrl,
+            matchType,
+            matchTypes: matchedTypes,
+          },
           tag: `post-${post.documentId}`,
           renotify: false,
         };
@@ -321,8 +343,8 @@ module.exports = ({ strapi }) => {
             postMaxAge,
           );
 
-        const userMatches = !hasUserPreferences || categoryMatch || ageMatch;
-        const kidMatches = (profile.kinder || []).some((kid) => {
+        const userMatch = !hasUserPreferences || categoryMatch || ageMatch;
+        const kidMatch = (profile.kinder || []).some((kid) => {
           const kidCategories = kid.favoriteCategories || [];
           const hasKidCategories = kidCategories.length > 0;
           const hasKidAge =
@@ -338,11 +360,16 @@ module.exports = ({ strapi }) => {
           return kidAgeMatch && kidCategoryMatch;
         });
 
-        if ((userMatches || kidMatches) && profile.user?.id) {
+        const matchedTypes = [];
+        if (userMatch) matchedTypes.push("user");
+        if (kidMatch) matchedTypes.push("kid");
+
+        if (matchedTypes.length && profile.user?.id) {
           matches.push({
             userId: profile.user.id,
             userName: profile.user.username,
             profileId: profile.documentId,
+            matchTypes: matchedTypes,
           });
         }
       }

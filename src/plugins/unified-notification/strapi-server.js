@@ -18,20 +18,23 @@ module.exports = {
       strapi.plugins["unified-notification"].controllers,
     );
 
-    // Run every five minutes; the event window is the 5 minutes before T-24h.
+    // Run every five minutes; send a reminder when an event is due in roughly 24h ± 5m.
     cron.schedule("*/5 * * * *", async () => {
       try {
         const now = Date.now();
-        const reminderDueBefore = new Date(now + 24 * 60 * 60 * 1000);
-        const reminderDueAfter = new Date(
-          reminderDueBefore.getTime() - 5 * 60 * 1000,
+        const reminderWindowStart = new Date(
+          now + 23 * 60 * 60 * 1000 + 55 * 60 * 1000,
         );
+        const reminderWindowEnd = new Date(
+          now + 24 * 60 * 60 * 1000 + 5 * 60 * 1000,
+        );
+
         const posts = await strapi.documents("api::post.post").findMany({
           filters: {
             postType: "event",
             eventDate: {
-              $gte: reminderDueAfter.toISOString(),
-              $lte: reminderDueBefore.toISOString(),
+              $gte: reminderWindowStart.toISOString(),
+              $lte: reminderWindowEnd.toISOString(),
             },
             eventReminderNotificationSent: false,
           },
@@ -51,6 +54,11 @@ module.exports = {
           .service("notification");
 
         for (const post of posts) {
+          if (!post?.documentId) continue;
+
+          const eventDate = post.eventDate ? new Date(post.eventDate) : null;
+          if (!eventDate || Number.isNaN(eventDate.getTime())) continue;
+
           const bookmarkedProfiles = profiles.filter((profile) =>
             (profile.bookmarks || []).some(
               (bookmark) =>
@@ -90,6 +98,7 @@ module.exports = {
         const recentPosts = await strapi.documents("api::post.post").findMany({
           filters: {
             publishedAt: { $gte: windowStart.toISOString() },
+            notificationSent: false,
           },
           populate: ["kategories"],
           status: "published",
