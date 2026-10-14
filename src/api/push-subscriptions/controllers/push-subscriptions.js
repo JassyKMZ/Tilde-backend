@@ -16,11 +16,22 @@ module.exports = {
       .query("api::push-subscriptions.push-subscription")
       .findMany();
 
-    const payload = JSON.stringify({ title, body, url });
+    const payload = JSON.stringify({
+      web_push: 8030,
+      notification: {
+        title,
+        body,
+        navigate: url,
+        silent: false,
+      },
+      title,
+      body,
+      url,
+    });
     await Promise.all(
       subs.map((sub) =>
-        webpush.sendNotification(sub, payload).catch(console.error)
-      )
+        webpush.sendNotification(sub, payload).catch(console.error),
+      ),
     );
 
     ctx.send({ sent: true, count: subs.length });
