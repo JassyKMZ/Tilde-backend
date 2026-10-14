@@ -143,8 +143,21 @@ module.exports = ({ strapi }) => {
         },
       };
 
-      // Map to WebPush payload shape expected by your web-push helper
+      // Keep the standard fields at the root for older service workers.
       const webpushPayload = {
+        web_push: 8030,
+        notification: {
+          title: payload.title,
+          body: payload.body,
+          navigate: payload.data.url,
+          silent: false,
+          ...(payload.icon ? { icon: payload.icon } : {}),
+          ...(payload.badge ? { badge: payload.badge } : {}),
+          ...(payload.image ? { image: payload.image } : {}),
+          ...(payload.data ? { data: payload.data } : {}),
+          ...(payload.tag ? { tag: payload.tag } : {}),
+          ...(payload.renotify ? { renotify: true } : {}),
+        },
         title: payload.title,
         body: payload.body,
         icon: payload.icon,
