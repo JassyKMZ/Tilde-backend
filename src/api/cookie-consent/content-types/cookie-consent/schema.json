@@ -1,0 +1,45 @@
+{
+  "kind": "collectionType",
+  "collectionName": "cookie_consents",
+  "info": {
+    "singularName": "cookie-consent",
+    "pluralName": "cookie-consents",
+    "displayName": "Cookie Consent Log",
+    "description": "DSGVO-konforme Nachweis-Protokollierung"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "attributes": {
+    "consentId": {
+      "type": "string",
+      "required": true,
+      "unique": true
+    },
+    "policyVersion": {
+      "type": "string"
+    },
+    "necessary": {
+      "type": "boolean",
+      "required": true
+    },
+    "analytics": {
+      "type": "boolean",
+      "required": true
+    },
+    "externalMedia": {
+      "type": "boolean"
+    },
+    "marketing": {
+      "type": "boolean",
+      "required": true
+    },
+    "timestamp": {
+      "type": "datetime",
+      "required": true
+    },
+    "userAgentAnonymized": {
+      "type": "string"
+    }
+  }
+}
