@@ -490,6 +490,45 @@ export interface ApiCategoryCategory extends Struct.CollectionTypeSchema {
   };
 }
 
+export interface ApiCookieConsentCookieConsent
+  extends Struct.CollectionTypeSchema {
+  collectionName: 'cookie_consents';
+  info: {
+    description: 'DSGVO-konforme Nachweis-Protokollierung';
+    displayName: 'Cookie Consent Log';
+    pluralName: 'cookie-consents';
+    singularName: 'cookie-consent';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    analytics: Schema.Attribute.Boolean & Schema.Attribute.Required;
+    consentId: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.Unique;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    externalMedia: Schema.Attribute.Boolean;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::cookie-consent.cookie-consent'
+    > &
+      Schema.Attribute.Private;
+    marketing: Schema.Attribute.Boolean & Schema.Attribute.Required;
+    necessary: Schema.Attribute.Boolean & Schema.Attribute.Required;
+    policyVersion: Schema.Attribute.String;
+    publishedAt: Schema.Attribute.DateTime;
+    timestamp: Schema.Attribute.DateTime & Schema.Attribute.Required;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    userAgentAnonymized: Schema.Attribute.String;
+  };
+}
+
 export interface ApiFcmTokenFcmToken extends Struct.CollectionTypeSchema {
   collectionName: 'fcm_tokens';
   info: {
@@ -788,6 +827,7 @@ export interface ApiPostPost extends Struct.CollectionTypeSchema {
         },
         number
       >;
+    notificationDeliveredUserIds: Schema.Attribute.JSON;
     notificationSent: Schema.Attribute.Boolean &
       Schema.Attribute.DefaultTo<false>;
     postType: Schema.Attribute.Enumeration<['event', 'tipp', 'beitrag']>;
@@ -1837,6 +1877,7 @@ declare module '@strapi/strapi' {
       'admin::user': AdminUser;
       'api::about.about': ApiAboutAbout;
       'api::category.category': ApiCategoryCategory;
+      'api::cookie-consent.cookie-consent': ApiCookieConsentCookieConsent;
       'api::fcm-token.fcm-token': ApiFcmTokenFcmToken;
       'api::feedback.feedback': ApiFeedbackFeedback;
       'api::institution.institution': ApiInstitutionInstitution;
