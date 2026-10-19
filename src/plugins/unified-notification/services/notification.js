@@ -62,22 +62,16 @@ module.exports = ({ strapi }) => {
   }
 
   function ageRangeOverlaps(firstMin, firstMax, secondMin, secondMax) {
-    const minA =
-      firstMin != null && Number.isFinite(Number(firstMin))
-        ? Number(firstMin)
-        : 0;
-    const maxA =
-      firstMax != null && Number.isFinite(Number(firstMax))
-        ? Number(firstMax)
-        : 99;
-    const minB =
-      secondMin != null && Number.isFinite(Number(secondMin))
-        ? Number(secondMin)
-        : 0;
-    const maxB =
-      secondMax != null && Number.isFinite(Number(secondMax))
-        ? Number(secondMax)
-        : 99;
+    const normalizeAge = (value) => {
+      if (value == null || value === "") return null;
+      const number = Number(value);
+      if (!Number.isFinite(number)) return null;
+      return Math.max(0, Math.min(19, Math.trunc(number)));
+    };
+    const minA = normalizeAge(firstMin) ?? 0;
+    const maxA = normalizeAge(firstMax) ?? 19;
+    const minB = normalizeAge(secondMin) ?? 0;
+    const maxB = normalizeAge(secondMax) ?? 19;
     return minA <= maxB && maxA >= minB;
   }
 
@@ -370,7 +364,7 @@ module.exports = ({ strapi }) => {
       for (const profile of userProfiles) {
         const userCategories = profile.kategories || [];
         const hasUserCategories = userCategories.length > 0;
-        const hasUserAge = profile.minAge != null && profile.maxAge != null;
+        const hasUserAge = profile.minAge != null || profile.maxAge != null;
         const hasUserPreferences = hasUserCategories || hasUserAge;
         const categoryMatch =
           hasUserCategories &&
