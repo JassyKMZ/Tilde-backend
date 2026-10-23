@@ -186,7 +186,7 @@ export interface ProfilKind extends Struct.ComponentSchema {
     avatarIndex: Schema.Attribute.Integer &
       Schema.Attribute.SetMinMax<
         {
-          max: 3;
+          max: 11;
           min: 0;
         },
         number
