@@ -4,8 +4,8 @@ console.log("🔧 Notification service loaded");
 
 module.exports = ({ strapi }) => {
   // Base URL used for notification links (service worker can open relative or absolute)
-  const FRONTEND_URL = (
-    process.env.FRONTEND_URL || "http://localhost:4173"
+  const PUSH_FRONTEND_URL = (
+    process.env.PUSH_FRONTEND_URL || "https://tilde-app.de"
   ).replace(/\/$/, "");
 
   /**
@@ -13,11 +13,11 @@ module.exports = ({ strapi }) => {
    * If payload.data.url is already absolute, keep it.
    */
   function makeAbsoluteUrl(path) {
-    if (!path) return FRONTEND_URL;
+    if (!path) return PUSH_FRONTEND_URL;
     if (path.startsWith("http://") || path.startsWith("https://")) return path;
     // ensure leading slash
     const p = path.startsWith("/") ? path : `/${path}`;
-    return `${FRONTEND_URL}${p}`;
+    return `${PUSH_FRONTEND_URL}${p}`;
   }
 
   /**
@@ -36,7 +36,7 @@ module.exports = ({ strapi }) => {
         payload.data.url = makeAbsoluteUrl(payload.data.url);
       }
     } else {
-      payload.data.url = FRONTEND_URL;
+      payload.data.url = PUSH_FRONTEND_URL;
     }
   }
 
@@ -209,18 +209,18 @@ module.exports = ({ strapi }) => {
       const testUserId = options.testUserId;
 
       // Build absolute post URL reliably
-      const postPath = `/post/${post.documentId}`;
-      const absolutePostUrl = `${FRONTEND_URL}${postPath}`;
+      const postPath = `/beitrag/${post.documentId}`;
+      const absolutePostUrl = `${PUSH_FRONTEND_URL}${postPath}`;
 
       // Test mode: send only to one user with a clear test payload
       if (testUserId) {
         const testPayload = {
           title: "Test: Neuer Beitrag",
           body: `Test für Post: ${post.titel}`,
-          icon: `${FRONTEND_URL}/icons/icon-192.png`,
-          badge: `${FRONTEND_URL}/icons/badge.png`,
+          icon: `${PUSH_FRONTEND_URL}/icons/icon-192.png`,
+          badge: `${PUSH_FRONTEND_URL}/icons/badge.png`,
           image: post.heroImageUrl
-            ? `${FRONTEND_URL}${post.heroImageUrl}`
+            ? `${PUSH_FRONTEND_URL}${post.heroImageUrl}`
             : undefined,
           data: { url: absolutePostUrl },
           tag: `test-post-${post.documentId}`,
@@ -271,10 +271,10 @@ module.exports = ({ strapi }) => {
               : matchType === "kid"
                 ? `${post.titel} passt zu deinen Kinderprofilen.`
                 : post.titel,
-          icon: `${FRONTEND_URL}/icons/icon-192.png`,
-          badge: `${FRONTEND_URL}/icons/badge.png`,
+          icon: `${PUSH_FRONTEND_URL}/icons/icon-192.png`,
+          badge: `${PUSH_FRONTEND_URL}/icons/badge.png`,
           image: post.heroImageUrl
-            ? `${FRONTEND_URL}${post.heroImageUrl}`
+            ? `${PUSH_FRONTEND_URL}${post.heroImageUrl}`
             : undefined,
           data: {
             url: absolutePostUrl,
@@ -321,14 +321,14 @@ module.exports = ({ strapi }) => {
       const eventDate = post.eventDate ? new Date(post.eventDate) : null;
       const dateText = eventDate ? eventDate.toLocaleDateString("de-DE") : "";
 
-      const postPath = `/post/${post.documentId}`;
-      const absolutePostUrl = `${FRONTEND_URL}${postPath}`;
+      const postPath = `/beitrag/${post.documentId}`;
+      const absolutePostUrl = `${PUSH_FRONTEND_URL}${postPath}`;
 
       const payload = {
         title: `Erinnerung - ${post.titel}`,
         body: eventDate ? `${dateText} — morgen` : `Erinnerung: ${post.titel}`,
-        icon: `${FRONTEND_URL}/icons/icon-192.png`,
-        badge: `${FRONTEND_URL}/icons/badge.png`,
+        icon: `${PUSH_FRONTEND_URL}/icons/icon-192.png`,
+        badge: `${PUSH_FRONTEND_URL}/icons/badge.png`,
         data: { url: absolutePostUrl },
         tag: `reminder-${post.documentId}`,
         renotify: true,
