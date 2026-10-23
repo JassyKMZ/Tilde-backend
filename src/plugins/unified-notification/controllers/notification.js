@@ -90,7 +90,7 @@ module.exports = ({ strapi }) => ({
         body: `${dateText} — in 2 Tagen`,
         icon: "/icons/icon-192.png",
         badge: "/icons/badge.png",
-        data: { url: `/post/${post.documentId}` },
+        data: { url: `/beitrag/${post.documentId}` },
         tag: `reminder-${post.documentId}`,
         renotify: true,
       };
