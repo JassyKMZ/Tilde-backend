@@ -40,6 +40,13 @@ Strapi gives you many possible deployment options for your project including [St
 yarn strapi deploy
 ```
 
+## Push notification links
+
+Set `PUSH_FRONTEND_URL` to the public Vue app origin (for example,
+`https://tilde-app.de`) in the Strapi environment. Notification links use the
+frontend route `/beitrag/:id`; keep `FRONTEND_URL` configured separately for
+Strapi's own public URL.
+
 ## 📚 Learn more
 
 - [Resource center](https://strapi.io/resource-center) - Strapi resource center.
