@@ -19,8 +19,7 @@ module.exports = ({ strapi }) => ({
       const payload = {
         title: title || "Test Notification",
         body: body || "This is a test push notification.",
-        icon: "/icons/icon-192.png",
-        badge: "/icons/badge.png",
+        icon: "/img/icons/icon-192x192.png",
         data: { url: "/" },
       };
 
@@ -88,8 +87,7 @@ module.exports = ({ strapi }) => ({
       const payload = {
         title: `Erinnerung - ${post.titel}`,
         body: `${dateText} — in 2 Tagen`,
-        icon: "/icons/icon-192.png",
-        badge: "/icons/badge.png",
+        icon: "/img/icons/icon-192x192.png",
         data: { url: `/beitrag/${post.documentId}` },
         tag: `reminder-${post.documentId}`,
         renotify: true,

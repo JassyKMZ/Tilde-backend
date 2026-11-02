@@ -195,6 +195,20 @@ module.exports = ({ strapi }) => {
         }
       }
 
+      // Remove subscriptions the push services reported as gone (404/410, unregistered).
+      const subscriptionService = strapi.service(
+        "api::webpush-subscription.webpush-subscription",
+      );
+      const tokenService = strapi.service("api::fcm-token.fcm-token");
+      await Promise.allSettled([
+        ...(webpushResult?.invalidEndpoints || []).map((endpoint) =>
+          subscriptionService.deleteByEndpoint(endpoint),
+        ),
+        ...(fcmResult?.invalidTokens || []).map((token) =>
+          tokenService.deleteByToken(token),
+        ),
+      ]);
+
       return {
         fcm: fcmResult || { successCount: 0, failureCount: 0 },
         webpush: webpushResult || { successCount: 0, failureCount: 0 },
@@ -217,8 +231,7 @@ module.exports = ({ strapi }) => {
         const testPayload = {
           title: "Test: Neuer Beitrag",
           body: `Test für Post: ${post.titel}`,
-          icon: `${PUSH_FRONTEND_URL}/icons/icon-192.png`,
-          badge: `${PUSH_FRONTEND_URL}/icons/badge.png`,
+          icon: `${PUSH_FRONTEND_URL}/img/icons/icon-192x192.png`,
           image: post.heroImageUrl
             ? `${PUSH_FRONTEND_URL}${post.heroImageUrl}`
             : undefined,
@@ -271,8 +284,7 @@ module.exports = ({ strapi }) => {
               : matchType === "kid"
                 ? `${post.titel} passt zu deinen Kinderprofilen.`
                 : post.titel,
-          icon: `${PUSH_FRONTEND_URL}/icons/icon-192.png`,
-          badge: `${PUSH_FRONTEND_URL}/icons/badge.png`,
+          icon: `${PUSH_FRONTEND_URL}/img/icons/icon-192x192.png`,
           image: post.heroImageUrl
             ? `${PUSH_FRONTEND_URL}${post.heroImageUrl}`
             : undefined,
@@ -327,8 +339,7 @@ module.exports = ({ strapi }) => {
       const payload = {
         title: `Erinnerung - ${post.titel}`,
         body: eventDate ? `${dateText} — morgen` : `Erinnerung: ${post.titel}`,
-        icon: `${PUSH_FRONTEND_URL}/icons/icon-192.png`,
-        badge: `${PUSH_FRONTEND_URL}/icons/badge.png`,
+        icon: `${PUSH_FRONTEND_URL}/img/icons/icon-192x192.png`,
         data: { url: absolutePostUrl },
         tag: `reminder-${post.documentId}`,
         renotify: true,

@@ -16,7 +16,6 @@ module.exports = {
         path: "/preview/:postId",
         handler: "notification.preview",
         config: {
-          auth: false, // or true if you want to restrict it
           policies: [],
           middlewares: [],
         },
@@ -27,7 +26,6 @@ module.exports = {
         handler: "notification.testPost",
         config: {
           type: "content-api",
-          auth: false,
           policies: [],
           middlewares: [],
         },
