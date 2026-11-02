@@ -5,7 +5,7 @@
     "singularName": "webpush-subscription",
     "pluralName": "webpush-subscriptions",
     "displayName": "WebPush Subscription",
-    "description": "Stores browser push subscriptions for Web Push (non-FCM browsers)"
+    "description": "Stores browser push subscriptions for Web Push"
   },
   "options": {
     "draftAndPublish": false
