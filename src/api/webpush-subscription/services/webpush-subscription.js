@@ -56,6 +56,7 @@ module.exports = createCoreService(
         .documents("api::webpush-subscription.webpush-subscription")
         .findMany({
           filters: { endpoint: normalized },
+          populate: ["user"],
           limit: 1,
         });
       if (!found || found.length === 0) return null;

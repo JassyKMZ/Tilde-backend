@@ -114,12 +114,38 @@ module.exports = {
 
       if (!deleted) return ctx.notFound();
 
-      const safe = await safeOutput(
-        deleted,
-        "api::webpush-subscription.webpush-subscription"
-      );
+      // Without any device left, exclude the user from new-post matching.
+      const userId = deleted.user?.id;
+      if (userId) {
+        const [subscriptions, tokens] = await Promise.all([
+          strapi
+            .service("api::webpush-subscription.webpush-subscription")
+            .findByUser(userId, { limit: 1 }),
+          strapi.service("api::fcm-token.fcm-token").findByUser(userId),
+        ]);
+        if (!subscriptions.length && !tokens.length) {
+          const userProfiles = await strapi.entityService.findMany(
+            "api::user-profile.user-profile",
+            {
+              filters: { user: userId },
+              limit: 1,
+            }
+          );
+          if (userProfiles.length > 0) {
+            await strapi.entityService.update(
+              "api::user-profile.user-profile",
+              userProfiles[0].id,
+              {
+                data: { pushNotificationsEnabled: false },
+              }
+            );
+          }
+        }
+      }
 
-      return ctx.send({ data: safe });
+      // Respond with the endpoint only: `deleted` has the populated user, and
+      // safeOutput returns raw entities on Strapi 5 (no sanitize.contentAPI).
+      return ctx.send({ data: { endpoint: deleted.endpoint } });
     } catch (err) {
       strapi.log.error("Failed to delete WebPush subscription:", err);
       return ctx.internalServerError("Delete WebPush subscription failed");
