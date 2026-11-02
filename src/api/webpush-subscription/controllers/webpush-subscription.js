@@ -24,6 +24,23 @@ async function safeOutput(entity, modelUid) {
   return entity;
 }
 
+/**
+ * The routes use `auth: false`, which makes Strapi skip JWT parsing entirely,
+ * so ctx.state.user is never set. Resolve the user from the Bearer token here.
+ */
+async function resolveUserId(ctx) {
+  if (ctx.state.user?.id) return ctx.state.user.id;
+  try {
+    const payload = await strapi
+      .plugin("users-permissions")
+      .service("jwt")
+      .getToken(ctx);
+    return payload?.id || null;
+  } catch {
+    return null;
+  }
+}
+
 module.exports = {
   async create(ctx) {
     try {
@@ -39,7 +56,7 @@ module.exports = {
         return ctx.badRequest("endpoint, p256dh and auth are required");
       }
 
-      const userId = ctx.state.user?.id || null;
+      const userId = await resolveUserId(ctx);
 
       const record = await strapi
         .service("api::webpush-subscription.webpush-subscription")
