@@ -16,7 +16,6 @@
     "upgrade:dry": "npx @strapi/upgrade latest --dry"
   },
   "dependencies": {
-    "@redon2inc/strapi-plugin-refresh-token": "^0.1.4",
     "@strapi/plugin-cloud": "5.42.1",
     "@strapi/plugin-users-permissions": "5.42.1",
     "@strapi/provider-email-nodemailer": "5.42.1",
