@@ -90,12 +90,6 @@
       "target": "api::user-profile.user-profile",
       "mappedBy": "user"
     },
-    "fcm_tokens": {
-      "type": "relation",
-      "relation": "oneToMany",
-      "target": "api::fcm-token.fcm-token",
-      "mappedBy": "user"
-    },
     "webpush_subscriptions": {
       "type": "relation",
       "relation": "oneToMany",

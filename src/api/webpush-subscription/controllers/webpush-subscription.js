@@ -117,13 +117,10 @@ module.exports = {
       // Without any device left, exclude the user from new-post matching.
       const userId = deleted.user?.id;
       if (userId) {
-        const [subscriptions, tokens] = await Promise.all([
-          strapi
-            .service("api::webpush-subscription.webpush-subscription")
-            .findByUser(userId, { limit: 1 }),
-          strapi.service("api::fcm-token.fcm-token").findByUser(userId),
-        ]);
-        if (!subscriptions.length && !tokens.length) {
+        const subscriptions = await strapi
+          .service("api::webpush-subscription.webpush-subscription")
+          .findByUser(userId, { limit: 1 });
+        if (!subscriptions.length) {
           const userProfiles = await strapi.entityService.findMany(
             "api::user-profile.user-profile",
             {
