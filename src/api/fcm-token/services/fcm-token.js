@@ -25,7 +25,7 @@ module.exports = createCoreService(
 
         const updated = await strapi
           .documents("api::fcm-token.fcm-token")
-          .update(entry.documentId, { data });
+          .update({ documentId: entry.documentId, data });
         return updated;
       }
 
@@ -58,7 +58,7 @@ module.exports = createCoreService(
 
       await strapi
         .documents("api::fcm-token.fcm-token")
-        .delete(entry.documentId);
+        .delete({ documentId: entry.documentId });
 
       return entry;
     },

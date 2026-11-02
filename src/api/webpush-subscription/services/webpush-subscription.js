@@ -28,7 +28,7 @@ module.exports = createCoreService(
 
         const updated = await strapi
           .documents("api::webpush-subscription.webpush-subscription")
-          .update(entry.documentId, { data });
+          .update({ documentId: entry.documentId, data });
         return updated;
       }
 
@@ -64,7 +64,7 @@ module.exports = createCoreService(
 
       await strapi
         .documents("api::webpush-subscription.webpush-subscription")
-        .delete(entry.documentId);
+        .delete({ documentId: entry.documentId });
 
       return entry;
     },
