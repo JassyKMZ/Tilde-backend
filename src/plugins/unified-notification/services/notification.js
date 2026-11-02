@@ -84,16 +84,12 @@ module.exports = ({ strapi }) => {
       console.log("sendToUser called for userId:", userId);
       strapi.log.info(`Sending unified notification to user ${userId}`);
 
-      const fcmTokens = await strapi
-        .service("api::fcm-token.fcm-token")
-        .findByUser(userId);
-
       const webpushSubs = await strapi
         .service("api::webpush-subscription.webpush-subscription")
         .findByUser(userId);
 
       console.log(
-        `User ${userId} - FCM tokens: ${fcmTokens?.length || 0}, WebPush subs: ${webpushSubs?.length || 0}`,
+        `User ${userId} - WebPush subs: ${webpushSubs?.length || 0}`,
       );
 
       // Ensure data.url is absolute for service worker openWindow
@@ -110,32 +106,6 @@ module.exports = ({ strapi }) => {
           "Final notification payload for user (could not stringify)",
         );
       }
-
-      // Map to FCM message shape (HTTP v1 compatible)
-      // NOTE: do NOT include `icon` in message.notification for FCM v1; use image or data fields.
-      const fcmMessage = {
-        notification: {
-          title: payload.title,
-          body: payload.body,
-          ...(payload.image ? { image: payload.image } : {}),
-        },
-        data: {
-          // include url and UI hints in data so client/service worker can use them
-          url: payload.data.url,
-          icon: payload.icon || "",
-          badge: payload.badge || "",
-          image: payload.image || "",
-          tag: payload.tag || "",
-          renotify: payload.renotify ? "true" : "false",
-          // include any other custom data fields (stringify non-strings)
-          ...Object.fromEntries(
-            Object.entries(payload.data || {}).map(([k, v]) => [
-              k,
-              typeof v === "string" ? v : JSON.stringify(v),
-            ]),
-          ),
-        },
-      };
 
       // Keep the standard fields at the root for older service workers.
       const webpushPayload = {
@@ -162,22 +132,7 @@ module.exports = ({ strapi }) => {
         renotify: payload.renotify,
       };
 
-      let fcmResult = null;
       let webpushResult = null;
-
-      if (fcmTokens?.length) {
-        try {
-          console.log(
-            `Sending FCM to user ${userId} with ${fcmTokens.length} tokens`,
-          );
-          fcmResult = await strapi
-            .service("api::fcm-token.fcm-token")
-            .sendToTokens(fcmTokens, fcmMessage);
-          console.log(`FCM send result for user ${userId}:`, fcmResult);
-        } catch (err) {
-          strapi.log.error("FCM send failed:", err);
-        }
-      }
 
       if (webpushSubs?.length) {
         try {
@@ -195,19 +150,15 @@ module.exports = ({ strapi }) => {
         }
       }
 
-      // Remove subscriptions the push services reported as gone (404/410, unregistered).
+      // Remove subscriptions the push services reported as gone (404/410).
       const subscriptionService = strapi.service(
         "api::webpush-subscription.webpush-subscription",
       );
-      const tokenService = strapi.service("api::fcm-token.fcm-token");
-      const cleanup = await Promise.allSettled([
-        ...(webpushResult?.invalidEndpoints || []).map((endpoint) =>
+      const cleanup = await Promise.allSettled(
+        (webpushResult?.invalidEndpoints || []).map((endpoint) =>
           subscriptionService.deleteByEndpoint(endpoint),
         ),
-        ...(fcmResult?.invalidTokens || []).map((token) =>
-          tokenService.deleteByToken(token),
-        ),
-      ]);
+      );
       cleanup
         .filter((r) => r.status === "rejected")
         .forEach((r) =>
@@ -215,7 +166,6 @@ module.exports = ({ strapi }) => {
         );
 
       return {
-        fcm: fcmResult || { successCount: 0, failureCount: 0 },
         webpush: webpushResult || { successCount: 0, failureCount: 0 },
       };
     },
@@ -304,9 +254,7 @@ module.exports = ({ strapi }) => {
 
         try {
           const result = await this.sendToUser(match.userId, payload);
-          const delivered =
-            Number(result?.fcm?.successCount || 0) > 0 ||
-            Number(result?.webpush?.successCount || 0) > 0;
+          const delivered = Number(result?.webpush?.successCount || 0) > 0;
           if (delivered) {
             deliveredUsers += 1;
             deliveredUserIds.push(match.userId);
