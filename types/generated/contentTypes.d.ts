@@ -529,44 +529,6 @@ export interface ApiCookieConsentCookieConsent
   };
 }
 
-export interface ApiFcmTokenFcmToken extends Struct.CollectionTypeSchema {
-  collectionName: 'fcm_tokens';
-  info: {
-    displayName: 'FCM Token';
-    pluralName: 'fcm-tokens';
-    singularName: 'fcm-token';
-  };
-  options: {
-    draftAndPublish: false;
-  };
-  attributes: {
-    createdAt: Schema.Attribute.DateTime;
-    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
-      Schema.Attribute.Private;
-    deviceId: Schema.Attribute.String;
-    lastSeen: Schema.Attribute.Timestamp;
-    locale: Schema.Attribute.String & Schema.Attribute.Private;
-    localizations: Schema.Attribute.Relation<
-      'oneToMany',
-      'api::fcm-token.fcm-token'
-    > &
-      Schema.Attribute.Private;
-    meta: Schema.Attribute.JSON;
-    platform: Schema.Attribute.Enumeration<['web', 'android', 'ios', 'other']>;
-    publishedAt: Schema.Attribute.DateTime;
-    token: Schema.Attribute.String &
-      Schema.Attribute.Required &
-      Schema.Attribute.Unique;
-    updatedAt: Schema.Attribute.DateTime;
-    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
-      Schema.Attribute.Private;
-    user: Schema.Attribute.Relation<
-      'manyToOne',
-      'plugin::users-permissions.user'
-    >;
-  };
-}
-
 export interface ApiFeedbackFeedback extends Struct.CollectionTypeSchema {
   collectionName: 'feedbacks';
   info: {
@@ -922,42 +884,6 @@ export interface ApiProfileRoleProfileRole extends Struct.CollectionTypeSchema {
   };
 }
 
-export interface ApiPushSubscriptionsPushSubscription
-  extends Struct.CollectionTypeSchema {
-  collectionName: 'push_subscriptions';
-  info: {
-    description: 'Stores client push subscription objects';
-    displayName: 'Push Subscription';
-    pluralName: 'push-subscriptions';
-    singularName: 'push-subscription';
-  };
-  options: {
-    draftAndPublish: false;
-  };
-  attributes: {
-    createdAt: Schema.Attribute.DateTime;
-    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
-      Schema.Attribute.Private;
-    endpoint: Schema.Attribute.String & Schema.Attribute.Required;
-    expirationTime: Schema.Attribute.DateTime;
-    keys: Schema.Attribute.JSON & Schema.Attribute.Required;
-    locale: Schema.Attribute.String & Schema.Attribute.Private;
-    localizations: Schema.Attribute.Relation<
-      'oneToMany',
-      'api::push-subscriptions.push-subscription'
-    > &
-      Schema.Attribute.Private;
-    publishedAt: Schema.Attribute.DateTime;
-    updatedAt: Schema.Attribute.DateTime;
-    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
-      Schema.Attribute.Private;
-    user_profile: Schema.Attribute.Relation<
-      'manyToOne',
-      'api::user-profile.user-profile'
-    >;
-  };
-}
-
 export interface ApiRoadmapStageRoadmapStage
   extends Struct.CollectionTypeSchema {
   collectionName: 'roadmap_stages';
@@ -1078,10 +1004,6 @@ export interface ApiUserProfileUserProfile extends Struct.CollectionTypeSchema {
     onboardingComplete: Schema.Attribute.Boolean &
       Schema.Attribute.DefaultTo<false>;
     publishedAt: Schema.Attribute.DateTime;
-    push_subscriptions: Schema.Attribute.Relation<
-      'oneToMany',
-      'api::push-subscriptions.push-subscription'
-    >;
     pushNotificationsEnabled: Schema.Attribute.Boolean;
     reminders: Schema.Attribute.Relation<'manyToMany', 'api::post.post'>;
     savedTipps: Schema.Attribute.Relation<'manyToMany', 'api::post.post'>;
@@ -1165,7 +1087,7 @@ export interface ApiWebpushSubscriptionWebpushSubscription
   extends Struct.CollectionTypeSchema {
   collectionName: 'webpush_subscriptions';
   info: {
-    description: 'Stores browser push subscriptions for Web Push (non-FCM browsers)';
+    description: 'Stores browser push subscriptions for Web Push';
     displayName: 'WebPush Subscription';
     pluralName: 'webpush-subscriptions';
     singularName: 'webpush-subscription';
@@ -1814,10 +1736,6 @@ export interface PluginUsersPermissionsUser
       Schema.Attribute.SetMinMaxLength<{
         minLength: 6;
       }>;
-    fcm_tokens: Schema.Attribute.Relation<
-      'oneToMany',
-      'api::fcm-token.fcm-token'
-    >;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<
       'oneToMany',
@@ -1878,7 +1796,6 @@ declare module '@strapi/strapi' {
       'api::about.about': ApiAboutAbout;
       'api::category.category': ApiCategoryCategory;
       'api::cookie-consent.cookie-consent': ApiCookieConsentCookieConsent;
-      'api::fcm-token.fcm-token': ApiFcmTokenFcmToken;
       'api::feedback.feedback': ApiFeedbackFeedback;
       'api::institution.institution': ApiInstitutionInstitution;
       'api::kurztipp.kurztipp': ApiKurztippKurztipp;
@@ -1886,7 +1803,6 @@ declare module '@strapi/strapi' {
       'api::legal-notice.legal-notice': ApiLegalNoticeLegalNotice;
       'api::post.post': ApiPostPost;
       'api::profile-role.profile-role': ApiProfileRoleProfileRole;
-      'api::push-subscriptions.push-subscription': ApiPushSubscriptionsPushSubscription;
       'api::roadmap-stage.roadmap-stage': ApiRoadmapStageRoadmapStage;
       'api::roadmap.roadmap': ApiRoadmapRoadmap;
       'api::user-profile.user-profile': ApiUserProfileUserProfile;
