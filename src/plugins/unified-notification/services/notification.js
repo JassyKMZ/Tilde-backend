@@ -200,7 +200,7 @@ module.exports = ({ strapi }) => {
         "api::webpush-subscription.webpush-subscription",
       );
       const tokenService = strapi.service("api::fcm-token.fcm-token");
-      await Promise.allSettled([
+      const cleanup = await Promise.allSettled([
         ...(webpushResult?.invalidEndpoints || []).map((endpoint) =>
           subscriptionService.deleteByEndpoint(endpoint),
         ),
@@ -208,6 +208,11 @@ module.exports = ({ strapi }) => {
           tokenService.deleteByToken(token),
         ),
       ]);
+      cleanup
+        .filter((r) => r.status === "rejected")
+        .forEach((r) =>
+          strapi.log.warn("Removing an invalid push subscription failed:", r.reason),
+        );
 
       return {
         fcm: fcmResult || { successCount: 0, failureCount: 0 },

@@ -76,7 +76,10 @@ module.exports = {
           }
 
           if (bookmarkedProfiles.length) {
-            await strapi.documents("api::post.post").update(post.documentId, {
+            // Bookkeeping fields: set them on the draft and published rows directly,
+            // so the job neither misses the published row nor publishes pending edits.
+            await strapi.db.query("api::post.post").updateMany({
+              where: { documentId: post.documentId },
               data: { eventReminderNotificationSent: true },
             });
           }
@@ -140,7 +143,8 @@ module.exports = {
           ];
 
           try {
-            await strapi.documents("api::post.post").update(post.documentId, {
+            await strapi.db.query("api::post.post").updateMany({
+              where: { documentId: post.documentId },
               data: {
                 notificationDeliveredUserIds,
                 ...(complete ? { notificationSent: true } : {}),
@@ -159,52 +163,7 @@ module.exports = {
     });
   },
 
-  routes: [
-    {
-      method: "POST",
-      path: "/test",
-      handler: "notification.test",
-      config: {
-        type: "content-api",
-        auth: false,
-        policies: [],
-        middlewares: [],
-      },
-    },
-    {
-      method: "POST",
-      path: "/pushnotifications/testreminder",
-      handler: "notification.testreminder",
-      config: {
-        type: "content-api",
-        auth: false,
-        policies: [],
-        middlewares: [],
-      },
-    },
-    {
-      method: "GET",
-      path: "/preview/:postId",
-      handler: "notification.preview",
-      config: {
-        type: "content-api",
-        auth: false,
-        policies: [],
-        middlewares: [],
-      },
-    },
-    {
-      method: "POST",
-      path: "/test-post/:postId/:userId?",
-      handler: "notification.testPost",
-      config: {
-        type: "content-api",
-        auth: false,
-        policies: [],
-        middlewares: [],
-      },
-    },
-  ],
+  routes: require("./routes"),
   controllers: {
     notification: require("./controllers/notification"),
   },

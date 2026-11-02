@@ -58,7 +58,8 @@ module.exports = ({ strapi }) => ({
       let post = null;
 
       try {
-        post = await strapi.documents("api::post.post").findOne(postId, {
+        post = await strapi.documents("api::post.post").findOne({
+          documentId: postId,
           populate: ["user_reminders", "user_reminders.user"],
           status: "published",
           locale: "all",
@@ -115,7 +116,8 @@ module.exports = ({ strapi }) => ({
     try {
       // Robust post loading
       const post =
-        (await strapi.documents("api::post.post").findOne(postId, {
+        (await strapi.documents("api::post.post").findOne({
+          documentId: postId,
           populate: ["kategories"],
           status: "published",
           locale: "all",
@@ -177,7 +179,8 @@ module.exports = ({ strapi }) => ({
 
       // 1) Try documents().findOne(documentId)
       try {
-        post = await strapi.documents("api::post.post").findOne(postId, {
+        post = await strapi.documents("api::post.post").findOne({
+          documentId: postId,
           populate: ["kategories"],
           status: "published",
           locale: "all",
@@ -272,7 +275,8 @@ module.exports = ({ strapi }) => ({
 
       // Robust post loading like preview
       const post =
-        (await strapi.documents("api::post.post").findOne(postId, {
+        (await strapi.documents("api::post.post").findOne({
+          documentId: postId,
           populate: ["kategories"],
           status: "published",
           locale: "all",
