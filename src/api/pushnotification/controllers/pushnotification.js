@@ -38,8 +38,9 @@ module.exports = {
       const userProfile = await strapi.entityService.findOne(
         "api::user-profile.user-profile",
         userProfileId,
+        { populate: ["user"] },
       );
-      if (!userProfile) {
+      if (!userProfile?.user?.id) {
         return ctx.badRequest("Invalid user profile");
       }
 
