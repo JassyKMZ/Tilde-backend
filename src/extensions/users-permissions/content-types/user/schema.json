@@ -76,14 +76,6 @@
       "inversedBy": "users",
       "configurable": false
     },
-    "refresh_tokens": {
-      "type": "relation",
-      "relation": "oneToMany",
-      "target": "plugin::refresh-token.token",
-      "mappedBy": "user",
-      "private": true,
-      "configurable": false
-    },
     "user_profile": {
       "type": "relation",
       "relation": "oneToOne",
