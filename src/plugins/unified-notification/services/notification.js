@@ -110,6 +110,9 @@ module.exports = ({ strapi }) => {
       // Keep the standard fields at the root for older service workers.
       const webpushPayload = {
         web_push: 8030,
+        // Safari 18.4+ shows declarative pushes without the service worker unless they
+        // are mutable; ours must run to count the app icon badge.
+        mutable: true,
         notification: {
           title: payload.title,
           body: payload.body,
