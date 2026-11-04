@@ -21,14 +21,14 @@ module.exports = createCoreController(
       const own = await findOwnProfile(strapi, ctx);
       if (!own) return ctx.send({ data: [], meta: {} });
       ctx.params.id = own.documentId;
-      const result = await core.findOne(ctx);
+      const result = await core.findOne.call(this, ctx);
       return { data: result?.data ? [result.data] : [], meta: {} };
     },
 
     async findOne(ctx) {
       const own = await findOwnProfile(strapi, ctx);
       if (!own || own.documentId !== ctx.params.id) return ctx.notFound();
-      return core.findOne(ctx);
+      return core.findOne.call(this, ctx);
     },
 
     // Profiles are created with the user (users-permissions afterCreate), updated via
