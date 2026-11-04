@@ -24,15 +24,13 @@
       "required": true
     },
     "analytics": {
-      "type": "boolean",
-      "required": true
+      "type": "boolean"
     },
     "externalMedia": {
       "type": "boolean"
     },
     "marketing": {
-      "type": "boolean",
-      "required": true
+      "type": "boolean"
     },
     "timestamp": {
       "type": "datetime",

@@ -22,7 +22,8 @@
       "type": "relation",
       "relation": "manyToMany",
       "target": "api::user-profile.user-profile",
-      "mappedBy": "kategories"
+      "mappedBy": "kategories",
+      "private": true
     },
     "title": {
       "type": "string"

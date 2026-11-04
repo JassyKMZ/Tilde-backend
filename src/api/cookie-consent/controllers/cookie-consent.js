@@ -22,9 +22,7 @@ module.exports = createCoreController(UID, ({ strapi }) => ({
       typeof input.policyVersion !== "string" ||
       input.policyVersion.length > 32 ||
       input.necessary !== true ||
-      typeof input.analytics !== "boolean" ||
-      typeof input.externalMedia !== "boolean" ||
-      typeof input.marketing !== "boolean"
+      typeof input.externalMedia !== "boolean"
     ) {
       return ctx.badRequest("Invalid consent record");
     }
@@ -38,10 +36,10 @@ module.exports = createCoreController(UID, ({ strapi }) => ({
       data: {
         consentId: input.consentId,
         policyVersion: input.policyVersion,
+        // Analytics/marketing categories were removed (none in use); older app
+        // versions may still send them, they are ignored.
         necessary: true,
-        analytics: input.analytics,
         externalMedia: input.externalMedia,
-        marketing: input.marketing,
         timestamp: new Date().toISOString(),
       },
     };

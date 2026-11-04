@@ -2,10 +2,48 @@
 "use strict";
 const { createCoreController } = require("@strapi/strapi").factories;
 
+async function findOwnProfile(strapi, ctx) {
+  const userId = ctx.state.user?.id;
+  if (!userId) return null;
+  return strapi.db
+    .query("api::user-profile.user-profile")
+    .findOne({ where: { user: userId }, select: ["id", "documentId"] });
+}
+
 module.exports = createCoreController(
   "api::user-profile.user-profile",
   ({ strapi, super: core }) => ({
     ...core,
+
+    // Profiles hold names and children's data, so the generic routes only ever expose
+    // the caller's own profile, whatever the role permissions in the admin panel say.
+    async find(ctx) {
+      const own = await findOwnProfile(strapi, ctx);
+      if (!own) return ctx.send({ data: [], meta: {} });
+      ctx.params.id = own.documentId;
+      const result = await core.findOne(ctx);
+      return { data: result?.data ? [result.data] : [], meta: {} };
+    },
+
+    async findOne(ctx) {
+      const own = await findOwnProfile(strapi, ctx);
+      if (!own || own.documentId !== ctx.params.id) return ctx.notFound();
+      return core.findOne(ctx);
+    },
+
+    // Profiles are created with the user (users-permissions afterCreate), updated via
+    // PUT /user-profiles/:documentId (updateByDocumentId) and deleted with the account.
+    async create(ctx) {
+      return ctx.forbidden();
+    },
+
+    async update(ctx) {
+      return ctx.forbidden();
+    },
+
+    async delete(ctx) {
+      return ctx.forbidden();
+    },
 
     async updateBookmarks(ctx) {
       const { bookmarks: docId } = ctx.request.body.data || {}; // Expect a single docId
