@@ -30,6 +30,25 @@ module.exports = (plugin) => {
   plugin.controllers.auth.emailConfirmation =
     customAuthController.emailConfirmation;
 
+  // The generic /api/users routes would let any logged-in user list, read, edit or
+  // delete other accounts if the role permissions allow it. The app only needs
+  // /api/users/me, so lock the rest down here regardless of admin panel settings.
+  // Account deletion goes through DELETE /api/account (api::account).
+  const userController = plugin.controllers.user;
+  const originalFindOne = userController.findOne;
+  const forbidden = async (ctx) => ctx.forbidden();
+  userController.find = forbidden;
+  userController.count = forbidden;
+  userController.create = forbidden;
+  userController.update = forbidden;
+  userController.destroy = forbidden;
+  userController.findOne = async (ctx) => {
+    if (String(ctx.state.user?.id) !== String(ctx.params.id)) {
+      return ctx.notFound();
+    }
+    return originalFindOne(ctx);
+  };
+
   // Prevent Strapi from sending automatic confirmation emails
   // by intercepting and disabling the email service for confirmation emails
   if (strapi.plugin("email")) {
