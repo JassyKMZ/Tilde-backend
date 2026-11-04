@@ -1,8 +1,9 @@
 {
   "collectionName": "components_impressum_long_texts",
   "info": {
-    "displayName": "Long Text",
-    "icon": "hashtag"
+    "displayName": "Rich Text",
+    "icon": "bulletList",
+    "description": "Formatierter Text mit Fettschrift, Listen und Links"
   },
   "options": {},
   "attributes": {
