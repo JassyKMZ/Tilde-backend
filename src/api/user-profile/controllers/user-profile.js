@@ -12,32 +12,41 @@ async function findOwnProfile(strapi, ctx) {
 
 module.exports = createCoreController(
   "api::user-profile.user-profile",
-  ({ strapi, super: core }) => ({
-    ...core,
-
+  ({ strapi }) => ({
     // Profiles hold names and children's data, so the generic routes only ever expose
     // the caller's own profile, whatever the role permissions in the admin panel say.
     async find(ctx) {
       const own = await findOwnProfile(strapi, ctx);
       if (!own) return ctx.send({ data: [], meta: {} });
       ctx.params.id = own.documentId;
-      const result = await core.findOne.call(this, ctx);
+      const result = await super.findOne(ctx);
       return { data: result?.data ? [result.data] : [], meta: {} };
     },
 
     async findOne(ctx) {
       const own = await findOwnProfile(strapi, ctx);
       if (!own || own.documentId !== ctx.params.id) return ctx.notFound();
-      return core.findOne.call(this, ctx);
+      return super.findOne(ctx);
     },
 
-    // Profiles are created with the user (users-permissions afterCreate), updated via
-    // PUT /user-profiles/:documentId (updateByDocumentId) and deleted with the account.
-    async create(ctx) {
-      return ctx.forbidden();
-    },
-
+    // PUT /user-profiles/:documentId: the app saves profile, bookmarks and settings
+    // here. (The custom routes in routes/user-profile.js are not registered: Strapi 5's
+    // createCoreRouter ignores a function config, so only the core routes exist.)
     async update(ctx) {
+      const own = await findOwnProfile(strapi, ctx);
+      if (!own || own.documentId !== ctx.params.id) return ctx.notFound();
+      const data = ctx.request.body?.data;
+      if (data && typeof data === "object") {
+        // Never let a user move the profile to another account or flag test users.
+        delete data.user;
+        delete data.testUser;
+      }
+      return super.update(ctx);
+    },
+
+    // Profiles are created with the user (users-permissions afterCreate) and deleted
+    // with the account (DELETE /api/account).
+    async create(ctx) {
       return ctx.forbidden();
     },
 
