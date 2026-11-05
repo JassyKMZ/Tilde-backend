@@ -486,7 +486,8 @@ export interface ApiCategoryCategory extends Struct.CollectionTypeSchema {
     user_profiles: Schema.Attribute.Relation<
       'manyToMany',
       'api::user-profile.user-profile'
-    >;
+    > &
+      Schema.Attribute.Private;
   };
 }
 
@@ -503,7 +504,7 @@ export interface ApiCookieConsentCookieConsent
     draftAndPublish: false;
   };
   attributes: {
-    analytics: Schema.Attribute.Boolean & Schema.Attribute.Required;
+    analytics: Schema.Attribute.Boolean;
     consentId: Schema.Attribute.String &
       Schema.Attribute.Required &
       Schema.Attribute.Unique;
@@ -517,7 +518,7 @@ export interface ApiCookieConsentCookieConsent
       'api::cookie-consent.cookie-consent'
     > &
       Schema.Attribute.Private;
-    marketing: Schema.Attribute.Boolean & Schema.Attribute.Required;
+    marketing: Schema.Attribute.Boolean;
     necessary: Schema.Attribute.Boolean & Schema.Attribute.Required;
     policyVersion: Schema.Attribute.String;
     publishedAt: Schema.Attribute.DateTime;
@@ -789,7 +790,8 @@ export interface ApiPostPost extends Struct.CollectionTypeSchema {
         },
         number
       >;
-    notificationDeliveredUserIds: Schema.Attribute.JSON;
+    notificationDeliveredUserIds: Schema.Attribute.JSON &
+      Schema.Attribute.Private;
     notificationSent: Schema.Attribute.Boolean &
       Schema.Attribute.DefaultTo<false>;
     postType: Schema.Attribute.Enumeration<['event', 'tipp', 'beitrag']>;
@@ -811,13 +813,16 @@ export interface ApiPostPost extends Struct.CollectionTypeSchema {
     savedTipps: Schema.Attribute.Relation<
       'manyToMany',
       'api::user-profile.user-profile'
-    >;
+    > &
+      Schema.Attribute.Private;
     summary: Schema.Attribute.Text;
     target_roles: Schema.Attribute.Relation<
       'manyToMany',
       'api::profile-role.profile-role'
     >;
     teilnehmer: Schema.Attribute.Integer;
+    terminNachAbsprache: Schema.Attribute.Boolean &
+      Schema.Attribute.DefaultTo<false>;
     titel: Schema.Attribute.String & Schema.Attribute.Required;
     trainer: Schema.Attribute.String;
     updatedAt: Schema.Attribute.DateTime;
@@ -826,11 +831,13 @@ export interface ApiPostPost extends Struct.CollectionTypeSchema {
     user_profiles: Schema.Attribute.Relation<
       'manyToMany',
       'api::user-profile.user-profile'
-    >;
+    > &
+      Schema.Attribute.Private;
     user_reminders: Schema.Attribute.Relation<
       'manyToMany',
       'api::user-profile.user-profile'
-    >;
+    > &
+      Schema.Attribute.Private;
     veranstalter: Schema.Attribute.Relation<
       'manyToOne',
       'api::veranstalter.veranstalter'
@@ -841,13 +848,12 @@ export interface ApiPostPost extends Struct.CollectionTypeSchema {
     >;
     veranstaltungstyp: Schema.Attribute.Enumeration<
       [
-        'Abrufveranstaltung',
-        'Kurs',
-        'Workshop',
-        'Seminar',
+        'Elternabend',
         'Fortbildung',
+        'Kurs',
+        'Seminar',
+        'Workshop',
         'Veranstaltung',
-        'Sch\u00FClerworkshop',
       ]
     > &
       Schema.Attribute.DefaultTo<'Veranstaltung'>;
@@ -1363,49 +1369,6 @@ export interface PluginI18NLocale extends Struct.CollectionTypeSchema {
   };
 }
 
-export interface PluginRefreshTokenToken extends Struct.CollectionTypeSchema {
-  collectionName: 'refresh-token_token';
-  info: {
-    description: 'Refresh tokens for users';
-    displayName: 'Refresh Tokens';
-    kind: 'collectionType';
-    pluralName: 'tokens';
-    singularName: 'token';
-    tableName: 'token';
-  };
-  options: {
-    draftAndPublish: false;
-  };
-  pluginOptions: {
-    'content-manager': {
-      visible: false;
-    };
-    'content-type-builder': {
-      visible: false;
-    };
-  };
-  attributes: {
-    createdAt: Schema.Attribute.DateTime;
-    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
-      Schema.Attribute.Private;
-    ipAddress: Schema.Attribute.Text;
-    locale: Schema.Attribute.String & Schema.Attribute.Private;
-    localizations: Schema.Attribute.Relation<
-      'oneToMany',
-      'plugin::refresh-token.token'
-    > &
-      Schema.Attribute.Private;
-    publishedAt: Schema.Attribute.DateTime;
-    updatedAt: Schema.Attribute.DateTime;
-    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
-      Schema.Attribute.Private;
-    user: Schema.Attribute.Relation<
-      'manyToOne',
-      'plugin::users-permissions.user'
-    >;
-  };
-}
-
 export interface PluginReviewWorkflowsWorkflow
   extends Struct.CollectionTypeSchema {
   collectionName: 'strapi_workflows';
@@ -1749,11 +1712,6 @@ export interface PluginUsersPermissionsUser
       }>;
     provider: Schema.Attribute.String;
     publishedAt: Schema.Attribute.DateTime;
-    refresh_tokens: Schema.Attribute.Relation<
-      'oneToMany',
-      'plugin::refresh-token.token'
-    > &
-      Schema.Attribute.Private;
     resetPasswordToken: Schema.Attribute.String & Schema.Attribute.Private;
     resetPasswordTokenCreatedAt: Schema.Attribute.Timestamp &
       Schema.Attribute.Private;
@@ -1814,7 +1772,6 @@ declare module '@strapi/strapi' {
       'plugin::email-designer-5.email-designer-template': PluginEmailDesigner5EmailDesignerTemplate;
       'plugin::email-designer-5.email-designer-template-version': PluginEmailDesigner5EmailDesignerTemplateVersion;
       'plugin::i18n.locale': PluginI18NLocale;
-      'plugin::refresh-token.token': PluginRefreshTokenToken;
       'plugin::review-workflows.workflow': PluginReviewWorkflowsWorkflow;
       'plugin::review-workflows.workflow-stage': PluginReviewWorkflowsWorkflowStage;
       'plugin::upload.file': PluginUploadFile;
