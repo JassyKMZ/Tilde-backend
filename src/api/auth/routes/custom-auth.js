@@ -8,6 +8,9 @@ module.exports = {
       handler: "custom-auth.confirmRegistration",
       config: {
         auth: false,
+        policies: [
+          { name: "global::rate-limit", config: { max: 10, windowMs: 10 * 60 * 1000 } },
+        ],
       },
     },
   ],

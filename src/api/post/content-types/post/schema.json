@@ -76,14 +76,27 @@
       },
       "default": "Veranstaltung",
       "enum": [
-        "Abrufveranstaltung",
-        "Kurs",
-        "Workshop",
-        "Seminar",
+        "Elternabend",
         "Fortbildung",
-        "Veranstaltung",
-        "Schülerworkshop"
+        "Kurs",
+        "Seminar",
+        "Workshop",
+        "Veranstaltung"
       ]
+    },
+    "terminNachAbsprache": {
+      "type": "boolean",
+      "default": false,
+      "conditions": {
+        "visible": {
+          "==": [
+            {
+              "var": "postType"
+            },
+            "event"
+          ]
+        }
+      }
     },
     "user_profiles": {
       "type": "relation",

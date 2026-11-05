@@ -8,7 +8,7 @@ module.exports = {
         policies: [
           "api::feedback.captcha",
           "api::feedback.honeypot",
-          "api::feedback.ratelimit",
+          { name: "global::rate-limit", config: { max: 5, windowMs: 60 * 1000 } },
         ],
       },
     },
