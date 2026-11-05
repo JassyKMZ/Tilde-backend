@@ -5,6 +5,10 @@ const cron = require("node-cron");
 module.exports = {
   register({ strapi }) {},
   async bootstrap({ strapi }) {
+    // Read only as many X-Forwarded-For entries as there are proxies in front of
+    // Strapi; earlier entries come from the client and could be faked.
+    strapi.server.app.maxIpsCount = Number(process.env.PROXY_HOPS) || 1;
+
     // Override email service to always use correct FROM address
     const emailService = strapi.plugin("email").service("email");
     const originalSend = emailService.send.bind(emailService);
@@ -29,6 +33,23 @@ module.exports = {
     };
 
     strapi.log.info("[Bootstrap] Email service override complete");
+
+    // One-time migration (safe to rerun): "Abrufveranstaltung" used to be an event type,
+    // but any type can be held on request. It is now the terminNachAbsprache switch;
+    // the type becomes the generic "Veranstaltung" until editors pick the right one.
+    try {
+      const { count } = await strapi.db.query("api::post.post").updateMany({
+        where: { veranstaltungstyp: "Abrufveranstaltung" },
+        data: { veranstaltungstyp: "Veranstaltung", terminNachAbsprache: true },
+      });
+      if (count) {
+        strapi.log.info(
+          `[Bootstrap] Migrated ${count} Abrufveranstaltung entries to terminNachAbsprache`,
+        );
+      }
+    } catch (error) {
+      strapi.log.error("[Bootstrap] Abrufveranstaltung migration failed", error);
+    }
 
     // Delete user profile when user is deleted
     strapi.db.lifecycles.subscribe({
