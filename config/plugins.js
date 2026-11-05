@@ -10,8 +10,15 @@ module.exports = {
         isEmailUnique: true,
         isUsernameUnique: true,
       },
-      jwt: {
-        expiresIn: "2h", // 2 hours
+      // Strapi's built-in access/refresh tokens: POST /api/auth/refresh rotates the
+      // refresh token, POST /api/auth/logout ends the session of one device.
+      jwtManagement: "refresh",
+      sessions: {
+        accessTokenLifespan: 60 * 60, // 1 hour (seconds)
+        // "Remember me": stay logged in while the app is used at least every
+        // 30 days, but log in again at the latest after 90 days.
+        idleRefreshTokenLifespan: 30 * 24 * 60 * 60,
+        maxRefreshTokenLifespan: 90 * 24 * 60 * 60,
       },
       enableEMail: true,
       // sendConfirmationEmail: false,
@@ -24,15 +31,6 @@ module.exports = {
         uppercase: true,
         numbers: true,
         symbols: true,
-      },
-    },
-    "refresh-token": {
-      config: {
-        refreshTokenExpiresIn: "30d",
-        requestRefreshOnAll: false,
-        refreshTokenSecret: process.env.REFRESH_JWT_SECRET || "SomethingSecret",
-        cookieResponse: false,
-        refreshTokenRotation: true,
       },
     },
   },

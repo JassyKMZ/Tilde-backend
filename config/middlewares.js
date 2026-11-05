@@ -1,4 +1,4 @@
-module.exports = [
+module.exports = ({ env }) => [
   "strapi::errors",
   {
     name: "strapi::security",
@@ -16,13 +16,9 @@ module.exports = [
   {
     name: "strapi::cors",
     config: {
-      origin: [
-        //"http://localhost:8080", // Vue dev
-        "http://localhost:4173", // Vite dev
-        "http://192.168.88.142:4173", // Vite dev on local network
-        //"http://localhost:3000", // Vue preview using npx serve dist
-        "https://tilde-app.de",
-      ],
+      // Comma-separated in .env; locally e.g.
+      // CORS_ORIGINS=http://localhost:4173,http://192.168.88.142:4173
+      origin: env.array("CORS_ORIGINS", ["https://tilde-app.de"]),
       headers: ["Content-Type", "Authorization", "Origin", "Accept"],
       methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS", "HEAD"],
       credentials: true,
@@ -37,8 +33,6 @@ module.exports = [
   "strapi::favicon",
   "strapi::public",
 
-  // eigene Middlewares:
-  // { name: "global::captcha" },
-  // { name: "global::honeypot" },
-  // { name: "global::ratelimit" },
+  // Spam protection runs as route policies, see src/policies/rate-limit.js and
+  // src/api/feedback/policies.
 ];

@@ -100,8 +100,9 @@ export interface ImpressumLink extends Struct.ComponentSchema {
 export interface ImpressumLongText extends Struct.ComponentSchema {
   collectionName: 'components_impressum_long_texts';
   info: {
-    displayName: 'Long Text';
-    icon: 'hashtag';
+    description: 'Formatierter Text mit Fettschrift, Listen und Links';
+    displayName: 'Rich Text';
+    icon: 'bulletList';
   };
   attributes: {
     Text: Schema.Attribute.Blocks;
