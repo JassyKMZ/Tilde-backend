@@ -854,6 +854,7 @@ export interface ApiPostPost extends Struct.CollectionTypeSchema {
         'Seminar',
         'Workshop',
         'Veranstaltung',
+        'Vortrag',
       ]
     > &
       Schema.Attribute.DefaultTo<'Veranstaltung'>;
