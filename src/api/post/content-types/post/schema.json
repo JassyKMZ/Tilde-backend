@@ -81,7 +81,8 @@
         "Kurs",
         "Seminar",
         "Workshop",
-        "Veranstaltung"
+        "Veranstaltung",
+         "Vortrag"
       ]
     },
     "terminNachAbsprache": {
