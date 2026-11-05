@@ -7,7 +7,14 @@ module.exports = {
       path: "/user/request-email-change",
       handler: "change-email.requestEmailChange",
       config: {
+        // The controller checks the token itself.
         auth: false,
+        policies: [
+          {
+            name: "global::rate-limit",
+            config: { max: 5, windowMs: 60 * 60 * 1000 },
+          },
+        ],
       },
     },
     {
@@ -16,14 +23,12 @@ module.exports = {
       handler: "change-email.confirmEmailChange",
       config: {
         auth: false,
-      },
-    },
-    {
-      method: "PUT",
-      path: "/change-email",
-      handler: "change-email.update",
-      config: {
-        auth: false,
+        policies: [
+          {
+            name: "global::rate-limit",
+            config: { max: 10, windowMs: 10 * 60 * 1000 },
+          },
+        ],
       },
     },
     {

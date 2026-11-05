@@ -76,26 +76,41 @@
       },
       "default": "Veranstaltung",
       "enum": [
-        "Abrufveranstaltung",
-        "Kurs",
-        "Workshop",
-        "Seminar",
+        "Elternabend",
         "Fortbildung",
-        "Veranstaltung",
-        "Schülerworkshop"
+        "Kurs",
+        "Seminar",
+        "Workshop",
+        "Veranstaltung"
       ]
+    },
+    "terminNachAbsprache": {
+      "type": "boolean",
+      "default": false,
+      "conditions": {
+        "visible": {
+          "==": [
+            {
+              "var": "postType"
+            },
+            "event"
+          ]
+        }
+      }
     },
     "user_profiles": {
       "type": "relation",
       "relation": "manyToMany",
       "target": "api::user-profile.user-profile",
-      "mappedBy": "bookmarks"
+      "mappedBy": "bookmarks",
+      "private": true
     },
     "savedTipps": {
       "type": "relation",
       "relation": "manyToMany",
       "target": "api::user-profile.user-profile",
-      "mappedBy": "savedTipps"
+      "mappedBy": "savedTipps",
+      "private": true
     },
     "kategories": {
       "type": "relation",
@@ -127,7 +142,8 @@
       "type": "relation",
       "relation": "manyToMany",
       "target": "api::user-profile.user-profile",
-      "mappedBy": "reminders"
+      "mappedBy": "reminders",
+      "private": true
     },
     "dauer": {
       "type": "decimal"
@@ -147,7 +163,8 @@
       "default": false
     },
     "notificationDeliveredUserIds": {
-      "type": "json"
+      "type": "json",
+      "private": true
     },
     "eventReminderNotificationSent": {
       "type": "boolean",
