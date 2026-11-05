@@ -5,6 +5,10 @@ const cron = require("node-cron");
 module.exports = {
   register({ strapi }) {},
   async bootstrap({ strapi }) {
+    // Read only as many X-Forwarded-For entries as there are proxies in front of
+    // Strapi; earlier entries come from the client and could be faked.
+    strapi.server.app.maxIpsCount = Number(process.env.PROXY_HOPS) || 1;
+
     // Override email service to always use correct FROM address
     const emailService = strapi.plugin("email").service("email");
     const originalSend = emailService.send.bind(emailService);
@@ -29,6 +33,23 @@ module.exports = {
     };
 
     strapi.log.info("[Bootstrap] Email service override complete");
+
+    // One-time migration (safe to rerun): "Abrufveranstaltung" used to be an event type,
+    // but any type can be held on request. It is now the terminNachAbsprache switch;
+    // the type becomes the generic "Veranstaltung" until editors pick the right one.
+    try {
+      const { count } = await strapi.db.query("api::post.post").updateMany({
+        where: { veranstaltungstyp: "Abrufveranstaltung" },
+        data: { veranstaltungstyp: "Veranstaltung", terminNachAbsprache: true },
+      });
+      if (count) {
+        strapi.log.info(
+          `[Bootstrap] Migrated ${count} Abrufveranstaltung entries to terminNachAbsprache`,
+        );
+      }
+    } catch (error) {
+      strapi.log.error("[Bootstrap] Abrufveranstaltung migration failed", error);
+    }
 
     // Delete user profile when user is deleted
     strapi.db.lifecycles.subscribe({
@@ -132,5 +153,60 @@ module.exports = {
     strapi.log.info(
       "[Bootstrap] Daily event archival cron job scheduled (runs daily at 2:00 AM UTC)",
     );
+
+    // Consent records prove a choice for the limitation period (3 years, § 195 BGB);
+    // the privacy policy promises deletion afterwards. Runs daily at 2:30 AM UTC.
+    const CONSENT_RETENTION_YEARS = 3;
+    cron.schedule("30 2 * * *", async () => {
+      try {
+        const cutoff = new Date();
+        cutoff.setFullYear(cutoff.getFullYear() - CONSENT_RETENTION_YEARS);
+        const { count } = await strapi.db
+          .query("api::cookie-consent.cookie-consent")
+          .deleteMany({ where: { timestamp: { $lt: cutoff } } });
+        if (count) {
+          strapi.log.info(`[Cron] Deleted ${count} consent records older than 3 years`);
+        }
+      } catch (error) {
+        strapi.log.error("[Cron] Error deleting old consent records:", error);
+      }
+    });
+
+    // Registrations never confirmed by email are useless and often hold someone
+    // else's address (typos, spam); the privacy policy promises deletion after
+    // 30 days. Bulk deletes skip lifecycles, so linked records go first.
+    // Runs daily at 2:45 AM UTC.
+    const UNCONFIRMED_RETENTION_DAYS = 30;
+    cron.schedule("45 2 * * *", async () => {
+      try {
+        const cutoff = new Date(
+          Date.now() - UNCONFIRMED_RETENTION_DAYS * 24 * 60 * 60 * 1000,
+        );
+        const users = await strapi.db
+          .query("plugin::users-permissions.user")
+          .findMany({
+            where: { confirmed: false, createdAt: { $lt: cutoff } },
+            select: ["id"],
+          });
+        if (!users.length) return;
+
+        const ids = users.map((u) => u.id);
+        await strapi.db
+          .query("api::webpush-subscription.webpush-subscription")
+          .deleteMany({ where: { user: { id: { $in: ids } } } });
+        await strapi.db
+          .query("api::user-profile.user-profile")
+          .deleteMany({ where: { user: { id: { $in: ids } } } });
+        await strapi.db
+          .query("plugin::users-permissions.user")
+          .deleteMany({ where: { id: { $in: ids } } });
+
+        strapi.log.info(
+          `[Cron] Deleted ${ids.length} registrations unconfirmed for ${UNCONFIRMED_RETENTION_DAYS} days`,
+        );
+      } catch (error) {
+        strapi.log.error("[Cron] Error deleting unconfirmed registrations:", error);
+      }
+    });
   },
 };
