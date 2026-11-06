@@ -1,3 +1,9 @@
-# To prevent search engines from seeing the site altogether, uncomment the next two lines:
-# User-Agent: *
-# Disallow: /
+# api.tilde-app.de – rules for search engines
+User-agent: *
+# The admin login has nothing to index.
+Disallow: /admin
+# Keep /api/ and /uploads/ crawlable: Google loads posts and images from here when it
+# renders the pages of tilde-app.de.
+Allow: /
+
+Sitemap: https://api.tilde-app.de/api/sitemap.xml
