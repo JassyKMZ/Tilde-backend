@@ -1,6 +1,7 @@
 "use strict";
 
 const crypto = require("crypto");
+const { maskEmails } = require("../../../utils/mask-emails");
 
 const REDIRECT_URL = (
   process.env.REDIRECT_URL ||
@@ -155,7 +156,7 @@ module.exports = {
           html: customHtml,
         });
 
-      strapi.log.info(`Confirmation email sent to ${newUser.email}`);
+      strapi.log.info(`Confirmation email sent to ${maskEmails(newUser.email)}`);
     } catch (mailErr) {
       strapi.log.error("Failed to send confirmation email:", mailErr);
       // Don't fail the registration if email fails

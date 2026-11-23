@@ -2,6 +2,8 @@
 
 const cron = require("node-cron");
 
+const { maskEmails } = require("./utils/mask-emails");
+
 module.exports = {
   register({ strapi }) {},
   async bootstrap({ strapi }) {
@@ -20,8 +22,10 @@ module.exports = {
         from: process.env.SMTP_FROM || process.env.SMTP_USERNAME,
       };
 
+      // Recipients are personal data and logs are kept indefinitely, so only a
+      // shortened form is logged (e.g. "ma***@example.org").
       strapi.log.info(
-        `[Email Override] Sending email FROM: ${correctedOptions.from} TO: ${correctedOptions.to}`,
+        `[Email Override] Sending email FROM: ${correctedOptions.from} TO: ${maskEmails(correctedOptions.to)}`,
       );
 
       try {
@@ -206,6 +210,47 @@ module.exports = {
         );
       } catch (error) {
         strapi.log.error("[Cron] Error deleting unconfirmed registrations:", error);
+      }
+    });
+
+    // Contact requests and feedback hold personal data; the privacy policy promises
+    // deletion once handled, at the latest after a fixed period:
+    // - contact requests marked "erledigt" go 30 days after their last change (time
+    //   to look something up again), all others 6 months after they came in;
+    // - feedback has no "erledigt" switch and goes 6 months after it came in.
+    // Copies in the info@ mailbox are not touched and must be cleaned up there.
+    // Runs daily at 3:00 AM UTC.
+    const HANDLED_REQUEST_RETENTION_DAYS = 30;
+    const MESSAGE_RETENTION_MONTHS = 6;
+    cron.schedule("0 3 * * *", async () => {
+      try {
+        const handledCutoff = new Date(
+          Date.now() - HANDLED_REQUEST_RETENTION_DAYS * 24 * 60 * 60 * 1000,
+        );
+        const maxCutoff = new Date();
+        maxCutoff.setMonth(maxCutoff.getMonth() - MESSAGE_RETENTION_MONTHS);
+
+        const { count: requests } = await strapi.db
+          .query("api::kontaktanfrage.kontaktanfrage")
+          .deleteMany({
+            where: {
+              $or: [
+                { erledigt: true, updatedAt: { $lt: handledCutoff } },
+                { createdAt: { $lt: maxCutoff } },
+              ],
+            },
+          });
+        const { count: feedbacks } = await strapi.db
+          .query("api::feedback.feedback")
+          .deleteMany({ where: { createdAt: { $lt: maxCutoff } } });
+
+        if (requests || feedbacks) {
+          strapi.log.info(
+            `[Cron] Deleted ${requests} contact requests and ${feedbacks} feedback entries past their retention period`,
+          );
+        }
+      } catch (error) {
+        strapi.log.error("[Cron] Error deleting old contact requests and feedback:", error);
       }
     });
   },

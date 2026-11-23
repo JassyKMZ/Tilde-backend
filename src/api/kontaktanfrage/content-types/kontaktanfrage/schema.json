@@ -1,0 +1,42 @@
+{
+  "kind": "collectionType",
+  "collectionName": "kontaktanfragen",
+  "info": {
+    "singularName": "kontaktanfrage",
+    "pluralName": "kontaktanfragen",
+    "displayName": "Kontaktanfrage",
+    "description": "Nachrichten aus dem Kontaktformular (/kontakt)"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "anliegen": {
+      "type": "string",
+      "required": true
+    },
+    "name": {
+      "type": "string",
+      "required": true
+    },
+    "email": {
+      "type": "email",
+      "required": true
+    },
+    "institution": {
+      "type": "string"
+    },
+    "telefon": {
+      "type": "string"
+    },
+    "nachricht": {
+      "type": "text",
+      "required": true
+    },
+    "erledigt": {
+      "type": "boolean",
+      "default": false
+    }
+  }
+}

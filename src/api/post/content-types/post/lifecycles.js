@@ -1,5 +1,7 @@
 "use strict";
 
+const { maskEmails } = require("../../../../utils/mask-emails");
+
 function normalizeIds(values = []) {
   return [
     ...new Set(
@@ -118,7 +120,7 @@ async function notifyReviewers(post) {
             `,
           });
       } catch (error) {
-        strapi.log.error(`Failed to email post reviewer ${recipient}:`, error);
+        strapi.log.error(`Failed to email post reviewer ${maskEmails(recipient)}:`, error);
       }
     }
   } catch (error) {
