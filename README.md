@@ -47,6 +47,24 @@ Set `PUSH_FRONTEND_URL` to the public Vue app origin (for example,
 frontend route `/beitrag/:id`; keep `FRONTEND_URL` configured separately for
 Strapi's own public URL.
 
+## Link previews for shared posts
+
+WhatsApp, Signal, iMessage, LinkedIn, Facebook and similar apps read a page's meta
+tags without running JavaScript. On `tilde-app.de/beitrag/<id>` they would only see the
+defaults from `index.html`. `GET /api/link-preview/:id` answers with the post's title,
+summary and image instead.
+
+`vue-frontend/public/.htaccess` redirects only these preview bots there. Search engines,
+Google included, keep getting the app. It needs no Plesk admin rights: Apache behind
+Plesk's nginx reads the file from the site's folder. People who land on the preview page
+are sent on to the app.
+
+To check it after a deploy, run
+`curl -sIL -A "WhatsApp/2.23" https://tilde-app.de/beitrag/<documentId>`. It should
+show a 302 to `api.tilde-app.de/api/link-preview/…` and then a 200. Facebook's
+[Sharing Debugger](https://developers.facebook.com/tools/debug/) shows the preview and
+clears cached ones.
+
 ## 📚 Learn more
 
 - [Resource center](https://strapi.io/resource-center) - Strapi resource center.
