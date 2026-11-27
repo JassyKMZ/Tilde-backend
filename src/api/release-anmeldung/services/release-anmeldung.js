@@ -4,15 +4,30 @@
  * release-anmeldung service
  *
  * Besides the default CRUD methods it sends the confirmation mail for a new
- * registration. The team sees all registrations in the Strapi admin.
+ * registration: event details, calendar file and the personal link to change or
+ * cancel it.
+ * The team sees all registrations in the Strapi admin (or via the export).
  */
 
 const { createCoreService } = require('@strapi/strapi').factories;
-
-// Replies to the confirmation (e.g. cancellations) land in the team inbox.
-const CONTACT_INBOX = process.env.KONTAKT_EMAIL || 'info@tilde-app.de';
+const {
+  CONTACT_INBOX,
+  eventInfo,
+  icsFile,
+  icsUrl,
+  googleCalendarLink,
+  cancelUrl,
+} = require('../event');
 
 const BRAND_COLOR = '#5041b1';
+
+function escapeHtml(value) {
+  return String(value ?? '').replace(
+    /[&<>"']/g,
+    (char) =>
+      ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[char],
+  );
+}
 
 function layout(title, bodyHtml) {
   return `
@@ -31,25 +46,97 @@ function layout(title, bodyHtml) {
 </div>`;
 }
 
-// Receipt only: apart from the number of persons it contains nothing the sender typed,
-// so the form can't be misused to send someone else a message under Tilde's name.
+function eventRows() {
+  const event = eventInfo();
+  return [
+    ['Datum', event.dateText],
+    ['Uhrzeit', event.timeText],
+    ['Ort', event.location],
+    ['Raum', event.room],
+  ];
+}
+
+function button(href, label, filled) {
+  const colors = filled
+    ? `background-color: ${BRAND_COLOR}; color: #ffffff; border: 2px solid ${BRAND_COLOR};`
+    : `background-color: #ffffff; color: ${BRAND_COLOR}; border: 2px solid ${BRAND_COLOR};`;
+  return `<a href="${escapeHtml(href)}" style="display: inline-block; margin: 0 8px 8px 0; padding: 10px 18px; border-radius: 999px; font-weight: 600; font-size: 15px; text-decoration: none; ${colors}">${label}</a>`;
+}
+
+// Apart from the number of persons it contains nothing the sender typed, so the form
+// can't be misused to send someone else a message under Tilde's name.
 function confirmationMail(entry) {
   const persons = Number(entry.personen) || 1;
   const personsText = persons === 1 ? '1 Person' : `${persons} Personen`;
+  const cancelLink = entry.abmeldeToken ? cancelUrl(entry.abmeldeToken) : null;
+
+  const detailsText = eventRows()
+    .map(([label, value]) => `${label}: ${value}`)
+    .join('\n');
+  const detailsHtml = eventRows()
+    .map(
+      ([label, value]) =>
+        `<tr><td style="padding: 4px 16px 4px 0; color: #665f6d; vertical-align: top; white-space: nowrap;">${label}</td>` +
+        `<td style="padding: 4px 0; color: #2f2938; font-weight: 600;">${escapeHtml(value)}</td></tr>`,
+    )
+    .join('');
+
+  const cancelText = cancelLink
+    ? `Sie bringen mehr oder weniger Personen mit oder können doch nicht kommen? Hier können Sie Ihre Anmeldung ändern oder sich abmelden:\n${cancelLink}`
+    : 'Sie bringen mehr oder weniger Personen mit oder können doch nicht kommen? Antworten Sie einfach auf diese E-Mail.';
+  const cancelHtml = cancelLink
+    ? `<p style="margin: 0 0 8px 0;">Sie bringen mehr oder weniger Personen mit oder können doch nicht kommen?</p>
+      <p style="margin: 0 0 20px 0;">${button(cancelLink, 'Anmeldung ändern oder abmelden', false)}</p>`
+    : '<p style="margin: 0 0 16px 0;">Sie bringen mehr oder weniger Personen mit oder können doch nicht kommen? Antworten Sie einfach auf diese E-Mail.</p>';
+
   return {
     to: entry.email,
+    // Replies (changes, questions) reach the team instead of a no-reply address.
     replyTo: CONTACT_INBOX,
     subject: 'Ihre Anmeldung zum Release-Tag der Tilde App',
-    text: `Guten Tag,\n\nvielen Dank für Ihre Anmeldung zum Release-Tag der Tilde App! Wir haben ${personsText} für Sie eingeplant und freuen uns auf Sie.\n\nSollte sich am Termin etwas ändern, informieren wir Sie über diese E-Mail-Adresse.\n\nSie können doch nicht kommen oder bringen mehr oder weniger Personen mit? Antworten Sie einfach auf diese E-Mail.\n\nSie haben sich nicht angemeldet? Dann hat jemand Ihre E-Mail-Adresse eingegeben. Antworten Sie kurz, dann löschen wir die Anmeldung.\n\nViele Grüße\nIhr Tilde-Team`,
+    text: [
+      'Guten Tag,',
+      '',
+      `vielen Dank für Ihre Anmeldung zum Release-Tag der Tilde App! Wir haben ${personsText} für Sie eingeplant und freuen uns auf Sie.`,
+      '',
+      detailsText,
+      '',
+      'Im Anhang finden Sie eine Kalenderdatei (.ics) für Ihren Kalender.',
+      `Google Kalender: ${googleCalendarLink()}`,
+      '',
+      'Sollte sich am Termin etwas ändern, informieren wir Sie über diese E-Mail-Adresse.',
+      '',
+      cancelText,
+      '',
+      'Viele Grüße',
+      'Ihr Tilde-Team',
+      '',
+      'Sie haben sich nicht angemeldet? Dann hat jemand Ihre E-Mail-Adresse eingegeben. Antworten Sie kurz, dann löschen wir die Anmeldung.',
+    ].join('\n'),
     html: layout(
       'Vielen Dank für Ihre Anmeldung!',
       `<p style="margin: 0 0 16px 0;">Guten Tag,</p>
-      <p style="margin: 0 0 16px 0;">vielen Dank für Ihre Anmeldung zum Release-Tag der Tilde App! Wir haben <strong>${personsText}</strong> für Sie eingeplant und freuen uns auf Sie.</p>
+      <p style="margin: 0 0 20px 0;">vielen Dank für Ihre Anmeldung zum Release-Tag der Tilde App! Wir haben <strong>${personsText}</strong> für Sie eingeplant und freuen uns auf Sie.</p>
+      <div style="padding: 16px 20px; background-color: #f0edfa; border-radius: 8px; margin: 0 0 20px 0;">
+        <table style="border-collapse: collapse; font-size: 15px;">${detailsHtml}</table>
+      </div>
+      <p style="margin: 0 0 8px 0; font-weight: 600;">In den Kalender eintragen:</p>
+      <p style="margin: 0 0 20px 0;">
+        ${button(icsUrl(), 'Apple, Outlook &amp; Co. (.ics)', true)}
+        ${button(googleCalendarLink(), 'Google Kalender', false)}
+      </p>
       <p style="margin: 0 0 16px 0;">Sollte sich am Termin etwas ändern, informieren wir Sie über diese E-Mail-Adresse.</p>
-      <p style="margin: 0 0 16px 0;">Sie können doch nicht kommen oder bringen mehr oder weniger Personen mit? Antworten Sie einfach auf diese E-Mail.</p>
+      ${cancelHtml}
       <p style="margin: 0 0 16px 0;">Viele Grüße<br />Ihr Tilde-Team</p>
       <p style="margin: 24px 0 0 0; font-size: 13px; color: #665f6d;">Sie haben sich nicht angemeldet? Dann hat jemand Ihre E-Mail-Adresse eingegeben. Antworten Sie kurz, dann löschen wir die Anmeldung.</p>`,
     ),
+    attachments: [
+      {
+        filename: 'tilde-release-tag.ics',
+        content: icsFile(),
+        contentType: 'text/calendar; charset=utf-8; method=PUBLISH',
+      },
+    ],
   };
 }
 

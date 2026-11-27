@@ -6,8 +6,7 @@ const MAX_PERSONS = 10;
 
 // Upper length limits per field; keeps spam and accidental pastes out of the admin.
 const MAX_LENGTH = {
-  name: 100,
-  institution: 150,
+  name: 150,
   email: 200,
   anmerkung: 500,
 };
@@ -16,10 +15,7 @@ module.exports = {
   async beforeCreate(event) {
     const { data } = event.params;
 
-    // Either a person's name or an institution is enough to know who is coming.
-    const name = (data.name || "").trim();
-    const institution = (data.institution || "").trim();
-    if (name.length < 2 && institution.length < 2) {
+    if (!data.name || data.name.trim().length < 2) {
       throw new ValidationError(
         "Bitte geben Sie Ihren Namen oder Ihre Institution an.",
       );

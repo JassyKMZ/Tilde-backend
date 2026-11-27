@@ -13,10 +13,8 @@
   "pluginOptions": {},
   "attributes": {
     "name": {
-      "type": "string"
-    },
-    "institution": {
-      "type": "string"
+      "type": "string",
+      "required": true
     },
     "email": {
       "type": "email",
@@ -36,6 +34,14 @@
     "abgesagt": {
       "type": "boolean",
       "default": false
+    },
+    "abgesagtAm": {
+      "type": "datetime"
+    },
+    "abmeldeToken": {
+      "type": "string",
+      "private": true,
+      "unique": true
     }
   }
 }
