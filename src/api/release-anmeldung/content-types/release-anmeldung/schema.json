@@ -1,0 +1,41 @@
+{
+  "kind": "collectionType",
+  "collectionName": "release_anmeldungen",
+  "info": {
+    "singularName": "release-anmeldung",
+    "pluralName": "release-anmeldungen",
+    "displayName": "Release-Anmeldung",
+    "description": "Anmeldungen zum Release-Tag (/release-anmeldung, nur per Link erreichbar)"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "name": {
+      "type": "string"
+    },
+    "institution": {
+      "type": "string"
+    },
+    "email": {
+      "type": "email",
+      "required": true,
+      "unique": true
+    },
+    "personen": {
+      "type": "integer",
+      "required": true,
+      "default": 1,
+      "min": 1,
+      "max": 10
+    },
+    "anmerkung": {
+      "type": "text"
+    },
+    "abgesagt": {
+      "type": "boolean",
+      "default": false
+    }
+  }
+}
